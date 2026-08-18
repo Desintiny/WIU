@@ -18,6 +18,6 @@ public:
 
 	void PlayerMovement();
 	virtual void PlayerAttack();
-	void EquipWeapon();
+	virtual void EquipWeapon();
 };
 

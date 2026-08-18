@@ -54,5 +54,12 @@ void Player::PlayerMovement()
 	//}
 }
 
+void Player::PlayerAttack()
+{
+
+}
+
 void Player::EquipWeapon()
-{}
+{
+
+}
