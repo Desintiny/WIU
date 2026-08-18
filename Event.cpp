@@ -370,6 +370,7 @@ void Event::SetTransitionEvent() {
 			"captured by your enemies, now it is time to reclaim it back and avenge your loved ones. \n"
 			"1. Move Forward. \n"
 			"2. Try to run away." << std::endl;
+		std::cout << "What do you do? ";
 		std::cin >> EventTransitionChoice;
 		if (EventTransitionChoice == 1) {
 			std::cout << "As you entered a hole in the wall, what awaits you are enemies everywhere, they have not noticed you, \n"
