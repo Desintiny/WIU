@@ -52,6 +52,8 @@ void Game::Start()
 	player->setCol(1);
 	mapGrid[4][1] = 'P';
 
+	system("cls");
+
 	while (gameRunning)
 	{
 		DisplayGame();
