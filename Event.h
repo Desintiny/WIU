@@ -5,8 +5,6 @@ private:
 
 public:
 	void SetEvent();
-	
-		
-	
+	void SetTransitionEvent();
 };
 
