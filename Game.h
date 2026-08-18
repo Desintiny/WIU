@@ -7,9 +7,10 @@ class Game
 public: 
     Game();
     ~Game();
+
     void Start();
     void MainMenu();
     void ClassSelection();
-    void displayGame();
+    void DisplayGame();
 };
 

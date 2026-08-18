@@ -1,32 +1,23 @@
+#define STYLE_ORANGE "\033[33m"
+#define STYLE_RED "\033[31m"
+#define STYLE_PURPLE "\033[35m"
+#define STYLE_BLUE "\033[36m"
+#define STYLE_NONE "\033[0m"
+
 #include "Game.h"
 #include <iostream>
 #include <conio.h>
+
 using namespace std;
 
 Game::Game()
 {
 	gameRunning = true;
-	char tempMapGrid[12][12] = {
-		//    0    1    2    3    4    5    6    7    8    9    10	 11
-			{ '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+' },  // 0
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 1
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 2
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 3
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 4
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 5
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 6
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 7
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 8
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 9
-			{ '+', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '+' },  // 10
-			{ '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+' }   // 11
-	};
 
-	for (int row = 0; row < 12; row++)
-	{
-		for (int col = 0; col < 12; col++)
-		{
-			mapGrid[row][col] = tempMapGrid[row][col];
+	for (int row = 0; row < 12; row++) {
+		for (int col = 0; col < 12; col++) {
+			bool isBorder = (row == 0 || row == 11 || col == 0 || col == 11);
+			mapGrid[row][col] = isBorder ? '+' : '.';
 		}
 	}
 }
@@ -47,7 +38,7 @@ void Game::Start()
 		ClassSelection();
 		do 
 		{
-			displayGame();
+			DisplayGame();
 			input = _getch();
 		} while (gameRunning);
 	}
@@ -60,11 +51,12 @@ void Game::Start()
 void Game::MainMenu()
 {
 	int option;
+	cout << "============= HAVENFALL =============" << endl;
+	cout << "\t   1. Start Game" << endl;
+	cout << "\t   2. Quit Game" << endl;
+	cout << "=====================================" << endl;
 
-	cout << "======= HAVENFALL =======" << endl;
-	cout << "1. Start Game" << endl;
-	cout << "2. Quit Game\n" << endl;
-	cout << "Enter: ";
+	cout << "\nEnter: ";
 	cin >> option;
 
 	if (option == 1)
@@ -80,13 +72,13 @@ void Game::MainMenu()
 void Game::ClassSelection()
 {
 	int choice;
-
+	cout << "=====================================" << endl;
 	cout << "Choose Your Path" << endl;
 	cout << endl;
 	cout << "[1] Berserker - Melee Class" << endl;
 	cout << "[2] Archer - Ranged Class" << endl;
 	cout << "[3] Mage - Magic Class" << endl;
-	cout << "Choice: ";
+	cout << "\nChoice: ";
 	cin >> choice;
 
 	if (choice == 1)
@@ -103,46 +95,78 @@ void Game::ClassSelection()
 	}
 }
 
-void Game::displayGame()
+void Game::DisplayGame()
 {
 	int healthPts = 40;
 	int staminaPts = 10;
-	string healthBar = "##########";
-	string staminaBar = "##########";
 
-	string enemyHealthBar = "##########";
+	char healthBar[10];
+	char staminaBar[10];
+	char enemyHealthBar[10];
+
+	for (int i = 0; i < 10; i++)
+	{
+		healthBar[i] = '#';
+		staminaBar[i] = '#';
+		enemyHealthBar[i] = '#';
+	}
+
 	bool inCombat = true;
 
-	cout << "\n\n";
-	cout << "\033[33m";
-	cout << "YOU (P)\t\t\t";
+	cout << "=====================================" << endl;
+
+	// ------------ PLAYER DISPLAY ------------
+
+	cout << STYLE_ORANGE << "YOU (P)\t\t\t";
+
+	// ENEMY HEALTH (ONLY SHOWS WHEN IN COMBAT)
 
 	if (inCombat)
 	{
-		cout << "\033[35m";
-		cout << "ENEMY (E)" << endl;
+		cout << STYLE_PURPLE << "ENEMY (E)" << endl;
 	}
 
-	// HEALTH in red
-	cout << "\033[31m";
-	cout << "HP [" << healthBar << "] ";
+	// ------------ PLAYER HEALTH ------------
+
+	cout << STYLE_RED << "HP [";
+
+	for (int i = 0; i < 10; i++)
+	{
+		cout << healthBar[i];
+	}
+
+	cout << "] ";
 
 	cout << healthPts;
 	cout << "/40\t";
 
+	// ENEMY HEALTH (ONLY SHOWS WHEN IN COMBAT)
+
 	if (inCombat)
 	{
-		cout << "\033[31m";
-		cout << "HP [" << enemyHealthBar << "] \n";
+		cout << "HP [";
+
+		for (int i = 0; i < 10; i++)
+		{
+			cout << enemyHealthBar[i];
+		} 
+		cout << "] \n";
 	}
 
-	// STAMINA in blue
-	cout << "\033[36m";
-	cout << "ST [" << staminaBar << "] ";
+	// ------------ PLAYER STAMINA ------------
+
+	cout << STYLE_BLUE << "ST [";
+
+	for (int i = 0; i < 10; i++)
+	{
+		cout << staminaBar[i];
+	} 
+	cout << "] ";
 
 	cout << staminaPts;
-	cout <<  "/10\n" << endl;
-	cout << "\033[0m";
+	cout <<  "/10\n" << STYLE_NONE << endl;
+
+	// ------------ GAME MAP ------------
 
 	for (int row = 0; row < 12; row++)
 	{
@@ -152,6 +176,8 @@ void Game::displayGame()
 		}
 		cout << endl;
 	}
+
+	// ------------ PLAYER CONTROLS ------------
 
 	cout << "[WASD] Move | [1] Attack | [2] Ability | [3] Guard" << endl;
 }
