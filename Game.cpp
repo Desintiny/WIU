@@ -52,6 +52,8 @@ void Game::Start()
 	player->setCol(1);
 	mapGrid[4][1] = 'P';
 
+	system("cls");
+
 	while (gameRunning)
 	{
 		DisplayGame();
@@ -59,6 +61,7 @@ void Game::Start()
 		char input = _getch();
 
 		player->PlayerMovement(input, mapGrid);
+		player->PlayerAtkDirection(input, mapGrid);
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
 		system("cls");
@@ -92,6 +95,8 @@ void Game::ClassSelection()
 	int choice;
 	do
 	{
+		// ------------ DISPLAY OF PLAYER CLASSES ------------
+
 		cout << "=====================================" << endl;
 		cout << "Choose Your Path" << endl;
 		cout << endl;
@@ -103,6 +108,8 @@ void Game::ClassSelection()
 
 		delete player;
 		player = nullptr;
+
+		// ------------ PLAYER CLASSES ------------
 
 		if (choice == 1)
 		{
@@ -124,10 +131,11 @@ void Game::ClassSelection()
 	} while (choice < 1 || choice > 3);
 }
 
+// ------------ DISPLAY UI FOR THE USER ------------
 void Game::DisplayGame()
 {
-	int healthPts = 40;
-	int staminaPts = 10;
+	int displayHealth = player->getHealth();
+	int displayStamina = player->getStamina();
 
 	char healthBar[10];
 	char staminaBar[10];
@@ -142,12 +150,18 @@ void Game::DisplayGame()
 
 	bool inCombat = true;
 
+	// ------------ PLAYER UI ------------
+
 	cout << STYLE_ORANGE << "YOU (P)\t\t\t";
+
+	// ------------ ENEMY UI DURING COMBAT ------------
 
 	if (inCombat)
 	{
 		cout << STYLE_PURPLE << "ENEMY (E)" << endl;
 	}
+
+	// ------------ PLAYER HEALTH ------------
 
 	cout << STYLE_RED << "HP [";
 
@@ -156,7 +170,9 @@ void Game::DisplayGame()
 		cout << healthBar[i];
 	}
 
-	cout << "] " << healthPts << "/40\t";
+	cout << "] " << player->getHealth() << '/' << displayHealth << "\t";;
+
+	// ------------ ENEMY HEALTH DURING COMBAT ------------
 
 	if (inCombat)
 	{
@@ -170,6 +186,8 @@ void Game::DisplayGame()
 		cout << "] \n";
 	}
 
+	// ------------ PLAYER STAMINA ------------
+
 	cout << STYLE_BLUE << "ST [";
 
 	for (int i = 0; i < 10; i++)
@@ -177,7 +195,7 @@ void Game::DisplayGame()
 		cout << staminaBar[i];
 	}
 
-	cout << "] " << staminaPts << "/10\n" << STYLE_NONE << endl;
+	cout << "] " << player->getStamina() << '/' << displayStamina << "\n" << STYLE_NONE << endl;
 
 	// ------------ GAME MAP ------------
 

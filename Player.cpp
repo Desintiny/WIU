@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <iostream>
 
 Player::Player(string n) : Entity(n)
 {
@@ -6,15 +7,13 @@ Player::Player(string n) : Entity(n)
 	intDirection[1] = 'j';
 	intDirection[2] = 'k';
 	intDirection[3] = 'l';
+
+	minRange = 0;
+	maxRange = 0;
 }
 
 Player::~Player()
 {
-}
-
-char Player::GetDirection(int i)
-{
-	return intDirection[i];
 }
 
 void Player::PlayerMovement(char input, char mapGrid[12][12])
@@ -56,10 +55,59 @@ void Player::PlayerMovement(char input, char mapGrid[12][12])
 	}
 }
 
+void Player::PlayerAtkDirection(char input, char mapGrid[12][12])
+{
+	int newRow = getRow();
+	int newCol = getCol();
+
+	if (input == 'i' || input == 'I') // UP
+	{
+		newRow--;
+	}
+	else if (input == 'j' || input == 'J') // LEFT
+	{
+		newCol--;
+	}
+	else if (input == 'k' || input == 'K') // RIGHT
+	{
+		newRow++;
+	}
+	else if (input == 'l' || input == 'L') // DOWN
+	{
+		newCol++;
+	}
+	else
+	{
+		return;
+	}
+
+	std::cout << "player is attacking at row: " << newRow << " and col: " << newCol << endl;
+}
+
 void Player::PlayerAttack()
 {
 }
 
 void Player::EquipWeapon()
 {
+}
+
+void Player::setMinRange(int r)
+{
+	minRange = r;
+}
+
+int Player::getMinRange(void)
+{
+	return minRange;
+}
+
+void Player::setMaxRange(int r)
+{
+	maxRange = r;
+}
+
+int Player::getMaxRange(void)
+{
+	return maxRange;
 }

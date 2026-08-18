@@ -2,7 +2,10 @@
 
 Mage::Mage(string n) : Player(n)
 {
-
+	setHealth(24);
+	setAttack(10);
+	setMinRange(2);
+	setMaxRange(3);
 };
 
 Mage::~Mage()

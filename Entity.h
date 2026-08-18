@@ -5,7 +5,7 @@ using namespace std;
 class Entity
 {
 	string name;
-	int healthPts, attackPts;
+	int healthPts, staminaPts, attackPts;
 	int row, col;
 
 public:
@@ -17,6 +17,9 @@ public:
 
 	void setHealth(int);
 	int getHealth(void);
+
+	void setStamina(int);
+	int getStamina(void);
 
 	void setAttack(int);
 	int getAttack(void);

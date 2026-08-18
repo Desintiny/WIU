@@ -5,6 +5,7 @@ Entity::Entity(string n)
 	name = n;
 
 	healthPts = 0;
+	staminaPts = 0;
 	attackPts = 0;
 
 	row = 0;
@@ -36,9 +37,19 @@ int Entity::getHealth(void)
 	return healthPts;
 }
 
-void Entity::setAttack(int a)
+void Entity::setStamina(int a)
 {
 	attackPts = a;
+}
+
+int Entity::getStamina(void)
+{
+	return staminaPts;
+}
+
+void Entity::setAttack(int s)
+{
+	staminaPts = s;
 }
 
 int Entity::getAttack(void)

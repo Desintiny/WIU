@@ -2,7 +2,10 @@
 
 Archer::Archer(string n) : Player(n)
 {
-
+	setHealth(28);
+	setAttack(7);
+	setMinRange(3);
+	setMaxRange(4);
 };
 
 Archer::~Archer()
