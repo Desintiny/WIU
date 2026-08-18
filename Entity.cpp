@@ -37,9 +37,9 @@ int Entity::getHealth(void)
 	return healthPts;
 }
 
-void Entity::setStamina(int a)
+void Entity::setStamina(int s)
 {
-	attackPts = a;
+	staminaPts = s;
 }
 
 int Entity::getStamina(void)
@@ -49,7 +49,7 @@ int Entity::getStamina(void)
 
 void Entity::setAttack(int s)
 {
-	staminaPts = s;
+	attackPts = s;
 }
 
 int Entity::getAttack(void)
