@@ -2,22 +2,14 @@
 
 Player::Player(string n) : Entity(n)
 {
-	//playerWeapon = nullptr;
-
-	moveBtn[0] = { 'w' };
-	moveBtn[1] = { 'a' };
-	moveBtn[2] = { 's' };
-	moveBtn[3] = { 'd' };
-
-	intDirection[0] = { 'i' };
-	intDirection[1] = { 'j' };
-	intDirection[2] = { 'k' };
-	intDirection[3] = { 'l' };
-};
+	intDirection[0] = 'i';
+	intDirection[1] = 'j';
+	intDirection[2] = 'k';
+	intDirection[3] = 'l';
+}
 
 Player::~Player()
 {
-	//delete playerWeapon;
 }
 
 char Player::GetDirection(int i)
@@ -25,41 +17,49 @@ char Player::GetDirection(int i)
 	return intDirection[i];
 }
 
-void Player::PlayerMovement()
+void Player::PlayerMovement(char input, char mapGrid[12][12])
 {
-	//int newRow = getRow(), newCol = getCol();
+	int newRow = getRow();
+	int newCol = getCol();
 
-	//if (m == moveBtn[0]) // W
-	//{
-	//	newRow = getRow() - 1;
-	//}
-	//else if (m == moveBtn[1]) // A
-	//{
-	//	newCol = getCol() - 1;
-	//}
-	//else if (m == moveBtn[2]) // S
-	//{
-	//	newRow = getRow() + 1;
-	//}
-	//else if (m == moveBtn[3]) // D
-	//{
-	//	newCol = getCol() + 1;
-	//}
+	if (input == 'w' || input == 'W') // UP
+	{
+		newRow--;
+	}
+	else if (input == 'a' || input == 'A') // LEFT
+	{
+		newCol--;
+	}
+	else if (input == 's' || input == 'S') // RIGHT
+	{
+		newRow++;
+	}
+	else if (input == 'd' || input == 'D') // DOWN
+	{
+		newCol++;
+	}
+	else
+	{
+		return;
+	}
 
-	//if (map.isWalkable(newRow, newCol))
-	//{
-	//	map.moveEntity(getRow(), getCol(), newRow, newCol);
-	//	setRow(newRow);
-	//	setCol(newCol);
-	//}
+	if (newRow >= 1 && newRow <= 10 && // within the border
+		newCol >= 1 && newCol <= 10 && // within the border
+		mapGrid[newRow][newCol] == '.') // if the next new position is '.'
+	{
+		mapGrid[getRow()][getCol()] = '.';
+
+		setRow(newRow);
+		setCol(newCol);
+
+		mapGrid[getRow()][getCol()] = 'P';
+	}
 }
 
 void Player::PlayerAttack()
 {
-
 }
 
 void Player::EquipWeapon()
 {
-
 }

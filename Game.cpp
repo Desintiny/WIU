@@ -13,44 +13,62 @@ using namespace std;
 Game::Game()
 {
 	gameRunning = true;
+	player = nullptr;
 
-	for (int row = 0; row < 12; row++) {
-		for (int col = 0; col < 12; col++) {
+	for (int row = 0; row < 12; row++)
+	{
+		for (int col = 0; col < 12; col++)
+		{
 			bool isBorder = (row == 0 || row == 11 || col == 0 || col == 11);
 			mapGrid[row][col] = isBorder ? '+' : '.';
 		}
 	}
 }
 
-Game::~Game() 
+Game::~Game()
 {
-
+	delete player;
 }
 
 void Game::Start()
 {
-	int input;
-
 	MainMenu();
 
-	if (gameRunning)
-	{
-		ClassSelection();
-		do 
-		{
-			DisplayGame();
-			input = _getch();
-		} while (gameRunning);
-	}
-	else
+	if (!gameRunning)
 	{
 		return;
+	}
+
+	ClassSelection();
+
+	if (player == nullptr)
+	{
+		gameRunning = false;
+		return;
+	}
+
+	// Start the player at left side
+	player->setRow(4);
+	player->setCol(1);
+	mapGrid[4][1] = 'P';
+
+	while (gameRunning)
+	{
+		DisplayGame();
+
+		char input = _getch();
+
+		player->PlayerMovement(input, mapGrid);
+
+		// Clears the the rest of the console text, so it doesn't show the previous map
+		system("cls");
 	}
 }
 
 void Game::MainMenu()
 {
 	int option;
+
 	cout << "============= HAVENFALL =============" << endl;
 	cout << "\t   1. Start Game" << endl;
 	cout << "\t   2. Quit Game" << endl;
@@ -72,27 +90,38 @@ void Game::MainMenu()
 void Game::ClassSelection()
 {
 	int choice;
-	cout << "=====================================" << endl;
-	cout << "Choose Your Path" << endl;
-	cout << endl;
-	cout << "[1] Berserker - Melee Class" << endl;
-	cout << "[2] Archer - Ranged Class" << endl;
-	cout << "[3] Mage - Magic Class" << endl;
-	cout << "\nChoice: ";
-	cin >> choice;
+	do
+	{
+		cout << "=====================================" << endl;
+		cout << "Choose Your Path" << endl;
+		cout << endl;
+		cout << "[1] Berserker - Melee Class" << endl;
+		cout << "[2] Archer - Ranged Class" << endl;
+		cout << "[3] Mage - Magic Class" << endl;
+		cout << "\nChoice: ";
+		cin >> choice;
 
-	if (choice == 1)
-	{
-		cout << "player is now a berserker" << endl;
-	}
-	else if (choice == 2)
-	{
-		cout << "player is now an archer" << endl;
-	}
-	else if (choice == 3)
-	{
-		cout << "player is now a mage" << endl;
-	}
+		delete player;
+		player = nullptr;
+
+		if (choice == 1)
+		{
+			player = new Berserker("Berserker");
+		}
+		else if (choice == 2)
+		{
+			player = new Archer("Archer");
+		}
+		else if (choice == 3)
+		{
+			player = new Mage("Mage");
+		}
+		else
+		{
+			cout << "Invalid choice." << endl;
+			gameRunning = false;
+		}
+	} while (choice < 1 || choice > 3);
 }
 
 void Game::DisplayGame()
@@ -113,20 +142,12 @@ void Game::DisplayGame()
 
 	bool inCombat = true;
 
-	cout << "=====================================" << endl;
-
-	// ------------ PLAYER DISPLAY ------------
-
 	cout << STYLE_ORANGE << "YOU (P)\t\t\t";
-
-	// ENEMY HEALTH (ONLY SHOWS WHEN IN COMBAT)
 
 	if (inCombat)
 	{
 		cout << STYLE_PURPLE << "ENEMY (E)" << endl;
 	}
-
-	// ------------ PLAYER HEALTH ------------
 
 	cout << STYLE_RED << "HP [";
 
@@ -135,12 +156,7 @@ void Game::DisplayGame()
 		cout << healthBar[i];
 	}
 
-	cout << "] ";
-
-	cout << healthPts;
-	cout << "/40\t";
-
-	// ENEMY HEALTH (ONLY SHOWS WHEN IN COMBAT)
+	cout << "] " << healthPts << "/40\t";
 
 	if (inCombat)
 	{
@@ -149,22 +165,19 @@ void Game::DisplayGame()
 		for (int i = 0; i < 10; i++)
 		{
 			cout << enemyHealthBar[i];
-		} 
+		}
+
 		cout << "] \n";
 	}
-
-	// ------------ PLAYER STAMINA ------------
 
 	cout << STYLE_BLUE << "ST [";
 
 	for (int i = 0; i < 10; i++)
 	{
 		cout << staminaBar[i];
-	} 
-	cout << "] ";
+	}
 
-	cout << staminaPts;
-	cout <<  "/10\n" << STYLE_NONE << endl;
+	cout << "] " << staminaPts << "/10\n" << STYLE_NONE << endl;
 
 	// ------------ GAME MAP ------------
 
@@ -174,10 +187,11 @@ void Game::DisplayGame()
 		{
 			cout << mapGrid[row][col] << ' ';
 		}
+
 		cout << endl;
 	}
 
-	// ------------ PLAYER CONTROLS ------------
-
-	cout << "[WASD] Move | [1] Attack | [2] Ability | [3] Guard" << endl;
+	cout << "\n[WASD] Move | [1] Attack | [2] Ability | [3] Guard | [Q] Quit" << endl;
+	cout << "Position: Row " << player->getRow()
+		 << ", Column " << player->getCol() << endl;
 }
