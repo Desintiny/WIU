@@ -10,9 +10,9 @@ void Event::SetForestEvent() {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "As you traverse the forest, you hear the sounds of crackling fire.\n"
 				"Upon closer inspection, you see a glowing light.\n"
-				"A campfire burns brightly in front of you. \n"
+				"A campfire burns brightly in front of you. \n\n"
 				"1. Rest by the fire \n"
-				"2. Ignore it" << std::endl;
+				"2. Ignore it.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -33,9 +33,9 @@ void Event::SetForestEvent() {
 			std::cout << "While walking, you suddenly see a cottage.The lights inside were turned on. \n"
 				"Someones home.As you approach the cottage, the door suddenly opens. \n"
 				"Oh, surprised to see you here, an adventurer per chance?\n"
-				"I could let you rest here for a while if needed, an old lady said. \n"
+				"I could let you rest here for a while if needed, an old lady said. \n\n"
 				"1. Accept the offer.\n"
-				"2. Refuse the offering." << std::endl;
+				"2. Refuse the offering.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -54,10 +54,10 @@ void Event::SetForestEvent() {
 	else if (RandomForestEvent == 3) {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "You hear the sounds of a river flowing.As you approach,\n"
-				"you see a flowing river of clear water. \n"
+				"you see a flowing river of clear water. \n\n"
 				"1. Scoop up some of the water.\n"
 				"2. Drink the water.\n"
-				"3. Ignore it" << std::endl;
+				"3. Ignore it.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -80,10 +80,10 @@ void Event::SetForestEvent() {
 	else if (RandomForestEvent == 4) {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "While walking, you suddenly met a wandering traveller. \n"
-				"He greets you, and you both start conversing.\n"
+				"He greets you, and you both start conversing.\n\n"
 				"1. Ask for information.\n"
 				"2. Ask for help.\n"
-				"3. Say goodbye." << std::endl;
+				"3. Say goodbye.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -107,9 +107,9 @@ void Event::SetForestEvent() {
 	else if (RandomForestEvent == 5) {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "On your way, you stumbled upon a random chest. \n"
-				"Upon closer inspection, you realised the lock was broken. \n"
+				"Upon closer inspection, you realised the lock was broken. \n\n"
 				"1. Open Chest. \n"
-				"2. Investigate closer." << std::endl;
+				"2. Investigate closer.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -130,10 +130,10 @@ void Event::SetForestEvent() {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "You hear the sounds of water crashing down. \n"
 				"Curious, you went that direction to take a look. \n"
-				"What lies in front of you is a lake with a waterfall that seems like 10 houses tall!\n"
+				"What lies in front of you is a lake with a waterfall that seems like 10 houses tall!\n\n"
 				"1. Rest by the lake. \n"
 				"2. Swim into the waterfall. \n"
-				"3. Scoop the water." << std::endl;
+				"3. Scoop the water.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -158,9 +158,9 @@ void Event::SetForestEvent() {
 	/////////////////////////////////////// EVENT 7 ///////////////////////////////////////
 	else if (RandomForestEvent == 7) {
 		while (EventChoice != 1 && EventChoice != 2) {
-			std::cout << "As you walk, you feel droplets above you. And as you look up, you see dark clouds forming \n"
+			std::cout << "As you walk, you feel droplets above you. And as you look up, you see dark clouds forming \n\n"
 				"1. Continue Forward. \n"
-				"2. Take shelter nearby." << std::endl;
+				"2. Take shelter nearby.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -182,9 +182,9 @@ void Event::SetForestEvent() {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "You chanced upon an open field.\n"
 				"In the center of the field, a glowing plant can be seen.\n"
-				"You approach the plant, curious, and see that it is abundant.\n"
+				"You approach the plant, curious, and see that it is abundant.\n\n"
 				"1. Harvest a plant. \n"
-				"2. Leave it be." << std::endl;
+				"2. Leave it be.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -205,10 +205,10 @@ void Event::SetForestEvent() {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "You approach a clearing in the forest.\n"
 				"You then see what looks like a training ground, or what used to be one. \n"
-				"You see a weapons rack and approach it. Surprisingly there were a few weapons scattered around, looks usable too!\n"
+				"You see a weapons rack and approach it. Surprisingly there were a few weapons scattered around, looks usable too!\n\n"
 				"1.Pick up a weapon. \n"
 				"2.Ignore and rest.\n"
-				"3.Search around." << std::endl;
+				"3.Search around.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -235,9 +235,9 @@ void Event::SetForestEvent() {
 	else if (RandomForestEvent == 10) {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "On the way, you spot a white crow. An unusual sight.\n"
-				"Upon closer inspection, you see the crow holding something in its beak.\n"
+				"Upon closer inspection, you see the crow holding something in its beak.\n\n"
 				"1.Get closer to the crow. \n"
-				"2.Leave the crow." << std::endl;
+				"2.Leave the crow.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -258,10 +258,10 @@ void Event::SetForestEvent() {
 	else if (RandomForestEvent == 11) {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "You decided to take a short break under a tree. \n"
-				"While resting, you realised that this was an apple tree. Above you an apple hangs.\n"
+				"While resting, you realised that this was an apple tree. Above you an apple hangs.\n\n"
 				"1.Attempt to jump and reach the apple. \n"
 				"2.Hit the tree. \n"
-				"3.Use your weapon to reach the apple." << std::endl;
+				"3.Use your weapon to reach the apple.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -286,10 +286,10 @@ void Event::SetForestEvent() {
 	else if (RandomForestEvent == 12) {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "You trekked through the forest, when you stumbled upon an active bee hive. \n"
-				"You can hear the bees buzzing around. Looking closer, there seems to be sufficient honey available.\n"
+				"You can hear the bees buzzing around. Looking closer, there seems to be sufficient honey available.\n\n"
 				"1. Ignore the hive. \n"
 				"2. Attempt to extract the honey. \n"
-				"3. Hit the bee hive down." << std::endl;
+				"3. Hit the bee hive down.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -315,10 +315,10 @@ void Event::SetForestEvent() {
 	/////////////////////////////////////// EVENT 13 ///////////////////////////////////////
 	else if (RandomForestEvent == 13) {
 		while (EventChoice != 1 && EventChoice != 2) {
-			std::cout << "While walking, you met a fellow adventurer. He greets you and you both engage in a conversation.\n"
+			std::cout << "While walking, you met a fellow adventurer. He greets you and you both engage in a conversation.\n\n"
 				"1. Ask for information. \n"
 				"2. Ask for help. \n"
-				"3. Say goodbye." << std::endl;
+				"3. Say goodbye.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -343,9 +343,9 @@ void Event::SetForestEvent() {
 	else if (RandomForestEvent == 14) {
 		while (EventChoice != 1 && EventChoice != 2) {
 			std::cout << "Walking along the road, you stumbled upon an abandoned caravan.\n"
-				"Upon inspection, it seems that the owners were either robbed or left in a hurry.\n"
+				"Upon inspection, it seems that the owners were either robbed or left in a hurry.\n\n"
 				"1. Loot what's left. \n"
-				"2. Leave it behind." << std::endl;
+				"2. Leave it behind.\n" << std::endl;
 			std::cout << "What do you do? ";
 			std::cin >> EventChoice;
 			if (EventChoice == 1) {
@@ -367,9 +367,9 @@ void Event::SetTransitionEvent() {
 	int EventTransitionChoice = 0;
 	while (EventTransitionChoice != 1 && EventTransitionChoice != 2) {
 		std::cout << "After what felt like forever, you made it back. In front lies your hometown, \n"
-			"captured by your enemies, now it is time to reclaim it back and avenge your loved ones. \n"
+			"captured by your enemies, now it is time to reclaim it back and avenge your loved ones. \n\n"
 			"1. Move Forward. \n"
-			"2. Try to run away." << std::endl;
+			"2. Try to run away.\n" << std::endl;
 		std::cout << "What do you do? ";
 		std::cin >> EventTransitionChoice;
 		if (EventTransitionChoice == 1) {
