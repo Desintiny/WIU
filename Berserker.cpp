@@ -2,11 +2,14 @@
 
 Berserker::Berserker(string n) : Player(n)
 {
-	setHealth(40);
-	setMaxHealth(40);
+	static const int health = 40;
+	static const int stamina = 10;
 
-	setStamina(10);
-	setMaxStamina(10);
+	setHealth(health);
+	setMaxHealth(health);
+
+	setStamina(stamina);
+	setMaxStamina(stamina);
 
 	setAttack(8);
 	

@@ -33,10 +33,7 @@ Game::Game()
 Game::~Game()
 {
 	delete player;
-	for (int i = 0; i < NUM_ENEMY; i++)
-	{
-		delete enemy[i];
-	}
+	delete enemy;
 }
 
 void Game::Start()
@@ -48,13 +45,23 @@ void Game::Start()
 		return;
 	}
 
+	//alonso code test//
+	Story();
+
 	char sym = ClassSelection();
+
+	Item testPotion;
+	testPotion.name = "Healing Salve";
+	testPotion.healAmount = 10;
+	inventory.addItem(testPotion);
 
 	if (player == nullptr)
 	{
 		gameRunning = false;
 		return;
 	}
+
+	PathChoice();
 
 	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
@@ -65,7 +72,7 @@ void Game::Start()
 	// ------- CREATE X NUMBER OF ENEMIES -------
 	for (int i = 0; i < NUM_ENEMY; i++)
 	{
-		enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
+		enemy[i] = new Enemy("Enemy" + (i + 1));
 	}
 
 	// ------- SPAWN X NUMBER OF ENEMIES -------
@@ -184,14 +191,11 @@ void Game::DisplayGame(char sym)
 	char staminaBar[10];
 	char enemyHealthBar[10];
 
-	int healthFilled = (player->getHealth() * 10) / player->getMaxHealth();
-	int staminaFilled = (player->getStamina() * 10) / player->getMaxStamina();
-
 	for (int i = 0; i < 10; i++)
 	{
-		healthBar[i] = (i < healthFilled) ? '#' : '-';
-		staminaBar[i] = (i < staminaFilled) ? '#' : '-';
-		enemyHealthBar[i] = '#'; // leave as-is until enemy HP tracking is wired into combat
+		healthBar[i] = '#';
+		staminaBar[i] = '#';
+		enemyHealthBar[i] = '#';
 	}
 
 	bool inCombat = true;
@@ -258,4 +262,169 @@ void Game::DisplayGame(char sym)
 	cout << "\n[WASD] Move | [1] Attack | [2] Ability | [3] Guard" << endl;
 	cout << "Position: Row " << player->getRow()
 		 << ", Column " << player->getCol() << endl;
+}
+
+void Game::Story()
+{
+	cout << "\n=====================================" << endl;
+	std::cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << std::endl;
+	std::cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << std::endl;
+	std::cout << "The ruthless enemies had killed all you loved, but you managed to escape." << std::endl;
+	std::cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << std::endl;
+}
+
+//Alonso's code for path randomistion (Notes: The bools can be moved to the .h file if needed)
+void Game::PathChoice()
+{
+	srand(time(0));
+
+	int randeventnum1;
+	int randeventnum2;
+	int randeventnum3;
+
+	bool eventdone1 = false;
+	bool eventdone2 = false;
+	bool eventdone3 = false;
+	bool eventdone4 = false;
+	bool eventdone5 = false;
+	bool eventdone6 = false;
+	bool eventdone7 = false;
+	bool eventdone8 = false;
+	bool eventdone9 = false;
+	bool eventdone10 = false;
+	bool eventdone11 = false;
+	bool eventdone12 = false;
+	bool eventdone13 = false;
+	bool eventdone14 = false;
+	bool eventdone15 = false;
+
+	randeventnum1 = (rand() % 15) + 1;
+	randeventnum2 = (rand() % 15) + 1;
+	randeventnum3 = (rand() % 15) + 1;
+
+	//random event 1 reroller (to ensure event 1 will always be a new event and that no older events repeat)
+	while ((randeventnum1 == 1 && eventdone1 == true) ||
+		(randeventnum1 == 2 && eventdone2 == true) ||
+		(randeventnum1 == 3 && eventdone3 == true) ||
+		(randeventnum1 == 4 && eventdone4 == true) ||
+		(randeventnum1 == 5 && eventdone5 == true) ||
+		(randeventnum1 == 6 && eventdone6 == true) ||
+		(randeventnum1 == 7 && eventdone7 == true) ||
+		(randeventnum1 == 8 && eventdone8 == true) ||
+		(randeventnum1 == 9 && eventdone9 == true) ||
+		(randeventnum1 == 10 && eventdone10 == true) ||
+		(randeventnum1 == 11 && eventdone11 == true) ||
+		(randeventnum1 == 12 && eventdone12 == true) ||
+		(randeventnum1 == 13 && eventdone13 == true) ||
+		(randeventnum1 == 14 && eventdone14 == true) ||
+		(randeventnum1 == 15 && eventdone15 == true))
+	{
+		randeventnum1 = (rand() % 15) + 1;
+	}
+
+	//random event 2 reroller (to prevent duplication of same events)
+	while ((randeventnum2 == 1 && eventdone1 == true) ||
+		(randeventnum2 == 2 && eventdone2 == true) ||
+		(randeventnum2 == 3 && eventdone3 == true) ||
+		(randeventnum2 == 4 && eventdone4 == true) ||
+		(randeventnum2 == 5 && eventdone5 == true) ||
+		(randeventnum2 == 6 && eventdone6 == true) ||
+		(randeventnum2 == 7 && eventdone7 == true) ||
+		(randeventnum2 == 8 && eventdone8 == true) ||
+		(randeventnum2 == 9 && eventdone9 == true) ||
+		(randeventnum2 == 10 && eventdone10 == true) ||
+		(randeventnum2 == 11 && eventdone11 == true) ||
+		(randeventnum2 == 12 && eventdone12 == true) ||
+		(randeventnum2 == 13 && eventdone13 == true) ||
+		(randeventnum2 == 14 && eventdone14 == true) ||
+		(randeventnum2 == 15 && eventdone15 == true) ||
+		randeventnum2 == randeventnum1)
+	{
+		randeventnum2 = (rand() % 15) + 1;
+	}
+
+	//random event 3 reroller (to prevent duplication of events with 1 and 2)
+	while ((randeventnum3 == 1 && eventdone1 == true) ||
+		(randeventnum3 == 2 && eventdone2 == true) ||
+		(randeventnum3 == 3 && eventdone3 == true) ||
+		(randeventnum3 == 4 && eventdone4 == true) ||
+		(randeventnum3 == 5 && eventdone5 == true) ||
+		(randeventnum3 == 6 && eventdone6 == true) ||
+		(randeventnum3 == 7 && eventdone7 == true) ||
+		(randeventnum3 == 8 && eventdone8 == true) ||
+		(randeventnum3 == 9 && eventdone9 == true) ||
+		(randeventnum3 == 10 && eventdone10 == true) ||
+		(randeventnum3 == 11 && eventdone11 == true) ||
+		(randeventnum3 == 12 && eventdone12 == true) ||
+		(randeventnum3 == 13 && eventdone13 == true) ||
+		(randeventnum3 == 14 && eventdone14 == true) ||
+		(randeventnum3 == 15 && eventdone15 == true) ||
+		randeventnum3 == randeventnum2 ||
+		randeventnum3 == randeventnum1)
+	{
+		randeventnum3 = (rand() % 15) + 1;
+	}
+
+	//Array of all the events
+	std::string EventNames[16];
+	EventNames[1] = "Campfire Rest";
+	EventNames[2] = "Forest Cottage";
+	EventNames[3] = "Flowing River";
+	EventNames[4] = "Wandering Traveller";
+	EventNames[5] = "Random Chest";
+	EventNames[6] = "Waterfall";
+	EventNames[7] = "Sudden Rain";
+	EventNames[8] = "Medicinal Herbs";
+	EventNames[9] = "Forgotten Training Grounds";
+	EventNames[10] = "White Crow";
+	EventNames[11] = "Apple Tree";
+	EventNames[12] = "Bee Hive";
+	EventNames[13] = "Fellow Adventurer";
+	EventNames[14] = "Abandoned Caravan";
+	EventNames[15] = "Giant Tree";
+
+	cout << "=====================================" << endl;
+
+	std::cout << "Pick a Path" << std::endl;
+
+	std::cout << "Path 1: " << EventNames[randeventnum1] << std::endl;
+	std::cout << "Path 2: " << EventNames[randeventnum2] << std::endl;
+	std::cout << "Path 3: " << EventNames[randeventnum3] << std::endl;
+
+	/*if ((randeventnum1 == 1 && eventdone1 != true ||
+		randeventnum2 == 1 && eventdone1 != true ||
+		randeventnum3 == 1 && eventdone1 != true))
+	{
+		std::cout << "Path 1: Campfire Rest" << std::endl;
+	}
+	if ((randeventnum1 == 2 && eventdone2 != true ||
+		randeventnum2 == 2 && eventdone2 != true ||
+		randeventnum3 == 2 && eventdone2 != true))
+	{
+		std::cout << "Path 1: Forest Cottage" << std::endl;
+	}
+	if ((randeventnum1 == 3 && eventdone3 != true ||
+		randeventnum2 == 3 && eventdone3 != true ||
+		randeventnum3 == 3 && eventdone3 != true))
+	{
+		std::cout << "Path 1: Flowing River" << std::endl;
+	}
+	if ((randeventnum1 == 4 && eventdone4 != true ||
+		randeventnum2 == 4 && eventdone4 != true ||
+		randeventnum3 == 4 && eventdone4 != true))
+	{
+		std::cout << "Path 1: Wandering Traveller" << std::endl;
+	}
+	if ((randeventnum1 == 5 && eventdone5 != true ||
+		randeventnum2 == 5 && eventdone5 != true ||
+		randeventnum3 == 5 && eventdone5 != true))
+	{
+		std::cout << "Path 1: Random Chest" << std::endl;
+	}
+	if ((randeventnum1 == 6 && eventdone6 != true ||
+		randeventnum2 == 6 && eventdone6 != true ||
+		randeventnum3 == 6 && eventdone6 != true))
+	{
+		std::cout << "Path 1: Waterfall" << std::endl;
+	}*/
 }

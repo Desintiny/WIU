@@ -5,7 +5,6 @@ class Player : public Entity
 {
 	int staminaPts, maxStaminaPts;
 
-	char intDirection[4];
 	int minRange;
 	int maxRange;
 

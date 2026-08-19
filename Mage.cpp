@@ -2,11 +2,14 @@
 
 Mage::Mage(string n) : Player(n)
 {
-	setHealth(24);
-	setMaxHealth(24);
-	
-	setStamina(10);
-	setMaxStamina(10);
+	static const int health = 24;
+	static const int stamina = 10;
+
+	setHealth(health);
+	setMaxHealth(health);
+
+	setStamina(stamina);
+	setMaxStamina(stamina);
 
 	setAttack(10);
 

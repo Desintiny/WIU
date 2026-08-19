@@ -2,11 +2,14 @@
 
 Archer::Archer(string n) : Player(n)
 {
-	setHealth(28);
-	setMaxHealth(28);
+	static const int health = 28;
+	static const int stamina = 10;
+
+	setHealth(health);
+	setMaxHealth(health);
 	
-	setStamina(10);
-	setMaxStamina(10);
+	setStamina(stamina);
+	setMaxStamina(stamina);
 
 	setAttack(7);
 

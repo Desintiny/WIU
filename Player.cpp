@@ -6,11 +6,6 @@ Player::Player(string n) : Entity(n)
 	staminaPts = 0;
 	maxStaminaPts = 0;
 
-	intDirection[0] = 'i';
-	intDirection[1] = 'j';
-	intDirection[2] = 'k';
-	intDirection[3] = 'l';
-
 	minRange = 0;
 	maxRange = 0;
 }
@@ -78,6 +73,10 @@ void Player::PlayerAtkDirection(char input, char mapGrid[12][12])
 	else if (input == 'l' || input == 'L') // DOWN
 	{
 		newCol++;
+	}
+	else if (input == 'i' || input == 'I')
+	{
+		inventory.displayInventory();
 	}
 	else
 	{
