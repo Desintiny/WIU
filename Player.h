@@ -11,7 +11,7 @@ public:
 	Player(string n);
 	~Player();
 
-	void PlayerMovement(char input, char mapGrid[12][12]);
+	void PlayerMovement(char sym, char input, char mapGrid[12][12]);
 	void PlayerAtkDirection(char input, char mapGrid[12][12]);
 
 	virtual void PlayerAttack();

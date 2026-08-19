@@ -16,7 +16,7 @@ Player::~Player()
 {
 }
 
-void Player::PlayerMovement(char input, char mapGrid[12][12])
+void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 {
 	int newRow = getRow();
 	int newCol = getCol();
@@ -51,7 +51,7 @@ void Player::PlayerMovement(char input, char mapGrid[12][12])
 		setRow(newRow);
 		setCol(newCol);
 
-		mapGrid[getRow()][getCol()] = 'P';
+		mapGrid[getRow()][getCol()] = sym;
 	}
 }
 

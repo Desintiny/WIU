@@ -6,6 +6,7 @@
 
 #include "Game.h"
 #include <iostream>
+#include <fstream>
 #include <conio.h>
 
 using namespace std;
@@ -14,7 +15,10 @@ Game::Game()
 {
 	gameRunning = true;
 	player = nullptr;
-	enemy = nullptr;
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		enemy[i] = nullptr;
+	}
 
 	for (int row = 0; row < 12; row++)
 	{
@@ -41,7 +45,7 @@ void Game::Start()
 		return;
 	}
 
-	ClassSelection();
+	char sym = ClassSelection();
 
 	if (player == nullptr)
 	{
@@ -52,25 +56,32 @@ void Game::Start()
 	// Start the player at left side
 	if (player != nullptr)
 	{
-		SpawnEntity(player, 'P', 4, 1);
+		SpawnEntity(player, sym, 4, 1);
 	}
 
-	enemy = new Enemy("Enemy1");
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		enemy[i] = new Enemy("Enemy" + (i + 1));
+	}
+
 
 	if (enemy != nullptr)
 	{
-		SpawnEntity(enemy, 'E', 4, 8);
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			SpawnEntity(enemy[i], 'E', 2 + i, 8);
+		}
 	}
 
 	system("cls");
 
 	while (gameRunning)
 	{
-		DisplayGame();
+		DisplayGame(sym);
 
 		char input = _getch();
 
-		player->PlayerMovement(input, mapGrid);
+		player->PlayerMovement(sym, input, mapGrid);
 		player->PlayerAtkDirection(input, mapGrid);
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
@@ -107,9 +118,10 @@ void Game::MainMenu()
 	}
 }
 
-void Game::ClassSelection()
+char Game::ClassSelection()
 {
 	int choice;
+	char sym = 'P';
 	do
 	{
 		// ------------ DISPLAY OF PLAYER CLASSES ------------
@@ -131,14 +143,17 @@ void Game::ClassSelection()
 		if (choice == 1)
 		{
 			player = new Berserker("Berserker");
+			sym = 'B';
 		}
 		else if (choice == 2)
 		{
 			player = new Archer("Archer");
+			sym = 'A';
 		}
 		else if (choice == 3)
 		{
 			player = new Mage("Mage");
+			sym = 'M';
 		}
 		else
 		{
@@ -146,10 +161,14 @@ void Game::ClassSelection()
 			gameRunning = false;
 		}
 	} while (choice < 1 || choice > 3);
+
+	gameRunning = true;
+
+	return sym;
 }
 
 // ------------ DISPLAY UI FOR THE USER ------------
-void Game::DisplayGame()
+void Game::DisplayGame(char sym)
 {
 	int displayHealth = player->getHealth();
 	int displayStamina = player->getStamina();
@@ -169,7 +188,7 @@ void Game::DisplayGame()
 
 	// ------------ PLAYER UI ------------
 
-	cout << STYLE_ORANGE << "YOU (P)\t\t\t";
+	cout << STYLE_ORANGE << "YOU (" << sym << ")\t\t\t";
 
 	// ------------ ENEMY UI DURING COMBAT ------------
 

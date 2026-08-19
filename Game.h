@@ -11,7 +11,9 @@ class Game
 	bool gameRunning;
 	char mapGrid[12][12];
 	Player* player;
-	Enemy* enemy;
+
+	static const int NUM_ENEMY = 8;
+	Enemy* enemy[NUM_ENEMY];
 
 public:
 	Game();
@@ -20,6 +22,6 @@ public:
 	void Start();
 	void SpawnEntity(Entity* entity, char sym, int row, int col);
 	void MainMenu();
-	void ClassSelection();
-	void DisplayGame();
+	char ClassSelection(void);
+	void DisplayGame(char sym);
 };
