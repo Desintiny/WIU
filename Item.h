@@ -1,10 +1,10 @@
 #pragma once
-class Item
+#include <string>
+
+struct Item
 {
-	char name;
-
-public:
-	Item();
-	~Item();
+    std::string name = "";
+    std::string type = "";
+    int healAmount = 0;
+    int atkBonus = 0;
 };
-

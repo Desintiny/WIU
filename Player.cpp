@@ -53,33 +53,20 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	}
 }
 
-void Player::PlayerAtkDirection(char input, char mapGrid[12][12])
+bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
 {
 	int newRow = getRow();
 	int newCol = getCol();
 
-	if (input == 'i' || input == 'I') // UP
-	{
-		newRow--;
-	}
-	else if (input == 'j' || input == 'J') // LEFT
-	{
-		newCol--;
-	}
-	else if (input == 'k' || input == 'K') // RIGHT
-	{
-		newRow++;
-	}
-	else if (input == 'l' || input == 'L') // DOWN
-	{
-		newCol++;
-	}
-	else
-	{
-		return;
-	}
+	if (input == 'i' || input == 'I') newRow--;      // UP
+	else if (input == 'j' || input == 'J') newCol--; // LEFT
+	else if (input == 'k' || input == 'K') newRow++; // RIGHT
+	else if (input == 'l' || input == 'L') newCol++; // DOWN
+	else return false;
 
-	std::cout << "player is attacking at row: " << newRow << " and col: " << newCol << endl;
+	targetRow = newRow;
+	targetCol = newCol;
+	return true;
 }
 
 void Player::PlayerAttack()

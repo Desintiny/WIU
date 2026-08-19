@@ -1,8 +1,12 @@
 #include "Enemy.h"
+#include <cstdlib>
 
 Enemy::Enemy(string n) : Entity(n)
 {
-
+	// baseline stats so enemies aren't a 1-hit kill (Entity defaults everything to 0 otherwise)
+	setHealth(18);
+	setMaxHealth(18);
+	setAttack(5);
 }
 
 Enemy::~Enemy()

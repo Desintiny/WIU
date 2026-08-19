@@ -58,6 +58,18 @@ int Entity::getAttack(void)
 	return attackPts;
 }
 
+void Entity::TakeDamage(int amount)
+{
+	healthPts -= amount;
+	if (healthPts < 0)
+		healthPts = 0;
+}
+
+bool Entity::IsAlive(void)
+{
+	return healthPts > 0;
+}
+
 void Entity::setRow(int r)
 {
 	row = r;

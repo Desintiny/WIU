@@ -1,12 +1,10 @@
 #pragma once
 #include "Player.h"
-
 #include "Archer.h"
 #include "Berserker.h"
 #include "Mage.h"
 
 #include "Event.h"
-
 #include "Enemy.h"
 
 class Game

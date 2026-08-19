@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <conio.h>
+#include <string>
 
 using namespace std;
 
@@ -33,7 +34,10 @@ Game::Game()
 Game::~Game()
 {
 	delete player;
-	delete enemy;
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		delete enemy[i];
+	}
 }
 
 void Game::Start()
@@ -49,13 +53,13 @@ void Game::Start()
 
 	char sym = ClassSelection();
 
-	event.PathChoice();
-
 	if (player == nullptr)
 	{
 		gameRunning = false;
 		return;
 	}
+
+	event.PathChoice();
 
 	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
@@ -66,17 +70,16 @@ void Game::Start()
 	// ------- CREATE X NUMBER OF ENEMIES -------
 	for (int i = 0; i < NUM_ENEMY; i++)
 	{
-		enemy[i] = new Enemy("Enemy" + (i + 1));
+		enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
 	}
 
 	// ------- SPAWN X NUMBER OF ENEMIES -------
-	if (enemy != nullptr)
+	for (int i = 0; i < NUM_ENEMY; i++)
 	{
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			SpawnEntity(enemy[i], 'E', 2 + i, 8);
-		}
+		SpawnEntity(enemy[i], 'E', 2 + i, 8);
 	}
+
+	system("cls");
 
 	while (gameRunning)
 	{
@@ -84,8 +87,56 @@ void Game::Start()
 
 		char input = _getch();
 
-		player->PlayerMovement(sym, input, mapGrid);
-		player->PlayerAtkDirection(input, mapGrid);
+		if (input == 'i' || input == 'j' || input == 'k' || input == 'l' ||
+			input == 'I' || input == 'J' || input == 'K' || input == 'L')
+		{
+			int targetRow, targetCol;
+			if (player->PlayerAtkDirection(input, targetRow, targetCol))
+			{
+				bool hit = false;
+
+				for (int i = 0; i < NUM_ENEMY; i++)
+				{
+					if (enemy[i] != nullptr &&
+						enemy[i]->getRow() == targetRow &&
+						enemy[i]->getCol() == targetCol)
+					{
+						int dmg = player->getAttack();
+						enemy[i]->TakeDamage(dmg);
+
+						cout << player->getName() << " attacks " << enemy[i]->getName()
+							 << " for " << dmg << " damage!" << endl;
+
+						if (!enemy[i]->IsAlive())
+						{
+							cout << enemy[i]->getName() << " has been defeated!" << endl;
+							mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+							delete enemy[i];
+							enemy[i] = nullptr;
+						}
+						else
+						{
+							cout << enemy[i]->getName() << " has " << enemy[i]->getHealth() << " HP left." << endl;
+						}
+
+						hit = true;
+						break;
+					}
+				}
+
+				if (!hit)
+				{
+					cout << player->getName() << " attacks empty space. No enemy there." << endl;
+				}
+			}
+
+			cout << "\nPress any key to continue...";
+			_getch();
+		}
+		else
+		{
+			player->PlayerMovement(sym, input, mapGrid);
+		}
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
 		system("cls");
@@ -183,11 +234,14 @@ void Game::DisplayGame(char sym)
 	char staminaBar[10];
 	char enemyHealthBar[10];
 
+	int healthFilled = (player->getHealth() * 10) / player->getMaxHealth();
+	int staminaFilled = (player->getStamina() * 10) / player->getMaxStamina();
+
 	for (int i = 0; i < 10; i++)
 	{
-		healthBar[i] = '#';
-		staminaBar[i] = '#';
-		enemyHealthBar[i] = '#';
+		healthBar[i] = (i < healthFilled) ? '#' : '-';
+		staminaBar[i] = (i < staminaFilled) ? '#' : '-';
+		enemyHealthBar[i] = '#'; // leave as-is until enemy HP tracking is wired into combat
 	}
 
 	bool inCombat = true;
@@ -212,7 +266,7 @@ void Game::DisplayGame(char sym)
 		cout << healthBar[i];
 	}
 
-	cout << "] " << player->getHealth() << '/' << displayHealth << "\t";;
+	cout << "] " << player->getHealth() << '/' << displayHealth << "\t";
 
 	// ------------ ENEMY HEALTH DURING COMBAT ------------
 
@@ -251,7 +305,7 @@ void Game::DisplayGame(char sym)
 		cout << endl;
 	}
 
-	cout << "\n[WASD] Move | [1] Attack | [2] Ability | [3] Guard" << endl;
+	cout << "\n[WASD] Move | [IJKL] Attack" << endl;
 	cout << "Position: Row " << player->getRow()
 		 << ", Column " << player->getCol() << endl;
 }
@@ -259,8 +313,12 @@ void Game::DisplayGame(char sym)
 void Game::StoryDialogue()
 {
 	cout << "\n=====================================" << endl;
-	std::cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << std::endl;
-	std::cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << std::endl;
-	std::cout << "The ruthless enemies had killed all you loved, but you managed to escape." << std::endl;
-	std::cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << std::endl;
+	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
+	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
+	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
+	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
+	cout << "=====================================\n" << endl;
+	cout << "Press any key to continue...";
+	_getch();
+	system("cls");
 }

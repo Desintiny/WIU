@@ -13,7 +13,7 @@ public:
 	~Player();
 
 	void PlayerMovement(char sym, char input, char mapGrid[12][12]);
-	void PlayerAtkDirection(char input, char mapGrid[12][12]);
+	bool PlayerAtkDirection(char input, int& targetRow, int& targetCol);
 
 	virtual void PlayerAttack();
 	virtual void EquipWeapon();

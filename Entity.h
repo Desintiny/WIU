@@ -24,10 +24,12 @@ public:
 	void setAttack(int);
 	int getAttack(void);
 
+	void TakeDamage(int amount);
+	bool IsAlive(void);
+
 	void setRow(int);
 	int getRow(void);
 
 	void setCol(int);
 	int getCol(void);
 };
-
