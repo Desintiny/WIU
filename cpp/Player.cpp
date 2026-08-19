@@ -1,23 +1,20 @@
 #include "Player.h"
+#include <iostream>
 
 Player::Player(string n) : Entity(n)
 {
-	intDirection[0] = 'i';
-	intDirection[1] = 'j';
-	intDirection[2] = 'k';
-	intDirection[3] = 'l';
+	staminaPts = 0;
+	maxStaminaPts = 0;
+
+	minRange = 0;
+	maxRange = 0;
 }
 
 Player::~Player()
 {
 }
 
-char Player::GetDirection(int i)
-{
-	return intDirection[i];
-}
-
-void Player::PlayerMovement(char input, char mapGrid[12][12])
+void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 {
 	int newRow = getRow();
 	int newCol = getCol();
@@ -52,8 +49,24 @@ void Player::PlayerMovement(char input, char mapGrid[12][12])
 		setRow(newRow);
 		setCol(newCol);
 
-		mapGrid[getRow()][getCol()] = 'P';
+		mapGrid[getRow()][getCol()] = sym;
 	}
+}
+
+bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
+{
+	int newRow = getRow();
+	int newCol = getCol();
+
+	if (input == 'i' || input == 'I') newRow--;      // UP
+	else if (input == 'j' || input == 'J') newCol--; // LEFT
+	else if (input == 'k' || input == 'K') newRow++; // RIGHT
+	else if (input == 'l' || input == 'L') newCol++; // DOWN
+	else return false;
+
+	targetRow = newRow;
+	targetCol = newCol;
+	return true;
 }
 
 void Player::PlayerAttack()
@@ -62,4 +75,44 @@ void Player::PlayerAttack()
 
 void Player::EquipWeapon()
 {
+}
+
+void Player::setStamina(int s)
+{
+	staminaPts = s;
+}
+
+int Player::getStamina(void)
+{
+	return staminaPts;
+}
+
+void Player::setMaxStamina(int s)
+{
+	maxStaminaPts = s;
+}
+
+int Player::getMaxStamina(void)
+{
+	return maxStaminaPts;
+}
+
+void Player::setMinRange(int r)
+{
+	minRange = r;
+}
+
+int Player::getMinRange(void)
+{
+	return minRange;
+}
+
+void Player::setMaxRange(int r)
+{
+	maxRange = r;
+}
+
+int Player::getMaxRange(void)
+{
+	return maxRange;
 }

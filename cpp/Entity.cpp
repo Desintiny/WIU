@@ -5,6 +5,8 @@ Entity::Entity(string n)
 	name = n;
 
 	healthPts = 0;
+	maxHealthPts = 0;
+
 	attackPts = 0;
 
 	row = 0;
@@ -36,14 +38,36 @@ int Entity::getHealth(void)
 	return healthPts;
 }
 
-void Entity::setAttack(int a)
+void Entity::setMaxHealth(int h)
 {
-	attackPts = a;
+	maxHealthPts = h;
+}
+
+int Entity::getMaxHealth(void)
+{
+	return maxHealthPts;
+}
+
+void Entity::setAttack(int s)
+{
+	attackPts = s;
 }
 
 int Entity::getAttack(void)
 {
 	return attackPts;
+}
+
+void Entity::TakeDamage(int amount)
+{
+	healthPts -= amount;
+	if (healthPts < 0)
+		healthPts = 0;
+}
+
+bool Entity::IsAlive(void)
+{
+	return healthPts > 0;
 }
 
 void Entity::setRow(int r)

@@ -6,7 +6,9 @@
 
 #include "Game.h"
 #include <iostream>
+#include <fstream>
 #include <conio.h>
+#include <string>
 
 using namespace std;
 
@@ -14,6 +16,10 @@ Game::Game()
 {
 	gameRunning = true;
 	player = nullptr;
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		enemy[i] = nullptr;
+	}
 
 	for (int row = 0; row < 12; row++)
 	{
@@ -28,6 +34,10 @@ Game::Game()
 Game::~Game()
 {
 	delete player;
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		delete enemy[i];
+	}
 }
 
 void Game::Start()
@@ -39,7 +49,9 @@ void Game::Start()
 		return;
 	}
 
-	ClassSelection();
+	StoryDialogue();
+
+	char sym = ClassSelection();
 
 	if (player == nullptr)
 	{
@@ -47,24 +59,97 @@ void Game::Start()
 		return;
 	}
 
-	// Start the player at left side
-	player->setRow(4);
-	player->setCol(1);
-	mapGrid[4][1] = 'P';
+	event.PathChoice();
+
+	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
+	if (player != nullptr)
+	{
+		SpawnEntity(player, sym, 4, 1);
+	}
+
+	// ------- CREATE X NUMBER OF ENEMIES -------
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
+	}
+
+	// ------- SPAWN X NUMBER OF ENEMIES -------
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		SpawnEntity(enemy[i], 'E', 2 + i, 8);
+	}
 
 	system("cls");
 
 	while (gameRunning)
 	{
-		DisplayGame();
+		DisplayGame(sym);
 
 		char input = _getch();
 
-		player->PlayerMovement(input, mapGrid);
+		if (input == 'i' || input == 'j' || input == 'k' || input == 'l' ||
+			input == 'I' || input == 'J' || input == 'K' || input == 'L')
+		{
+			int targetRow, targetCol;
+			if (player->PlayerAtkDirection(input, targetRow, targetCol))
+			{
+				bool hit = false;
+
+				for (int i = 0; i < NUM_ENEMY; i++)
+				{
+					if (enemy[i] != nullptr &&
+						enemy[i]->getRow() == targetRow &&
+						enemy[i]->getCol() == targetCol)
+					{
+						int dmg = player->getAttack();
+						enemy[i]->TakeDamage(dmg);
+
+						cout << player->getName() << " attacks " << enemy[i]->getName()
+							 << " for " << dmg << " damage!" << endl;
+
+						if (!enemy[i]->IsAlive())
+						{
+							cout << enemy[i]->getName() << " has been defeated!" << endl;
+							mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+							delete enemy[i];
+							enemy[i] = nullptr;
+						}
+						else
+						{
+							cout << enemy[i]->getName() << " has " << enemy[i]->getHealth() << " HP left." << endl;
+						}
+
+						hit = true;
+						break;
+					}
+				}
+
+				if (!hit)
+				{
+					cout << player->getName() << " attacks empty space. No enemy there." << endl;
+				}
+			}
+
+			cout << "\nPress any key to continue...";
+			_getch();
+		}
+		else
+		{
+			player->PlayerMovement(sym, input, mapGrid);
+		}
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
 		system("cls");
 	}
+}
+
+// ------------- SPAWN ENTITIES ONTO THE MAP -------------
+
+void Game::SpawnEntity(Entity* entity, char sym, int row, int col)
+{
+	entity->setRow(row);
+	entity->setCol(col);
+	mapGrid[row][col] = sym;
 }
 
 void Game::MainMenu()
@@ -89,11 +174,14 @@ void Game::MainMenu()
 	}
 }
 
-void Game::ClassSelection()
+char Game::ClassSelection()
 {
 	int choice;
+	char sym = 'P';
 	do
 	{
+		// ------------ DISPLAY OF PLAYER CLASSES ------------
+
 		cout << "=====================================" << endl;
 		cout << "Choose Your Path" << endl;
 		cout << endl;
@@ -106,17 +194,22 @@ void Game::ClassSelection()
 		delete player;
 		player = nullptr;
 
+		// ------------ PLAYER CLASSES ------------
+
 		if (choice == 1)
 		{
 			player = new Berserker("Berserker");
+			sym = 'B';
 		}
 		else if (choice == 2)
 		{
 			player = new Archer("Archer");
+			sym = 'A';
 		}
 		else if (choice == 3)
 		{
 			player = new Mage("Mage");
+			sym = 'M';
 		}
 		else
 		{
@@ -124,32 +217,47 @@ void Game::ClassSelection()
 			gameRunning = false;
 		}
 	} while (choice < 1 || choice > 3);
+
+	gameRunning = true;
+
+	return sym;
 }
 
-void Game::DisplayGame()
+// ------------ DISPLAY UI FOR THE USER ------------
+
+void Game::DisplayGame(char sym)
 {
-	int healthPts = 40;
-	int staminaPts = 10;
+	int displayHealth = player->getMaxHealth();
+	int displayStamina = player->getMaxStamina();
 
 	char healthBar[10];
 	char staminaBar[10];
 	char enemyHealthBar[10];
 
+	int healthFilled = (player->getHealth() * 10) / player->getMaxHealth();
+	int staminaFilled = (player->getStamina() * 10) / player->getMaxStamina();
+
 	for (int i = 0; i < 10; i++)
 	{
-		healthBar[i] = '#';
-		staminaBar[i] = '#';
-		enemyHealthBar[i] = '#';
+		healthBar[i] = (i < healthFilled) ? '#' : '-';
+		staminaBar[i] = (i < staminaFilled) ? '#' : '-';
+		enemyHealthBar[i] = '#'; // leave as-is until enemy HP tracking is wired into combat
 	}
 
 	bool inCombat = true;
 
-	cout << STYLE_ORANGE << "YOU (P)\t\t\t";
+	// ------------ PLAYER UI ------------
+
+	cout << STYLE_ORANGE << "YOU (" << sym << ")\t\t\t";
+
+	// ------------ ENEMY UI DURING COMBAT ------------
 
 	if (inCombat)
 	{
 		cout << STYLE_PURPLE << "ENEMY (E)" << endl;
 	}
+
+	// ------------ PLAYER HEALTH ------------
 
 	cout << STYLE_RED << "HP [";
 
@@ -158,7 +266,9 @@ void Game::DisplayGame()
 		cout << healthBar[i];
 	}
 
-	cout << "] " << healthPts << "/40\t";
+	cout << "] " << player->getHealth() << '/' << displayHealth << "\t";
+
+	// ------------ ENEMY HEALTH DURING COMBAT ------------
 
 	if (inCombat)
 	{
@@ -172,6 +282,8 @@ void Game::DisplayGame()
 		cout << "] \n";
 	}
 
+	// ------------ PLAYER STAMINA ------------
+
 	cout << STYLE_BLUE << "ST [";
 
 	for (int i = 0; i < 10; i++)
@@ -179,7 +291,7 @@ void Game::DisplayGame()
 		cout << staminaBar[i];
 	}
 
-	cout << "] " << staminaPts << "/10\n" << STYLE_NONE << endl;
+	cout << "] " << player->getStamina() << '/' << displayStamina << "\n" << STYLE_NONE << endl;
 
 	// ------------ GAME MAP ------------
 
@@ -193,7 +305,20 @@ void Game::DisplayGame()
 		cout << endl;
 	}
 
-	cout << "\n[WASD] Move | [1] Attack | [2] Ability | [3] Guard | [Q] Quit" << endl;
+	cout << "\n[WASD] Move | [IJKL] Attack" << endl;
 	cout << "Position: Row " << player->getRow()
 		 << ", Column " << player->getCol() << endl;
+}
+
+void Game::StoryDialogue()
+{
+	cout << "\n=====================================" << endl;
+	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
+	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
+	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
+	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
+	cout << "=====================================\n" << endl;
+	cout << "Press any key to continue...";
+	_getch();
+	system("cls");
 }
