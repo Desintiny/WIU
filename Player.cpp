@@ -74,10 +74,6 @@ void Player::PlayerAtkDirection(char input, char mapGrid[12][12])
 	{
 		newCol++;
 	}
-	else if (input == 'i' || input == 'I')
-	{
-		inventory.displayInventory();
-	}
 	else
 	{
 		return;

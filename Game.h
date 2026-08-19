@@ -1,13 +1,11 @@
 #pragma once
 #include "Player.h"
+
 #include "Archer.h"
 #include "Berserker.h"
 #include "Mage.h"
 
-#include "Inventory.h"
-
 #include "Event.h"
-#include "Event2.h"
 
 #include "Enemy.h"
 
@@ -16,9 +14,9 @@ class Game
 	bool gameRunning;
 	char mapGrid[12][12];
 	Player* player;
-	Inventory inventory;
 
 	static const int NUM_ENEMY = 8;
+	Event event;
 	Enemy* enemy[NUM_ENEMY];
 
 public:
@@ -31,6 +29,5 @@ public:
 	char ClassSelection(void);
 	void DisplayGame(char sym);
 
-	void Story();
-	void PathChoice();
+	void StoryDialogue();
 };

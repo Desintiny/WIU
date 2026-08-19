@@ -29,7 +29,5 @@ public:
 
 	void setCol(int);
 	int getCol(void);
-
-	void heal(int amount);
 };
 

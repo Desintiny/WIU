@@ -1,0 +1,195 @@
+======EVENT 1======
+As you traverse the forest, you hear the sounds of crackling fire. 
+Upon closer inspection, you see a glowing light. A campfire burns 
+brightly in front of you.
+
+1. Rest by the fire.
+2. Ignore it
+
+What do you do? Choice:
+You sat beside the campfire. Warmth soon wraps around your body. You feel revitalized!
+You walk away from the campfire. The light slowly dims from distance.
+
+======EVENT 2======
+While walking, you suddenly see a cottage. The lights inside were 
+turned on. Someone is home. As you approach the cottage, the door suddenly opens. 
+Oh, surprised to see you here, an adventurer per chance? I could let you rest 
+here for a while if needed, an old lady said.
+
+1. Accept the offer.
+2. Refuse the offer.
+
+What do you do? Choice:
+Do not worry about payment dear. Feel free to rest.
+Oh you are busy I see. Well no worries my dear, have this piece of bread for the journey.
+
+======EVENT 3======
+You hear the sounds of a river flowing. As you approach, you see a flowing.
+river of clear water.
+
+
+1. Scoop up the water.
+2. Drink the water.
+3. Ignore it.
+
+
+What do you do? Choice:
+You kneel down beside the river and scoop a bottle of the water.
+You kneel down beside the river and started drinking.
+You walk away from the river, the water continues to flow.
+
+======EVENT 4======
+While walking, you suddenly met a wandering traveller. 
+He greets you, and you both start conversing
+
+1. Ask for information.
+2. Ask for help.
+3. Say goodbye.
+
+What do you do? Choice:
+Oh, Valdrek? I would not go messing around with them if I were you. Especially their Enforcers.
+Well, I cannot really follow you but, I can give you this. Hope it benefits you in your adventure.
+See you around adventurer. And stay safe.
+
+======EVENT 5======
+On your way, you stumbled upon a random chest. 
+Upon closer inspection, you realised the lock was broken.
+
+1. Open Chest.
+2. Investigate the chest.
+3. Ignore it. 
+
+What do you do? Choice:
+As you open the chest, you found a small trinket of what looks to be a sculpture of an idol.
+You investigate closer, you don't find anything dangerous, and you look into it. A Trinket?
+You tried to ignore it but your curiosity gets the better of you. A trinket?
+
+======EVENT 6======
+You hear the sounds of water crashing down. 
+Curious, you went that direction to take a look. 
+What lies in front of you is a lake with a waterfall that seems like 10 houses!
+
+1. Rest by the lake.
+2. Swim into the waterfall
+3. Scoop the water
+
+What do you do? Choice:
+You rest your body by the river. You feel calm and relaxed as you sat, listening to the waterfall.
+You dove into the water. You noticed a shining object. As you swam to the object, you discovered it was a ring.
+You kneel down beside the lake and scoop a bottle of the water.
+
+======EVENT 7======
+As you walk, you feel droplets above you. 
+And as you look up, you see dark clouds forming.
+
+1. Continue Forward.
+2. Take shelter nearby.
+
+What do you do? Choice:
+You push on, ignoring the clouds. A sudden downpour hits you as you make your way.
+You found a big tree to cover you, you settle under the cover of the tree, a sudden downpour happens.
+
+======EVENT 8======
+You chanced upon an open field. 
+In the center of the field, a glowing plant can be seen. 
+You approach the plant, curious, and see that it is abundant.
+
+1. Harvest a plant
+2. Leave the plant alone
+
+What do you do? Choice:
+You bent down and plucked a few of the plants out.
+As you walk away, a sudden gust breezes past you. You suddenly feel energized, feeling the plant's gratitude.
+
+======EVENT 9======
+You approach a clearing in the forest.
+You then see what looks like a training ground, or what used to be one. You see a weapons rack and approach it. 
+Surprisingly there were a few weapons scattered around, looks usable too.
+
+1. Pick up a weapon.
+2. Ignore and rest.
+3. Search around.
+
+What do you do? Choice:
+You picked up a weapon to your liking. It feels nice having something new.
+You ignored the weapons and decided to take a power nap.
+You decided to ignore the weapons and searched around. Surprisingly you found bread that didn’t seem mouldy.
+
+======EVENT 10======
+On the way, you spot a white crow. An unusual sight. 
+Upon closer inspection, you see the crow holding something in its beak.
+
+1. Get closer to the crow.
+2. Leave the crow.
+
+What do you do? Choice:
+The crow flew away, leaving behind the item in its beak. Maybe you were destined to get it.
+You decided to leave the animal alone. As you turn back, you see its red eyes constantly staring, never turning.
+
+======EVENT 11======
+You decided to take a short break under a tree. 
+While resting, you realised that this was an apple tree. 
+Above you an apple hangs.
+
+1. Attempt to jump and reach the apple.
+2. Hit the tree.
+3. Use your weapon to reach the apple.
+
+What do you do? Choice:
+You decided to jump for the apple. With each attempt you nearly reach it, but it was never enough.
+You picked up your weapon and decided to strike the tree with it, multiple apples drop from the tree!
+You picked up your weapon and start jumping, swinging at it. Eventually, you knocked down an apple.
+
+======EVENT 12======
+You trekked through the forest, when you stumbled upon an active bee hive.
+You can hear the bees buzzing around. 
+Looking closer, there seems to be sufficient honey available.
+
+1. Ignore the hive.
+2. Attempt to extract the honey.
+3. Hit the bee hive down.
+
+What do you do? Choice:
+You walked away from the hive. Bees still buzzing.
+As you slowly approach the hive. Some of the bees curiously land on you. Despite it, you managed to get a bottle of honey.
+The bee hive fell down, the enraged bees swarmed you. As they stung you, you managed get some honey.
+
+======EVENT 13======
+While walking, you met a fellow adventurer. 
+He greets you and you both engage in a conversation.
+
+1. Ask for information.
+2. Ask for help.
+3. Say goodbye.
+
+What do you do? Choice:
+Hmm, Valdrek eh. I have not fought any of their warriors yet. But I heard their enforcers are strong.
+Sorry man, I cant help you out physically, but I can give you this. Hope it helps.
+Pleasure meeting you. Here, take this for the road. Hope we get to adventure together another time.
+
+======EVENT 14======
+Walking along the road, you stumbled upon an abandoned caravan.
+Upon inspection, it seems that the owners were either robbed or left in a hurry.
+
+1. Loot whats left.
+2. Leave it behind.
+
+What do you do? Choice:
+You went to the back of the caravan and checked around. To your luck, you found a charm inside.
+You walk away from the caravan. It doesn't seem like it holds anything worth your time.
+
+======EVENT 15======
+You found a small clearing within some bushes. 
+Pushing past it you are greeted by a Giant tree.
+
+1. Rest by the Tree base.
+2. Explore the Tree base.
+3. Explore the edges of the clearing.
+
+What do you do? Choice:
+You decided to take a break by the Tree base. As you rest you feel energy pouring into you.
+You decided to walk around the Tree base. At one point you found something hidden the crack of the roots.
+You decided to walk around the edges of the clearing you came from. While walking, you came across some fruits.
+
+
+

@@ -77,11 +77,3 @@ int Entity::getCol(void)
 {
 	return col;
 }
-
-void Entity::heal(int amount)
-{
-	healthPts += amount;
-
-	if (healthPts > maxHealthPts)
-		maxHealthPts = healthPts;
-}
