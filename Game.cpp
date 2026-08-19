@@ -33,7 +33,10 @@ Game::Game()
 Game::~Game()
 {
 	delete player;
-	delete enemy;
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		delete enemy[i];
+	}
 }
 
 void Game::Start()
@@ -62,7 +65,7 @@ void Game::Start()
 	// ------- CREATE X NUMBER OF ENEMIES -------
 	for (int i = 0; i < NUM_ENEMY; i++)
 	{
-		enemy[i] = new Enemy("Enemy" + (i + 1));
+		enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
 	}
 
 	// ------- SPAWN X NUMBER OF ENEMIES -------
@@ -181,11 +184,14 @@ void Game::DisplayGame(char sym)
 	char staminaBar[10];
 	char enemyHealthBar[10];
 
+	int healthFilled = (player->getHealth() * 10) / player->getMaxHealth();
+	int staminaFilled = (player->getStamina() * 10) / player->getMaxStamina();
+
 	for (int i = 0; i < 10; i++)
 	{
-		healthBar[i] = '#';
-		staminaBar[i] = '#';
-		enemyHealthBar[i] = '#';
+		healthBar[i] = (i < healthFilled) ? '#' : '-';
+		staminaBar[i] = (i < staminaFilled) ? '#' : '-';
+		enemyHealthBar[i] = '#'; // leave as-is until enemy HP tracking is wired into combat
 	}
 
 	bool inCombat = true;
