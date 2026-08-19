@@ -14,6 +14,7 @@ Game::Game()
 {
 	gameRunning = true;
 	player = nullptr;
+	enemy = nullptr;
 
 	for (int row = 0; row < 12; row++)
 	{
@@ -28,6 +29,7 @@ Game::Game()
 Game::~Game()
 {
 	delete player;
+	delete enemy;
 }
 
 void Game::Start()
@@ -48,9 +50,17 @@ void Game::Start()
 	}
 
 	// Start the player at left side
-	player->setRow(4);
-	player->setCol(1);
-	mapGrid[4][1] = 'P';
+	if (player != nullptr)
+	{
+		SpawnEntity(player, 'P', 4, 1);
+	}
+
+	enemy = new Enemy("Enemy1");
+
+	if (enemy != nullptr)
+	{
+		SpawnEntity(enemy, 'E', 4, 8);
+	}
 
 	system("cls");
 
@@ -66,6 +76,13 @@ void Game::Start()
 		// Clears the the rest of the console text, so it doesn't show the previous map
 		system("cls");
 	}
+}
+
+void Game::SpawnEntity(Entity* entity, char sym, int row, int col)
+{
+	entity->setRow(row);
+	entity->setCol(col);
+	mapGrid[row][col] = sym;
 }
 
 void Game::MainMenu()

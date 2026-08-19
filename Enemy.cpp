@@ -1,0 +1,57 @@
+#include "Enemy.h"
+
+Enemy::Enemy(string n) : Entity(n)
+{
+
+}
+
+Enemy::~Enemy()
+{
+
+}
+
+void Enemy::EnemyMovement(char mapGrid[12][12])
+{
+	int newRow = getRow();
+	int newCol = getCol();
+
+	int dir = rand() % 4 + 1;
+
+	if (dir == 1) // UP
+	{
+		newRow--;
+	}
+	else if (dir == 2) // LEFT
+	{
+		newCol--;
+	}
+	else if (dir == 3) // RIGHT
+	{
+		newRow++;
+	}
+	else if (dir == 4) // DOWN
+	{
+		newCol++;
+	}
+	else
+	{
+		return;
+	}
+
+	if (newRow >= 1 && newRow <= 10 && // within the border
+		newCol >= 1 && newCol <= 10 && // within the border
+		mapGrid[newRow][newCol] == '.') // if the next new position is '.'
+	{
+		mapGrid[getRow()][getCol()] = '.';
+
+		setRow(newRow);
+		setCol(newCol);
+
+		mapGrid[getRow()][getCol()] = 'E';
+	}
+}
+
+void Enemy::EnemyAttack()
+{
+
+}
