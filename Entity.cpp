@@ -5,7 +5,8 @@ Entity::Entity(string n)
 	name = n;
 
 	healthPts = 0;
-	staminaPts = 0;
+	maxHealthPts = 0;
+
 	attackPts = 0;
 
 	row = 0;
@@ -37,14 +38,14 @@ int Entity::getHealth(void)
 	return healthPts;
 }
 
-void Entity::setStamina(int s)
+void Entity::setMaxHealth(int h)
 {
-	staminaPts = s;
+	maxHealthPts = h;
 }
 
-int Entity::getStamina(void)
+int Entity::getMaxHealth(void)
 {
-	return staminaPts;
+	return maxHealthPts;
 }
 
 void Entity::setAttack(int s)

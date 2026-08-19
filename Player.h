@@ -3,6 +3,8 @@
 
 class Player : public Entity
 {
+	int staminaPts, maxStaminaPts;
+
 	char intDirection[4];
 	int minRange;
 	int maxRange;
@@ -16,6 +18,12 @@ public:
 
 	virtual void PlayerAttack();
 	virtual void EquipWeapon();
+
+	void setStamina(int);
+	int getStamina(void);
+
+	void setMaxStamina(int);
+	int getMaxStamina(void);
 
 	void setMinRange(int);
 	int getMinRange(void);

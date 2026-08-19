@@ -53,18 +53,19 @@ void Game::Start()
 		return;
 	}
 
-	// Start the player at left side
+	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
 	{
 		SpawnEntity(player, sym, 4, 1);
 	}
 
+	// ------- CREATE X NUMBER OF ENEMIES -------
 	for (int i = 0; i < NUM_ENEMY; i++)
 	{
 		enemy[i] = new Enemy("Enemy" + (i + 1));
 	}
 
-
+	// ------- SPAWN X NUMBER OF ENEMIES -------
 	if (enemy != nullptr)
 	{
 		for (int i = 0; i < NUM_ENEMY; i++)
@@ -88,6 +89,8 @@ void Game::Start()
 		system("cls");
 	}
 }
+
+// ------------- SPAWN ENTITIES ONTO THE MAP -------------
 
 void Game::SpawnEntity(Entity* entity, char sym, int row, int col)
 {
@@ -168,10 +171,11 @@ char Game::ClassSelection()
 }
 
 // ------------ DISPLAY UI FOR THE USER ------------
+
 void Game::DisplayGame(char sym)
 {
-	int displayHealth = player->getHealth();
-	int displayStamina = player->getStamina();
+	int displayHealth = player->getMaxHealth();
+	int displayStamina = player->getMaxStamina();
 
 	char healthBar[10];
 	char staminaBar[10];
@@ -245,7 +249,7 @@ void Game::DisplayGame(char sym)
 		cout << endl;
 	}
 
-	cout << "\n[WASD] Move | [1] Attack | [2] Ability | [3] Guard | [Q] Quit" << endl;
+	cout << "\n[WASD] Move | [1] Attack | [2] Ability | [3] Guard" << endl;
 	cout << "Position: Row " << player->getRow()
 		 << ", Column " << player->getCol() << endl;
 }

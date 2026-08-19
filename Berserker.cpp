@@ -3,8 +3,13 @@
 Berserker::Berserker(string n) : Player(n)
 {
 	setHealth(40);
-	setAttack(8);
+	setMaxHealth(40);
+
 	setStamina(10);
+	setMaxStamina(10);
+
+	setAttack(8);
+	
 	setMinRange(1);
 	setMaxRange(1);
 };

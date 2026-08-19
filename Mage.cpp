@@ -3,8 +3,13 @@
 Mage::Mage(string n) : Player(n)
 {
 	setHealth(24);
+	setMaxHealth(24);
+	
+	setStamina(10);
+	setMaxStamina(10);
+
 	setAttack(10);
-	setStamina(20);
+
 	setMinRange(2);
 	setMaxRange(3);
 };

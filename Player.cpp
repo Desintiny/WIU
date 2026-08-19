@@ -3,6 +3,9 @@
 
 Player::Player(string n) : Entity(n)
 {
+	staminaPts = 0;
+	maxStaminaPts = 0;
+
 	intDirection[0] = 'i';
 	intDirection[1] = 'j';
 	intDirection[2] = 'k';
@@ -90,6 +93,26 @@ void Player::PlayerAttack()
 
 void Player::EquipWeapon()
 {
+}
+
+void Player::setStamina(int s)
+{
+	staminaPts = s;
+}
+
+int Player::getStamina(void)
+{
+	return staminaPts;
+}
+
+void Player::setMaxStamina(int s)
+{
+	maxStaminaPts = s;
+}
+
+int Player::getMaxStamina(void)
+{
+	return maxStaminaPts;
 }
 
 void Player::setMinRange(int r)
