@@ -1,13 +1,20 @@
 #pragma once
 
-class Equipment {
+class Equipment
+{
 private:
     int Accuracy;
+    int Health;
+    int Damage;
 
 public:
     Equipment();
 
     int GetAccuracy();
-    void SetAccuracy(int accuracy);
-};
+    int GetHealth();
+    int GetDamage();
 
+    void AddAccuracy(int accuracy);
+    void AddHealth(int health);
+    void AddDamage(int damage);
+};
