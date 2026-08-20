@@ -2,6 +2,7 @@
 #include <iostream>
 
 using namespace std;
+
 RNG::RNG() {
     GotHit = 0;
     Accuracy = 0;
@@ -11,9 +12,14 @@ void RNG::SetAccuracy (int accuracy) {
     Accuracy = accuracy;
 }
 
-void RNG::HitOrMiss() {
+void RNG::HitOrMiss()
+{
     GotHit = rand() % 101 + Accuracy;
-    if (GotHit >= 31) {
+    if (GotHit >= 100) {
+        cout << "You have Hit the enemy (100%)" << endl;
+        DidHit = true;
+    }
+    else if (GotHit >= 31) {
         cout << "You have Hit the enemy (" << GotHit << "%)" << endl;
         DidHit = true;
     }
