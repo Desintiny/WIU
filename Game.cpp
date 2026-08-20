@@ -297,7 +297,7 @@ char Game::ClassSelection()
 
 void Game::DisplayGame(char sym)
 {
-	int displayHealth = player->GetTotalHealth();
+	int displayHealth = player->getMaxHealth();
 	int displayStamina = player->getMaxStamina();
 
 	char healthBar[10];
