@@ -40,8 +40,6 @@ public:
 	void setMaxRange(int);
 	int getMaxRange(void);
 
-	int GetTotalHealth();	//Dsplay health w Equipment
-
 	int GetAccuracy();	//Equipment Stats	
 	int GetEquipmentHealth();
 	int GetEquipmentDamage();
@@ -55,4 +53,3 @@ public:
 	void GetGemCharm();
 	void GetTreeEmblem();
 };
-
