@@ -93,51 +93,72 @@ bool Player::PlayerAtkDirection(char input, int& dirRow, int& dirCol)
 
 	return true;
 }
-void Player::GetAttackRing() {	//Indiv Accuracy addition
+void Player::GetAttackRing()
+{
 	AttackRing.AddAccuracy(5);
 	AttackRing.AddDamage(4);
 }
-void Player::GetHpRing() {
+
+void Player::GetHpRing()
+{
 	HpRing.AddAccuracy(5);
 	HpRing.AddHealth(10);
 
+	setMaxHealth(getMaxHealth() + HpRing.GetHealth());
 	setHealth(getHealth() + HpRing.GetHealth());
 }
-void Player::GetSharkToothCharm() {
+
+void Player::GetSharkToothCharm()
+{
 	SharkToothCharm.AddAccuracy(5);
 	SharkToothCharm.AddDamage(2);
 }
-void Player::GetIdolTrinket() {
+
+void Player::GetIdolTrinket()
+{
 	IdolTrinket.AddAccuracy(5);
 	IdolTrinket.AddDamage(2);
 	IdolTrinket.AddHealth(2);
 
-	setHealth(getHealth() + HpRing.GetHealth());
+	setMaxHealth(getMaxHealth() + IdolTrinket.GetHealth());
+	setHealth(getHealth() + IdolTrinket.GetHealth());
 }
-void Player::GetSilverBracelet() {
+
+void Player::GetSilverBracelet()
+{
 	SilverBracelet.AddAccuracy(5);
 	SilverBracelet.AddHealth(5);
 
-	setHealth(getHealth() + HpRing.GetHealth());
+	setMaxHealth(getMaxHealth() + SilverBracelet.GetHealth());
+	setHealth(getHealth() + SilverBracelet.GetHealth());
 }
-void Player::GetWoodCarvedNecklace() {
+
+void Player::GetWoodCarvedNecklace()
+{
 	WoodCarvedNecklace.AddAccuracy(5);
 	WoodCarvedNecklace.AddHealth(2);
 
-	setHealth(getHealth() + HpRing.GetHealth());
+	setMaxHealth(getMaxHealth() + WoodCarvedNecklace.GetHealth());
+	setHealth(getHealth() + WoodCarvedNecklace.GetHealth());
 }
-void Player::GetGemCharm() {
+
+void Player::GetGemCharm()
+{
 	GemCharm.AddAccuracy(5);
 	GemCharm.AddHealth(7);
 
-	setHealth(getHealth() + HpRing.GetHealth());
+	setMaxHealth(getMaxHealth() + GemCharm.GetHealth());
+	setHealth(getHealth() + GemCharm.GetHealth());
 }
-void Player::GetTreeEmblem() {
+
+void Player::GetTreeEmblem()
+{
 	TreeEmblem.AddAccuracy(5);
 	TreeEmblem.AddHealth(5);
 	TreeEmblem.AddDamage(2);
 
-	setHealth(getHealth() + HpRing.GetHealth());
+	setMaxHealth(getMaxHealth() + TreeEmblem.GetHealth());
+	setHealth(getHealth() + TreeEmblem.GetHealth());
 }
 int Player::GetAccuracy()
 {
@@ -251,8 +272,4 @@ void Player::setMaxRange(int r)
 int Player::getMaxRange(void)
 {
 	return maxRange;
-}
-int Player::GetTotalHealth()
-{
-	return getMaxHealth() + GetEquipmentHealth();
 }
