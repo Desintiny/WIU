@@ -10,10 +10,10 @@ private:
 public:
     RNG();
 
-    void SetAccuracy(int accuracy);
+    void SetAccuracy(int accuracy); // Accuracy
+    void HitOrMiss();
+    void AbilityHitOrMiss(int chance);
 
-    void HitOrMiss();                  // Basic attack
-    void AbilityHitOrMiss(int chance); // Ability
-
+    bool CriticalHit(int chance);    // Critical Hit
     bool GetDidHit();
 };
