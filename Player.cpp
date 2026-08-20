@@ -37,16 +37,6 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	{
 		newCol++;
 	}
-	else if (input == 'q' || input == 'Q') // Cheatcode
-	{
-		GetHpRing();
-		GetSharkToothCharm();
-		GetIdolTrinket();
-		GetSilverBracelet();
-		GetWoodCarvedNecklace();
-		GetGemCharm();
-		GetTreeEmblem();
-	}
 	else
 	{
 		return;
