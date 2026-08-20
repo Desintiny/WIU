@@ -13,7 +13,7 @@ Mage::Mage(string n) : Player(n)
 
 	setAttack(10);
 
-	setMinRange(1);
+	setMinRange(2);
 	setMaxRange(3);
 };
 

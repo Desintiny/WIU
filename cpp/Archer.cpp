@@ -13,7 +13,7 @@ Archer::Archer(string n) : Player(n)
 
 	setAttack(7);
 
-	setMinRange(1);
+	setMinRange(3);
 	setMaxRange(4);
 };
 

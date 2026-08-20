@@ -18,10 +18,9 @@ class Game
 
 	Player* player;
 
-	static const int MAX_ENEMIES = 10;
+	static const int NUM_ENEMY = 3;
 
-	Enemy* enemy[MAX_ENEMIES];
-	int enemyCount;
+	Enemy* enemy[NUM_ENEMY];
 
 	GameScene scene;
 	bool exitUnlocked;

@@ -3,7 +3,13 @@
 #include <fstream>
 #include <string>
 #include <vector>
+
 using namespace std;
+
+
+// ============================================================
+// CHECK IF EVENT WAS ALREADY USED
+// ============================================================
 
 bool Event::IsUsed(int event)
 {
@@ -14,50 +20,95 @@ bool Event::IsUsed(int event)
             return true;
         }
     }
+
     return false;
 }
 
-void Event::PathChoice()
+
+// ============================================================
+// PLAYER CHOOSES ONE OF THREE RANDOM PATHS
+// ============================================================
+
+void Event::PathChoice(Player* player)
 {
     ifstream inputFile("eventnames.txt");
+
     vector<string> eventNames;
     string line;
+
+    // Read all event names from file
     while (getline(inputFile, line))
     {
         eventNames.push_back(line);
     }
+
     inputFile.close();
+
+
+    // Make sure enough events exist
     if (eventNames.size() < 3)
     {
         cout << "Not enough events!\n";
         return;
     }
-    int path1;  // Pick Path 1
+
+
+    // ---------------- PATH 1 ----------------
+
+    int path1;
+
     do
     {
         path1 = rand() % eventNames.size();
+
     } while (IsUsed(path1));
-    int path2;   // Pick Path 2
+
+
+    // ---------------- PATH 2 ----------------
+
+    int path2;
 
     do
     {
         path2 = rand() % eventNames.size();
+
     } while (IsUsed(path2) || path2 == path1);
-    int path3;   // Pick Path 3
+
+
+    // ---------------- PATH 3 ----------------
+
+    int path3;
 
     do
     {
         path3 = rand() % eventNames.size();
-    } while (IsUsed(path3) || path3 == path1 || path3 == path2);
+
+    } while (IsUsed(path3) ||
+        path3 == path1 ||
+        path3 == path2);
+
+
+    // ---------------- DISPLAY PATHS ----------------
+
     cout << "=====================================\n";
     cout << "Pick a Path\n\n";
+
     cout << "Path 1: " << eventNames[path1] << "\n";
     cout << "Path 2: " << eventNames[path2] << "\n";
     cout << "Path 3: " << eventNames[path3] << "\n";
+
+
     int choice;
+
     cout << "\nChoice: ";
     cin >> choice;
+
+
     int selectedEvent;
+
+
+    // ---------------- PLAYER CHOICE ----------------
+
     if (choice == 1)
     {
         selectedEvent = path1;
@@ -75,37 +126,78 @@ void Event::PathChoice()
         cout << "Invalid choice.\n";
         return;
     }
-    usedEvents.push_back(selectedEvent);    // Remember the selected event
-    ForestEvent(selectedEvent);  // Run the selected event
+
+
+    // Remember that the event has been used
+    usedEvents.push_back(selectedEvent);
+
+
+    // Run selected event
+    ForestEvent(selectedEvent, player);
 }
 
 
-void Event::ForestEvent(int event)
+// ============================================================
+// FOREST EVENT
+// ============================================================
+
+void Event::ForestEvent(int event, Player* player)
 {
     ifstream inputFile("input.txt");
+
     vector<string> eventLines;
     string line;
-    string eventMarker = "======EVENT " + to_string(event + 1) + "======";  // Read 1 to 15
+
+
+    // event starts from 0 internally
+    // so event + 1 matches EVENT 1, EVENT 2, etc.
+    string eventMarker =
+        "======EVENT " + to_string(event + 1) + "======";
+
 
     bool readingEvent = false;
+
+
+    // ========================================================
+    // READ CORRECT EVENT FROM FILE
+    // ========================================================
+
     while (getline(inputFile, line))
     {
+        // Start reading when correct event is found
         if (line == eventMarker)
         {
             readingEvent = true;
             continue;
         }
-        if (readingEvent && line.find("======EVENT ") == 0)  // Finds and stop
+
+
+        // Stop when next event starts
+        if (readingEvent &&
+            line.find("======EVENT ") == 0)
         {
             break;
         }
+
+
+        // Store event lines
         if (readingEvent)
         {
             eventLines.push_back(line);
         }
     }
+
+
     inputFile.close();
-    int choicePrompt = -1;  // Find the choice prompt
+
+
+    // ========================================================
+    // FIND THE CHOICE PROMPT
+    // ========================================================
+
+    int choicePrompt = -1;
+
+
     for (int i = 0; i < eventLines.size(); i++)
     {
         if (eventLines[i] == "What do you do? Choice:")
@@ -114,23 +206,326 @@ void Event::ForestEvent(int event)
             break;
         }
     }
-    if (choicePrompt == -1)     // Make sure the prompt was found
+
+
+    // Make sure prompt exists
+    if (choicePrompt == -1)
     {
         cout << "Choice prompt not found!\n";
         return;
     }
-    for (int i = 0; i < choicePrompt; i++)  // Print the event description and choices
+
+
+    // ========================================================
+    // DISPLAY EVENT STORY AND CHOICES
+    // ========================================================
+
+    for (int i = 0; i < choicePrompt; i++)
     {
         cout << eventLines[i] << '\n';
     }
-    cout << eventLines[choicePrompt] << " ";    // Print choice prompt
+
+
+    cout << eventLines[choicePrompt] << " ";
+
+
+    // ========================================================
+    // PLAYER MAKES EVENT CHOICE
+    // ========================================================
 
     int choice;
+
     cin >> choice;
-    int responseIndex = choicePrompt + choice;  // Response starts immediately after the choice prompt
-    if (responseIndex < eventLines.size())  // Check that the response exists
+
+
+    // Response starts after the choice prompt
+    int responseIndex = choicePrompt + choice;
+
+
+    // ========================================================
+    // DISPLAY RESPONSE
+    // ========================================================
+
+    if (responseIndex < eventLines.size())
     {
-        cout << '\n' << eventLines[responseIndex] << '\n';
+        cout << '\n'
+            << eventLines[responseIndex]
+            << '\n';
+
+
+        // ====================================================
+        // EVENT ITEM REWARDS
+        // ====================================================
+
+
+        // ----------------------------------------------------
+        // EVENT 2 - FOREST COTTAGE
+        // Choice 2 gives Bread
+        // ----------------------------------------------------
+
+        if (event == 1 && choice == 2)
+        {
+            Item bread;
+
+            bread.name = "Bread";
+            bread.type = "Healing";
+            bread.healAmount = 5;
+            bread.atkBonus = 0;
+            bread.consumable = true;
+
+            player->AddItem(bread);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 3 - FLOWING RIVER
+        // Choice 1 gives Water
+        // ----------------------------------------------------
+
+        if (event == 2 && choice == 1)
+        {
+            Item water;
+
+            water.name = "Bottle of Water";
+            water.type = "Healing";
+            water.healAmount = 3;
+            water.atkBonus = 0;
+            water.consumable = true;
+
+            player->AddItem(water);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 5 - RANDOM CHEST
+        // Choices can give a Trinket
+        // ----------------------------------------------------
+
+        if (event == 4 &&
+            (choice == 1 ||
+                choice == 2 ||
+                choice == 3))
+        {
+            Item trinket;
+
+            trinket.name = "Old Trinket";
+            trinket.type = "Key Item";
+            trinket.healAmount = 0;
+            trinket.atkBonus = 0;
+            trinket.consumable = false;
+
+            player->AddItem(trinket);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 6 - WATERFALL
+        // Choice 2 gives Ring
+        // ----------------------------------------------------
+
+        if (event == 5 && choice == 2)
+        {
+            Item ring;
+
+            ring.name = "Old Ring";
+            ring.type = "Key Item";
+            ring.healAmount = 0;
+            ring.atkBonus = 0;
+            ring.consumable = false;
+
+            player->AddItem(ring);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 6 - WATERFALL
+        // Choice 3 gives Water
+        // ----------------------------------------------------
+
+        if (event == 5 && choice == 3)
+        {
+            Item water;
+
+            water.name = "Bottle of Water";
+            water.type = "Healing";
+            water.healAmount = 3;
+            water.atkBonus = 0;
+            water.consumable = true;
+
+            player->AddItem(water);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 8 - MEDICINAL HERBS
+        // Choice 1 gives Medicinal Herb
+        // ----------------------------------------------------
+
+        if (event == 7 && choice == 1)
+        {
+            Item herb;
+
+            herb.name = "Medicinal Herb";
+            herb.type = "Healing";
+            herb.healAmount = 8;
+            herb.atkBonus = 0;
+            herb.consumable = true;
+
+            player->AddItem(herb);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 9 - TRAINING GROUNDS
+        // Choice 1 gives a Weapon
+        // ----------------------------------------------------
+
+        if (event == 8 && choice == 1)
+        {
+            Item weapon;
+
+            weapon.name = "Old Weapon";
+            weapon.type = "Weapon";
+            weapon.healAmount = 0;
+            weapon.atkBonus = 2;
+            weapon.consumable = false;
+
+            player->AddItem(weapon);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 9 - TRAINING GROUNDS
+        // Choice 3 gives Bread
+        // ----------------------------------------------------
+
+        if (event == 8 && choice == 3)
+        {
+            Item bread;
+
+            bread.name = "Bread";
+            bread.type = "Healing";
+            bread.healAmount = 5;
+            bread.atkBonus = 0;
+            bread.consumable = true;
+
+            player->AddItem(bread);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 10 - WHITE CROW
+        // Choice 1 gives Mystery Item
+        // ----------------------------------------------------
+
+        if (event == 9 && choice == 1)
+        {
+            Item crowItem;
+
+            crowItem.name = "Crow Trinket";
+            crowItem.type = "Key Item";
+            crowItem.healAmount = 0;
+            crowItem.atkBonus = 0;
+            crowItem.consumable = false;
+
+            player->AddItem(crowItem);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 11 - APPLE TREE
+        // Choice 2 gives Apples
+        // ----------------------------------------------------
+
+        if (event == 10 && choice == 2)
+        {
+            Item apple;
+
+            apple.name = "Apple";
+            apple.type = "Healing";
+            apple.healAmount = 4;
+            apple.atkBonus = 0;
+            apple.consumable = true;
+
+            player->AddItem(apple);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 11 - APPLE TREE
+        // Choice 3 also gives Apple
+        // ----------------------------------------------------
+
+        if (event == 10 && choice == 3)
+        {
+            Item apple;
+
+            apple.name = "Apple";
+            apple.type = "Healing";
+            apple.healAmount = 4;
+            apple.atkBonus = 0;
+            apple.consumable = true;
+
+            player->AddItem(apple);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 12 - BEE HIVE
+        // Choices 2 and 3 give Honey
+        // ----------------------------------------------------
+
+        if (event == 11 &&
+            (choice == 2 || choice == 3))
+        {
+            Item honey;
+
+            honey.name = "Honey";
+            honey.type = "Healing";
+            honey.healAmount = 6;
+            honey.atkBonus = 0;
+            honey.consumable = true;
+
+            player->AddItem(honey);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 14 - ABANDONED CARAVAN
+        // Choice 1 gives Charm
+        // ----------------------------------------------------
+
+        if (event == 13 && choice == 1)
+        {
+            Item charm;
+
+            charm.name = "Old Charm";
+            charm.type = "Key Item";
+            charm.healAmount = 0;
+            charm.atkBonus = 0;
+            charm.consumable = false;
+
+            player->AddItem(charm);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 15 - GIANT TREE
+        // Choice 3 gives Fruit
+        // ----------------------------------------------------
+
+        if (event == 14 && choice == 3)
+        {
+            Item fruit;
+
+            fruit.name = "Forest Fruit";
+            fruit.type = "Healing";
+            fruit.healAmount = 5;
+            fruit.atkBonus = 0;
+            fruit.consumable = true;
+
+            player->AddItem(fruit);
+        }
     }
     else
     {

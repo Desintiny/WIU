@@ -1,5 +1,7 @@
 #pragma once
 #include "Entity.h"
+#include "Item.h"
+#include <vector>
 
 class Player : public Entity
 {
@@ -7,6 +9,8 @@ class Player : public Entity
 
 	int minRange;
 	int maxRange;
+
+	std::vector<Item> inventory;
 
 public:
 	Player(string n);
@@ -29,4 +33,9 @@ public:
 
 	void setMaxRange(int);
 	int getMaxRange(void);
+
+	// -------- INVENTORY --------
+	void AddItem(Item item);
+	void DisplayInventory();
+	void UseItem(int index);
 };

@@ -152,3 +152,126 @@ int Player::getMaxRange(void)
 {
 	return maxRange;
 }
+
+void Player::AddItem(Item item)
+{
+    inventory.push_back(item);
+
+    cout << "\nYou obtained: " << item.name << "!" << endl;
+}
+
+
+void Player::DisplayInventory()
+{
+    cout << "\n=====================================" << endl;
+    cout << "              INVENTORY" << endl;
+    cout << "=====================================" << endl;
+
+    cout << "HP: " << getHealth()
+        << "/" << getMaxHealth() << endl;
+
+    cout << "ATK: " << getAttack() << endl;
+
+    cout << "-------------------------------------" << endl;
+
+    if (inventory.empty())
+    {
+        cout << "Inventory is empty." << endl;
+    }
+    else
+    {
+        for (int i = 0; i < inventory.size(); i++)
+        {
+            cout << "[" << i + 1 << "] "
+                << inventory[i].name << endl;
+
+            cout << "    Type: "
+                << inventory[i].type << endl;
+
+            if (inventory[i].healAmount > 0)
+            {
+                cout << "    Heal: "
+                    << inventory[i].healAmount
+                    << " HP" << endl;
+            }
+
+            if (inventory[i].atkBonus > 0)
+            {
+                cout << "    ATK Bonus: +"
+                    << inventory[i].atkBonus << endl;
+            }
+
+            cout << endl;
+        }
+    }
+
+    cout << "-------------------------------------" << endl;
+    cout << "[Item Number] Use Item" << endl;
+    cout << "[0] Back" << endl;
+    cout << "=====================================" << endl;
+}
+
+
+void Player::UseItem(int index)
+{
+    if (index < 0 || index >= inventory.size())
+    {
+        cout << "\nInvalid item." << endl;
+        return;
+    }
+
+    Item item = inventory[index];
+
+    // -------- HEALING ITEM --------
+    if (item.type == "Healing")
+    {
+        int oldHealth = getHealth();
+
+        int newHealth = getHealth() + item.healAmount;
+
+        if (newHealth > getMaxHealth())
+        {
+            newHealth = getMaxHealth();
+        }
+
+        setHealth(newHealth);
+
+        cout << "\nYou used "
+            << item.name << "!" << endl;
+
+        cout << "HP: "
+            << oldHealth
+            << " -> "
+            << getHealth()
+            << endl;
+    }
+
+    // -------- WEAPON --------
+    else if (item.type == "Weapon")
+    {
+        int oldAttack = getAttack();
+
+        setAttack(getAttack() + item.atkBonus);
+
+        cout << "\nYou equipped "
+            << item.name << "!" << endl;
+
+        cout << "ATK: "
+            << oldAttack
+            << " -> "
+            << getAttack()
+            << endl;
+    }
+
+    else
+    {
+        cout << "\nThis item cannot be used yet." << endl;
+        return;
+    }
+
+    // Remove consumable items
+    if (item.consumable)
+    {
+        inventory.erase(inventory.begin() + index);
+    }
+}
