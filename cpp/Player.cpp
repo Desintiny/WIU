@@ -60,19 +60,19 @@ bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
 
 	if (input == 'i' || input == 'I') 
 	{
-		newRow--;      // UP
+		newRow--;	// UP
 	}
 	else if (input == 'j' || input == 'J') 
 	{
-		newCol--; // LEFT
+		newCol--;	// LEFT
 	}
 	else if (input == 'k' || input == 'K') 
 	{
-		newRow++; // RIGHT
+		newRow++;	// RIGHT
 	}
 	else if (input == 'l' || input == 'L') 
 	{
-		newCol++; // DOWN
+		newCol++;	// DOWN
 	}
 	else return false;
 
