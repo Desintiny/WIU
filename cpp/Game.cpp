@@ -62,7 +62,7 @@ void Game::Start()
 		return;
 	}
 
-	event.PathChoice();
+	event.PathChoice(player);
 
 	cout << "\nPress any key to continue...";
 	_getch();
