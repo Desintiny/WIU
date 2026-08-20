@@ -69,8 +69,31 @@ bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
 	return true;
 }
 
-void Player::PlayerAttack()
+void Player::PlayerAttack(Entity* enemy)
 {
+	if (enemy != nullptr)
+	{
+		int dmg = getAttack();
+
+		enemy->TakeDamage(dmg);
+
+		cout << getName() << " attacks " << enemy->getName()
+			<< " for " << dmg << " damage!" << endl;
+
+		if (!enemy->IsAlive())
+		{
+			cout << enemy->getName() << " has been defeated!" << endl;
+		}
+		else
+		{
+			cout << enemy->getName() << " has "
+				<< enemy->getHealth() << " HP left." << endl;
+		}
+	}
+	else
+	{
+		cout << getName() << " attacks empty space. No enemy there." << endl;
+	}
 }
 
 void Player::EquipWeapon()
