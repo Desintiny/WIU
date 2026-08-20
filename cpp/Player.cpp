@@ -58,10 +58,22 @@ bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
 	int newRow = getRow();
 	int newCol = getCol();
 
-	if (input == 'i' || input == 'I') newRow--;      // UP
-	else if (input == 'j' || input == 'J') newCol--; // LEFT
-	else if (input == 'k' || input == 'K') newRow++; // RIGHT
-	else if (input == 'l' || input == 'L') newCol++; // DOWN
+	if (input == 'i' || input == 'I') 
+	{
+		newRow--;      // UP
+	}
+	else if (input == 'j' || input == 'J') 
+	{
+		newCol--; // LEFT
+	}
+	else if (input == 'k' || input == 'K') 
+	{
+		newRow++; // RIGHT
+	}
+	else if (input == 'l' || input == 'L') 
+	{
+		newCol++; // DOWN
+	}
 	else return false;
 
 	targetRow = newRow;
