@@ -48,3 +48,11 @@ void RNG::AbilityHitOrMiss(int chance) {
 bool RNG::GetDidHit() {
     return DidHit;
 }
+
+bool RNG::CriticalHit(int chance) {
+    int roll = rand() % 100;
+    if (roll < chance) {
+        return true;
+    }
+    return false;
+}
