@@ -1,5 +1,7 @@
 #include "Enemy.h"
 #include <cstdlib>
+#include <iostream>
+using namespace std;
 
 Enemy::Enemy(string n) : Entity(n)
 {
@@ -55,7 +57,25 @@ void Enemy::EnemyMovement(char mapGrid[12][12])
 	}
 }
 
-void Enemy::EnemyAttack()
+void Enemy::EnemyAttack(Entity* target)
 {
+	if (target != nullptr)
+	{
+		int dmg = getAttack();
 
+		target->TakeDamage(dmg);
+
+		cout << getName() << " attacks " << target->getName()
+			 << " for " << dmg << " damage!" << endl;
+
+		if (!target->IsAlive())
+		{
+			cout << target->getName() << " has been defeated!" << endl;
+		}
+		else
+		{
+			cout << target->getName() << " has "
+				 << target->getHealth() << " HP left." << endl;
+		}
+	}
 }

@@ -113,6 +113,11 @@ void Game::Start()
 							delete enemy[i];
 							enemy[i] = nullptr;
 						}
+						else
+						{
+							// enemy survived the hit, so it attacks back
+							enemy[i]->EnemyAttack(player);
+						}
 
 						hit = true;
 						break;
@@ -123,6 +128,12 @@ void Game::Start()
 				{
 					cout << player->getName() << " attacks empty space. No enemy there." << endl;
 				}
+
+				if (!player->IsAlive())
+				{
+					cout << "\nYou have been defeated..." << endl;
+					gameRunning = false;
+				}
 			}
 
 			cout << "\nPress any key to continue...";
@@ -131,6 +142,15 @@ void Game::Start()
 		else
 		{
 			player->PlayerMovement(sym, input, mapGrid);
+
+			// ---- ENEMY MOVEMENT (wanders after the player moves) ----
+			for (int i = 0; i < NUM_ENEMY; i++)
+			{
+				if (enemy[i] != nullptr)
+				{
+					enemy[i]->EnemyMovement(mapGrid);
+				}
+			}
 		}
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
