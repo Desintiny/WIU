@@ -15,7 +15,7 @@ public:
 	void PlayerMovement(char sym, char input, char mapGrid[12][12]);
 	bool PlayerAtkDirection(char input, int& targetRow, int& targetCol);
 
-	virtual void PlayerAttack();
+	virtual void PlayerAttack(Entity* enemy);
 	virtual void EquipWeapon();
 
 	void setStamina(int);
