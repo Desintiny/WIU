@@ -10,5 +10,5 @@ public:
 
 	void EnemyMovement(char mapGrid[12][12]);
 
-	virtual void EnemyAttack();
+	virtual void EnemyAttack(Entity* target);
 };
