@@ -23,7 +23,7 @@ public:
 	~Player();
 
 	void PlayerMovement(char sym, char input, char mapGrid[12][12]);
-	bool PlayerAtkDirection(char input, int& targetRow, int& targetCol);
+	bool PlayerAtkDirection(char input, int& dirRow, int& dirCol);
 
 	virtual void PlayerAttack(Entity* enemy);
 	virtual void EquipWeapon();
@@ -39,6 +39,8 @@ public:
 
 	void setMaxRange(int);
 	int getMaxRange(void);
+
+	int GetTotalHealth();	//Dsplay health w Equipment
 
 	int GetAccuracy();	//Equipment Stats	
 	int GetEquipmentHealth();
