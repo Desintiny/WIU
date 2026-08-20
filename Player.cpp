@@ -37,6 +37,16 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	{
 		newCol++;
 	}
+	else if (input == 'q' || input == 'Q') // Cheatcode
+	{
+		GetHpRing();
+		GetSharkToothCharm();
+		GetIdolTrinket();
+		GetSilverBracelet();
+		GetWoodCarvedNecklace();
+		GetGemCharm();
+		GetTreeEmblem();
+	}
 	else
 	{
 		return;
@@ -147,7 +157,11 @@ void Player::PlayerAttack(Entity* enemy)
 
 		if (rng.GetDidHit()) {
 			int dmg = getAttack() + GetEquipmentDamage();
-
+			if (rng.CriticalHit(5))
+			{
+				dmg *= 2;
+				cout << "CRITICAL HIT" << endl;
+			}
 			enemy->TakeDamage(dmg);
 
 			cout << getName() << " attacks " << enemy->getName()
