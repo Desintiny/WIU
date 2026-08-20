@@ -1,7 +1,6 @@
 #pragma once
 #include "Player.h"
 #include "Archer.h"
-#pragma once
 #include "GameScene.h"
 
 #include "Player.h"
