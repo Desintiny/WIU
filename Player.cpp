@@ -1,7 +1,7 @@
 #include "Player.h"
-#include "RNG.h"
-#include "Equipment.h"
 #include <iostream>
+#include "Equipment.h"
+#include "RNG.h"
 
 Player::Player(string n) : Entity(n)
 {
@@ -37,6 +37,16 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	{
 		newCol++;
 	}
+	else if (input == 'q') {
+		GetAttackRing();
+		GetHpRing();
+		GetSharkToothCharm();
+		GetIdolTrinket();
+		GetSilverBracelet();
+		GetWoodCarvedNecklace();
+		GetGemCharm();
+		GetTreeEmblem();
+	}
 	else
 	{
 		return;
@@ -44,7 +54,7 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 
 	if (newRow >= 1 && newRow <= 10 && // within the border
 		newCol >= 1 && newCol <= 10 && // within the border
-		mapGrid[newRow][newCol] == '.') // if the next new position is '.'
+		mapGrid[newRow][newCol] == '.' || mapGrid[newRow][newCol] == 'X')
 	{
 		mapGrid[getRow()][getCol()] = '.';
 
@@ -55,19 +65,32 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	}
 }
 
-bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
+// Returns the DIRECTION of the attack (-1, 0, or 1 on each axis), not a fixed target tile.
+// Game.cpp uses this direction to scan from minRange to maxRange along that line,
+// so ranged classes (Archer/Mage) can actually hit further away than 1 tile.
+bool Player::PlayerAtkDirection(char input, int& dirRow, int& dirCol)
 {
-	int newRow = getRow();
-	int newCol = getCol();
+	dirRow = 0;
+	dirCol = 0;
 
-	if (input == 'i' || input == 'I') newRow--;      // UP
-	else if (input == 'j' || input == 'J') newCol--; // LEFT
-	else if (input == 'k' || input == 'K') newRow++; // RIGHT
-	else if (input == 'l' || input == 'L') newCol++; // DOWN
+	if (input == 'i' || input == 'I')
+	{
+		dirRow = -1;	// UP
+	}
+	else if (input == 'j' || input == 'J')
+	{
+		dirCol = -1;	// LEFT
+	}
+	else if (input == 'k' || input == 'K')
+	{
+		dirRow = 1;		// RIGHT
+	}
+	else if (input == 'l' || input == 'L')
+	{
+		dirCol = 1;		// DOWN
+	}
 	else return false;
 
-	targetRow = newRow;
-	targetCol = newCol;
 	return true;
 }
 void Player::GetAttackRing() {	//Indiv Accuracy addition
@@ -77,6 +100,8 @@ void Player::GetAttackRing() {	//Indiv Accuracy addition
 void Player::GetHpRing() {
 	HpRing.AddAccuracy(5);
 	HpRing.AddHealth(10);
+
+	setHealth(getHealth() + HpRing.GetHealth());
 }
 void Player::GetSharkToothCharm() {
 	SharkToothCharm.AddAccuracy(5);
@@ -86,23 +111,33 @@ void Player::GetIdolTrinket() {
 	IdolTrinket.AddAccuracy(5);
 	IdolTrinket.AddDamage(2);
 	IdolTrinket.AddHealth(2);
+
+	setHealth(getHealth() + HpRing.GetHealth());
 }
 void Player::GetSilverBracelet() {
 	SilverBracelet.AddAccuracy(5);
 	SilverBracelet.AddHealth(5);
+
+	setHealth(getHealth() + HpRing.GetHealth());
 }
 void Player::GetWoodCarvedNecklace() {
 	WoodCarvedNecklace.AddAccuracy(5);
 	WoodCarvedNecklace.AddHealth(2);
+
+	setHealth(getHealth() + HpRing.GetHealth());
 }
 void Player::GetGemCharm() {
 	GemCharm.AddAccuracy(5);
 	GemCharm.AddHealth(7);
+
+	setHealth(getHealth() + HpRing.GetHealth());
 }
 void Player::GetTreeEmblem() {
 	TreeEmblem.AddAccuracy(5);
 	TreeEmblem.AddHealth(5);
 	TreeEmblem.AddDamage(2);
+
+	setHealth(getHealth() + HpRing.GetHealth());
 }
 int Player::GetAccuracy()
 {
@@ -216,4 +251,8 @@ void Player::setMaxRange(int r)
 int Player::getMaxRange(void)
 {
 	return maxRange;
+}
+int Player::GetTotalHealth()
+{
+	return getMaxHealth() + GetEquipmentHealth();
 }
