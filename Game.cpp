@@ -61,6 +61,11 @@ void Game::Start()
 
 	event.PathChoice();
 
+	cout << "\nPress any key to continue...";
+	_getch();
+
+	system("cls");
+
 	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
 	{
@@ -78,8 +83,6 @@ void Game::Start()
 	{
 		SpawnEntity(enemy[i], 'E', 2 + i, 8);
 	}
-
-	system("cls");
 
 	while (gameRunning)
 	{
@@ -101,22 +104,14 @@ void Game::Start()
 						enemy[i]->getRow() == targetRow &&
 						enemy[i]->getCol() == targetCol)
 					{
-						int dmg = player->getAttack();
-						enemy[i]->TakeDamage(dmg);
-
-						cout << player->getName() << " attacks " << enemy[i]->getName()
-							 << " for " << dmg << " damage!" << endl;
+						player->PlayerAttack(enemy[i]);
 
 						if (!enemy[i]->IsAlive())
 						{
-							cout << enemy[i]->getName() << " has been defeated!" << endl;
 							mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+
 							delete enemy[i];
 							enemy[i] = nullptr;
-						}
-						else
-						{
-							cout << enemy[i]->getName() << " has " << enemy[i]->getHealth() << " HP left." << endl;
 						}
 
 						hit = true;
@@ -156,22 +151,29 @@ void Game::MainMenu()
 {
 	int option;
 
-	cout << "============= HAVENFALL =============" << endl;
-	cout << "\t   1. Start Game" << endl;
-	cout << "\t   2. Quit Game" << endl;
-	cout << "=====================================" << endl;
-
-	cout << "\nEnter: ";
-	cin >> option;
-
-	if (option == 1)
+	do
 	{
-		gameRunning = true;
-	}
-	else if (option == 2)
-	{
-		gameRunning = false;
-	}
+		cout << "============= HAVENFALL =============" << endl;
+		cout << "\t   1. Start Game" << endl;
+		cout << "\t   2. Quit Game" << endl;
+		cout << "=====================================" << endl;
+
+		cout << "\nEnter: ";
+		cin >> option;
+
+		if (option == 1)
+		{
+			gameRunning = true;
+		}
+		else if (option == 2)
+		{
+			gameRunning = false;
+		}
+		else
+		{
+			cout << "Invalid option. Try again.\n\n";
+		}
+	} while (option != 1 );
 }
 
 char Game::ClassSelection()
