@@ -42,7 +42,7 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 
 	if (newRow >= 1 && newRow <= 10 && // within the border
 		newCol >= 1 && newCol <= 10 && // within the border
-		mapGrid[newRow][newCol] == '.') // if the next new position is '.'
+		mapGrid[newRow][newCol] == '.' || mapGrid[newRow][newCol] == 'X')
 	{
 		mapGrid[getRow()][getCol()] = '.';
 
@@ -58,10 +58,22 @@ bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
 	int newRow = getRow();
 	int newCol = getCol();
 
-	if (input == 'i' || input == 'I') newRow--;      // UP
-	else if (input == 'j' || input == 'J') newCol--; // LEFT
-	else if (input == 'k' || input == 'K') newRow++; // RIGHT
-	else if (input == 'l' || input == 'L') newCol++; // DOWN
+	if (input == 'i' || input == 'I') 
+	{
+		newRow--;	// UP
+	}
+	else if (input == 'j' || input == 'J') 
+	{
+		newCol--;	// LEFT
+	}
+	else if (input == 'k' || input == 'K') 
+	{
+		newRow++;	// RIGHT
+	}
+	else if (input == 'l' || input == 'L') 
+	{
+		newCol++;	// DOWN
+	}
 	else return false;
 
 	targetRow = newRow;

@@ -69,19 +69,7 @@ void Game::Start()
 	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
 	{
-		SpawnEntity(player, sym, 4, 1);
-	}
-
-	// ------- CREATE X NUMBER OF ENEMIES -------
-	for (int i = 0; i < NUM_ENEMY; i++)
-	{
-		enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
-	}
-
-	// ------- SPAWN X NUMBER OF ENEMIES -------
-	for (int i = 0; i < NUM_ENEMY; i++)
-	{
-		SpawnEntity(enemy[i], 'E', 2 + i, 8);
+		LoadScene(sym, 1);
 	}
 
 	while (gameRunning)
@@ -112,6 +100,28 @@ void Game::Start()
 
 							delete enemy[i];
 							enemy[i] = nullptr;
+
+							bool allEnemiesDead = true;
+
+							for (int j = 0; j < NUM_ENEMY; j++)
+							{
+								if (enemy[j] != nullptr)
+								{
+									allEnemiesDead = false;
+									break;
+								}
+							}
+
+							if (allEnemiesDead && scene.getCurrentScene() == 1)
+							{
+								mapGrid[4][11] = 'X';  // right border
+								cout << "\nThe exit has opened.";
+							}
+							else if (allEnemiesDead && scene.getCurrentScene() == 2)
+							{
+								mapGrid[7][11] = 'X';
+								cout << "\nThe exit has opened.";
+							}
 						}
 
 						hit = true;
@@ -131,11 +141,25 @@ void Game::Start()
 		else
 		{
 			player->PlayerMovement(sym, input, mapGrid);
+			CheckSceneExit(sym);
 		}
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
 		system("cls");
 	}
+}
+
+void Game::StoryDialogue()
+{
+	cout << "\n=====================================" << endl;
+	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
+	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
+	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
+	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
+	cout << "=====================================\n" << endl;
+	cout << "Press any key to continue...";
+	_getch();
+	system("cls");
 }
 
 // ------------- SPAWN ENTITIES ONTO THE MAP -------------
@@ -295,6 +319,19 @@ void Game::DisplayGame(char sym)
 
 	cout << "] " << player->getStamina() << '/' << displayStamina << "\n" << STYLE_NONE << endl;
 
+	if (scene.getCurrentScene() == 1) 
+	{
+		cout << "FOREST\n";
+	}
+	else if (scene.getCurrentScene() == 2) 
+	{
+		cout << "VILLAGE\n";
+	}
+	else 
+	{
+		cout << "BOSS ARENA\n";
+	}
+
 	// ------------ GAME MAP ------------
 
 	for (int row = 0; row < 12; row++)
@@ -312,15 +349,78 @@ void Game::DisplayGame(char sym)
 		 << ", Column " << player->getCol() << endl;
 }
 
-void Game::StoryDialogue()
+void Game::LoadScene(char sym, int sceneNumber)
 {
-	cout << "\n=====================================" << endl;
-	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
-	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
-	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
-	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
-	cout << "=====================================\n" << endl;
-	cout << "Press any key to continue...";
-	_getch();
-	system("cls");
+	scene.ChangeScene(sceneNumber);
+
+	ClearEnemies();
+
+	// Rebuild the 12 x 12 map.
+	for (int row = 0; row < 12; row++)
+	{
+		for (int col = 0; col < 12; col++)
+		{
+			bool isBorder = (row == 0 || row == 11 || col == 0 || col == 11);
+			mapGrid[row][col] = isBorder ? '+' : '.';
+		}
+	}
+	// ------------------------- FOREST -------------------------
+	if (sceneNumber == 1) 
+	{
+		SpawnEntity(player, sym, 4, 1);
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
+		}
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			SpawnEntity(enemy[i], 'E', 2 + i, 8);
+		}
+	}
+	// ------------------------- VILLAGE -------------------------
+	else if (sceneNumber == 2)
+	{
+		SpawnEntity(player, sym, 4, 1);
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			enemy[i] = new Enemy("Village Enemy" + std::to_string(i + 1));
+		}
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			SpawnEntity(enemy[i], 'E', 2 + i, 8);
+		}
+	}
+	// ------------------------- BOSS -------------------------
+	else if (sceneNumber == 3)
+	{
+		SpawnEntity(player, sym, 7, 1);
+	}
+}
+
+void Game::CheckSceneExit(char sym)
+{
+	int row = player->getRow();
+	int col = player->getCol();
+
+	if (scene.getCurrentScene() == 1 && row == 4 && col == 11) // X position
+	{
+		LoadScene(sym, 2);
+	}
+	else if (scene.getCurrentScene() == 2 && row == 7 && col == 11) // X position
+	{
+		LoadScene(sym, 3);
+	}
+}
+
+void Game::ClearEnemies()
+{
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		delete enemy[i];
+		enemy[i] = nullptr;
+	}
 }
