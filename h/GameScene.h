@@ -8,10 +8,6 @@ public:
 	GameScene();
 	~GameScene();
 
-	void SceneForest();
-	void SceneVillage();
-	void SceneBoss();
-
 	void ChangeScene(int newScene);
 	int getCurrentScene(void);
 };
