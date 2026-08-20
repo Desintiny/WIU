@@ -1,5 +1,4 @@
 #pragma once
-
 class RNG {
 private:
     int GotHit;
@@ -13,4 +12,3 @@ public:
 
     bool GetDidHit();
 };
-
