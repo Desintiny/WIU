@@ -17,7 +17,9 @@ Game::Game()
 {
 	gameRunning = true;
 	player = nullptr;
-	for (int i = 0; i < NUM_ENEMY; i++)
+	enemyCount = 0;
+
+	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		enemy[i] = nullptr;
 	}
@@ -35,7 +37,7 @@ Game::Game()
 Game::~Game()
 {
 	delete player;
-	for (int i = 0; i < NUM_ENEMY; i++)
+	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		delete enemy[i];
 	}
@@ -60,7 +62,7 @@ void Game::Start()
 		return;
 	}
 
-	event.PathChoice(player);
+	event.PathChoice();
 
 	cout << "\nPress any key to continue...";
 	_getch();
@@ -119,7 +121,7 @@ void Game::Start()
 					int checkRow = player->getRow() + (dirRow * dist);
 					int checkCol = player->getCol() + (dirCol * dist);
 
-					for (int i = 0; i < NUM_ENEMY; i++)
+					for (int i = 0; i < enemyCount; i++)
 					{
 						if (enemy[i] != nullptr &&
 							enemy[i]->getRow() == checkRow &&
@@ -136,7 +138,7 @@ void Game::Start()
 
 								bool allEnemiesDead = true;
 
-								for (int j = 0; j < NUM_ENEMY; j++)
+								for (int j = 0; j < enemyCount; j++)
 								{
 									if (enemy[j] != nullptr)
 									{
@@ -177,7 +179,7 @@ void Game::Start()
 			player->PlayerMovement(sym, input, mapGrid);
 
 			// ---- ENEMY MOVEMENT (wanders after the player moves) ----
-			for (int i = 0; i < NUM_ENEMY; i++)
+			for (int i = 0; i < enemyCount; i++)
 			{
 				if (enemy[i] != nullptr)
 				{
@@ -190,7 +192,7 @@ void Game::Start()
 		// ---- ENEMY ATTACK CHECK (runs every turn, regardless of what the player just did) ----
 		// Any enemy standing next to the player (including diagonally) gets to attack.
 		
-		for (int i = 0; i < NUM_ENEMY; i++)
+		for (int i = 0; i < enemyCount; i++)
 		{
 			if (enemy[i] != nullptr)
 			{
@@ -265,7 +267,7 @@ void Game::MainMenu()
 		{
 			cout << "Invalid option. Try again.\n\n";
 		}
-	} while (option != 1 );
+	} while (option != 1);
 }
 
 char Game::ClassSelection()
@@ -437,35 +439,42 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
-		}
+		enemyCount = 2;
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			SpawnEntity(enemy[i], 'E', 2 + i, 8);
-		}
+		enemy[0] = new Enemy("Forest Enemy 1");
+		SpawnEntity(enemy[0], 'E', 2, 8);
+
+		enemy[1] = new Enemy("Forest Enemy 2");
+		SpawnEntity(enemy[1], 'E', 6, 8);
 	}
 	// ------------------------- VILLAGE -------------------------
 	else if (sceneNumber == 2)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			enemy[i] = new Enemy("Village Enemy" + std::to_string(i + 1));
-		}
+		enemyCount = 4;
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			SpawnEntity(enemy[i], 'E', 2 + i, 8);
-		}
+		enemy[0] = new Enemy("Village Enemy 1");
+		SpawnEntity(enemy[0], 'E', 2, 8);
+
+		enemy[1] = new Enemy("Village Enemy 2");
+		SpawnEntity(enemy[1], 'E', 4, 8);
+
+		enemy[2] = new Enemy("Village Enemy 3");
+		SpawnEntity(enemy[2], 'E', 6, 8);
+
+		enemy[3] = new Enemy("Village Enemy 4");
+		SpawnEntity(enemy[3], 'E', 8, 8);
 	}
 	// ------------------------- BOSS -------------------------
 	else if (sceneNumber == 3)
 	{
 		SpawnEntity(player, sym, 7, 1);
+
+		enemyCount = 1;
+
+		enemy[0] = new Enemy("Valdrek");
+		SpawnEntity(enemy[0], 'E', 7, 8);
 	}
 }
 
@@ -486,9 +495,11 @@ void Game::CheckSceneExit(char sym)
 
 void Game::ClearEnemies()
 {
-	for (int i = 0; i < NUM_ENEMY; i++)
+	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		delete enemy[i];
 		enemy[i] = nullptr;
 	}
+
+	enemyCount = 0;
 }
