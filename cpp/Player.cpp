@@ -42,7 +42,7 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 
 	if (newRow >= 1 && newRow <= 10 && // within the border
 		newCol >= 1 && newCol <= 10 && // within the border
-		mapGrid[newRow][newCol] == '.') // if the next new position is '.'
+		mapGrid[newRow][newCol] == '.' || mapGrid[newRow][newCol] == 'X')
 	{
 		mapGrid[getRow()][getCol()] = '.';
 
@@ -53,31 +53,32 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	}
 }
 
-bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
+// Returns the DIRECTION of the attack (-1, 0, or 1 on each axis), not a fixed target tile.
+// Game.cpp uses this direction to scan from minRange to maxRange along that line,
+// so ranged classes (Archer/Mage) can actually hit further away than 1 tile.
+bool Player::PlayerAtkDirection(char input, int& dirRow, int& dirCol)
 {
-	int newRow = getRow();
-	int newCol = getCol();
+	dirRow = 0;
+	dirCol = 0;
 
-	if (input == 'i' || input == 'I') 
+	if (input == 'i' || input == 'I')
 	{
-		newRow--;	// UP
+		dirRow = -1;	// UP
 	}
-	else if (input == 'j' || input == 'J') 
+	else if (input == 'j' || input == 'J')
 	{
-		newCol--;	// LEFT
+		dirCol = -1;	// LEFT
 	}
-	else if (input == 'k' || input == 'K') 
+	else if (input == 'k' || input == 'K')
 	{
-		newRow++;	// RIGHT
+		dirRow = 1;		// RIGHT
 	}
-	else if (input == 'l' || input == 'L') 
+	else if (input == 'l' || input == 'L')
 	{
-		newCol++;	// DOWN
+		dirCol = 1;		// DOWN
 	}
 	else return false;
 
-	targetRow = newRow;
-	targetCol = newCol;
 	return true;
 }
 

@@ -9,6 +9,7 @@
 #include <fstream>
 #include <conio.h>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -69,19 +70,7 @@ void Game::Start()
 	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
 	{
-		SpawnEntity(player, sym, 4, 1);
-	}
-
-	// ------- CREATE X NUMBER OF ENEMIES -------
-	for (int i = 0; i < NUM_ENEMY; i++)
-	{
-		enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
-	}
-
-	// ------- SPAWN X NUMBER OF ENEMIES -------
-	for (int i = 0; i < NUM_ENEMY; i++)
-	{
-		SpawnEntity(enemy[i], 'E', 2 + i, 8);
+		LoadScene(sym, 1);
 	}
 
 	while (gameRunning)
@@ -93,46 +82,66 @@ void Game::Start()
 		if (input == 'i' || input == 'j' || input == 'k' || input == 'l' ||
 			input == 'I' || input == 'J' || input == 'K' || input == 'L')
 		{
-			int targetRow, targetCol;
-			if (player->PlayerAtkDirection(input, targetRow, targetCol))
+			int dirRow, dirCol;
+			if (player->PlayerAtkDirection(input, dirRow, dirCol))
 			{
 				bool hit = false;
 
-				for (int i = 0; i < NUM_ENEMY; i++)
+				// Scan tiles from minRange to maxRange along the chosen direction.
+				// A Berserker (1/1) only checks 1 tile away; an Archer (3/4) or Mage (2/3)
+				// can hit further out, so class range actually matters now.
+				for (int dist = player->getMinRange(); dist <= player->getMaxRange() && !hit; dist++)
 				{
-					if (enemy[i] != nullptr &&
-						enemy[i]->getRow() == targetRow &&
-						enemy[i]->getCol() == targetCol)
+					int checkRow = player->getRow() + (dirRow * dist);
+					int checkCol = player->getCol() + (dirCol * dist);
+
+					for (int i = 0; i < NUM_ENEMY; i++)
 					{
-						player->PlayerAttack(enemy[i]);
-
-						if (!enemy[i]->IsAlive())
+						if (enemy[i] != nullptr &&
+							enemy[i]->getRow() == checkRow &&
+							enemy[i]->getCol() == checkCol)
 						{
-							mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+							player->PlayerAttack(enemy[i]);
 
-							delete enemy[i];
-							enemy[i] = nullptr;
-						}
-						else
-						{
-							// enemy survived the hit, so it attacks back
-							enemy[i]->EnemyAttack(player);
-						}
+							if (!enemy[i]->IsAlive())
+							{
+								mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
 
-						hit = true;
-						break;
+								delete enemy[i];
+								enemy[i] = nullptr;
+
+								bool allEnemiesDead = true;
+
+								for (int j = 0; j < NUM_ENEMY; j++)
+								{
+									if (enemy[j] != nullptr)
+									{
+										allEnemiesDead = false;
+										break;
+									}
+								}
+
+								if (allEnemiesDead && scene.getCurrentScene() == 1)
+								{
+									mapGrid[4][11] = 'X';  // right border
+									cout << "\nThe exit has opened.";
+								}
+								else if (allEnemiesDead && scene.getCurrentScene() == 2)
+								{
+									mapGrid[7][11] = 'X';
+									cout << "\nThe exit has opened.";
+								}
+							}
+
+							hit = true;
+							break;
+						}
 					}
 				}
 
 				if (!hit)
 				{
 					cout << player->getName() << " attacks empty space. No enemy there." << endl;
-				}
-
-				if (!player->IsAlive())
-				{
-					cout << "\nYou have been defeated..." << endl;
-					gameRunning = false;
 				}
 			}
 
@@ -151,11 +160,50 @@ void Game::Start()
 					enemy[i]->EnemyMovement(mapGrid);
 				}
 			}
+			CheckSceneExit(sym);
+		}
+
+		// ---- ENEMY ATTACK CHECK (runs every turn, regardless of what the player just did) ----
+		// Any enemy standing next to the player (including diagonally) gets to attack.
+		
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			if (enemy[i] != nullptr)
+			{
+				int rowDist = abs(enemy[i]->getRow() - player->getRow());
+				int colDist = abs(enemy[i]->getCol() - player->getCol());
+
+				// 4-directional adjacency only (matches player movement/attack) —
+				// exactly one tile away on ONE axis, not both at once (no diagonals)
+				if ((rowDist == 1 && colDist == 0) || (rowDist == 0 && colDist == 1))
+				{
+					enemy[i]->EnemyAttack(player);
+				}
+			}
+		}
+
+		if (!player->IsAlive())
+		{
+			cout << "\nYou have been defeated..." << endl;
+			gameRunning = false;
 		}
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
 		system("cls");
 	}
+}
+
+void Game::StoryDialogue()
+{
+	cout << "\n=====================================" << endl;
+	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
+	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
+	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
+	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
+	cout << "=====================================\n" << endl;
+	cout << "Press any key to continue...";
+	_getch();
+	system("cls");
 }
 
 // ------------- SPAWN ENTITIES ONTO THE MAP -------------
@@ -315,6 +363,19 @@ void Game::DisplayGame(char sym)
 
 	cout << "] " << player->getStamina() << '/' << displayStamina << "\n" << STYLE_NONE << endl;
 
+	if (scene.getCurrentScene() == 1) 
+	{
+		cout << "FOREST\n";
+	}
+	else if (scene.getCurrentScene() == 2) 
+	{
+		cout << "VILLAGE\n";
+	}
+	else 
+	{
+		cout << "BOSS ARENA\n";
+	}
+
 	// ------------ GAME MAP ------------
 
 	for (int row = 0; row < 12; row++)
@@ -332,15 +393,78 @@ void Game::DisplayGame(char sym)
 		 << ", Column " << player->getCol() << endl;
 }
 
-void Game::StoryDialogue()
+void Game::LoadScene(char sym, int sceneNumber)
 {
-	cout << "\n=====================================" << endl;
-	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
-	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
-	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
-	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
-	cout << "=====================================\n" << endl;
-	cout << "Press any key to continue...";
-	_getch();
-	system("cls");
+	scene.ChangeScene(sceneNumber);
+
+	ClearEnemies();
+
+	// Rebuild the 12 x 12 map.
+	for (int row = 0; row < 12; row++)
+	{
+		for (int col = 0; col < 12; col++)
+		{
+			bool isBorder = (row == 0 || row == 11 || col == 0 || col == 11);
+			mapGrid[row][col] = isBorder ? '+' : '.';
+		}
+	}
+	// ------------------------- FOREST -------------------------
+	if (sceneNumber == 1) 
+	{
+		SpawnEntity(player, sym, 4, 1);
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
+		}
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			SpawnEntity(enemy[i], 'E', 2 + i, 8);
+		}
+	}
+	// ------------------------- VILLAGE -------------------------
+	else if (sceneNumber == 2)
+	{
+		SpawnEntity(player, sym, 4, 1);
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			enemy[i] = new Enemy("Village Enemy" + std::to_string(i + 1));
+		}
+
+		for (int i = 0; i < NUM_ENEMY; i++)
+		{
+			SpawnEntity(enemy[i], 'E', 2 + i, 8);
+		}
+	}
+	// ------------------------- BOSS -------------------------
+	else if (sceneNumber == 3)
+	{
+		SpawnEntity(player, sym, 7, 1);
+	}
+}
+
+void Game::CheckSceneExit(char sym)
+{
+	int row = player->getRow();
+	int col = player->getCol();
+
+	if (scene.getCurrentScene() == 1 && row == 4 && col == 11) // X position
+	{
+		LoadScene(sym, 2);
+	}
+	else if (scene.getCurrentScene() == 2 && row == 7 && col == 11) // X position
+	{
+		LoadScene(sym, 3);
+	}
+}
+
+void Game::ClearEnemies()
+{
+	for (int i = 0; i < NUM_ENEMY; i++)
+	{
+		delete enemy[i];
+		enemy[i] = nullptr;
+	}
 }
