@@ -30,6 +30,11 @@ class Game
 	GameScene scene;
 	bool exitUnlocked;
 
+	int loopCount;
+	int maxLoops;
+
+	bool encounterFinished;
+
 public:
 	Game();
 	~Game();

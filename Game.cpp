@@ -19,6 +19,12 @@ Game::Game()
 	player = nullptr;
 	enemyCount = 0;
 
+	loopCount = 0;
+	maxLoops = 6;
+
+	exitUnlocked = false;
+	encounterFinished = false;
+
 	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		enemy[i] = nullptr;
@@ -62,16 +68,16 @@ void Game::Start()
 		return;
 	}
 
-	event.PathChoice(player);
-
-	cout << "\nPress any key to continue...";
-	_getch();
-
-	system("cls");
-
 	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
 	{
+		event.PathChoice(player);
+
+		cout << "\nPress any key to continue...";
+		_getch();
+
+		system("cls");
+
 		LoadScene(sym, 1);
 	}
 
@@ -149,13 +155,27 @@ void Game::Start()
 
 								if (allEnemiesDead && scene.getCurrentScene() == 1)
 								{
-									mapGrid[4][11] = 'X';  // right border
-									cout << "\nThe exit has opened.";
+									loopCount++;
+
+									encounterFinished = true;
+
+									cout << "\nEncounter completed!";
+									cout << "\nProgress: "
+										<< loopCount
+										<< "/"
+										<< maxLoops;
 								}
 								else if (allEnemiesDead && scene.getCurrentScene() == 2)
 								{
-									mapGrid[7][11] = 'X';
-									cout << "\nThe exit has opened.";
+									loopCount++;
+
+									encounterFinished = true;
+
+									cout << "\nEncounter completed!";
+									cout << "\nProgress: "
+										<< loopCount
+										<< "/"
+										<< maxLoops;
 								}
 							}
 
@@ -171,8 +191,11 @@ void Game::Start()
 				}
 			}
 
-			cout << "\nPress any key to continue...";
-			_getch();
+			if (!encounterFinished)
+			{
+				cout << "\nPress any key to continue...";
+				_getch();
+			}
 		}
 		else
 		{
@@ -186,7 +209,6 @@ void Game::Start()
 					enemy[i]->EnemyMovement(mapGrid);
 				}
 			}
-			CheckSceneExit(sym);
 		}
 
 		// ---- ENEMY ATTACK CHECK (runs every turn, regardless of what the player just did) ----
@@ -212,6 +234,68 @@ void Game::Start()
 		{
 			cout << "\nYou have been defeated..." << endl;
 			gameRunning = false;
+		}
+
+		if (encounterFinished)
+		{
+			encounterFinished = false;
+
+			cout << "\nPress any key to continue...";
+			_getch();
+
+			system("cls");
+
+
+			// =====================================
+			// MORE ENCOUNTERS REMAIN
+			// =====================================
+
+			if (loopCount < 3)
+			{
+				// Pick another event
+				event.PathChoice(player);
+
+				cout << "\nPress any key to continue...";
+				_getch();
+
+				system("cls");
+
+				// Start another combat encounter
+				LoadScene(sym, 1);
+			}
+			else if (loopCount < 6)
+			{
+				// Pick another event
+				event.PathChoice(player);
+
+				cout << "\nPress any key to continue...";
+				_getch();
+
+				system("cls");
+
+				// Start another combat encounter
+				LoadScene(sym, 2);
+			}
+
+			// =====================================
+			// ALL ENCOUNTERS COMPLETE
+			// =====================================
+
+			else if (loopCount == maxLoops)
+			{
+				cout << "=====================================\n";
+				cout << "          STAGE COMPLETE\n";
+				cout << "=====================================\n";
+				cout << "The boss awaits...\n";
+
+				cout << "\nPress any key to continue...";
+				_getch();
+
+				system("cls");
+
+				// Load Boss Arena
+				LoadScene(sym, 3);
+			}
 		}
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
@@ -475,21 +559,6 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemy[0] = new Enemy("Valdrek");
 		SpawnEntity(enemy[0], 'E', 7, 8);
-	}
-}
-
-void Game::CheckSceneExit(char sym)
-{
-	int row = player->getRow();
-	int col = player->getCol();
-
-	if (scene.getCurrentScene() == 1 && row == 4 && col == 11) // X position
-	{
-		LoadScene(sym, 2);
-	}
-	else if (scene.getCurrentScene() == 2 && row == 7 && col == 11) // X position
-	{
-		LoadScene(sym, 3);
 	}
 }
 
