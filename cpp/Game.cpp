@@ -439,7 +439,7 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		enemyCount = 2;
+		enemyCount = ENEMY_FOREST;
 
 		enemy[0] = new Enemy("Forest Enemy 1");
 		SpawnEntity(enemy[0], 'E', 2, 8);
@@ -452,7 +452,7 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		enemyCount = 4;
+		enemyCount = ENEMY_VILLAGE;
 
 		enemy[0] = new Enemy("Village Enemy 1");
 		SpawnEntity(enemy[0], 'E', 2, 8);
@@ -471,7 +471,7 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 7, 1);
 
-		enemyCount = 1;
+		enemyCount = ENEMY_BOSS;
 
 		enemy[0] = new Enemy("Valdrek");
 		SpawnEntity(enemy[0], 'E', 7, 8);
