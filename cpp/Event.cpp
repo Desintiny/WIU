@@ -27,7 +27,7 @@ bool Event::IsUsed(int event)
     if (!inputFile.is_open())
     {
         cout << "ERROR: Could not open eventnames.txt\n";
-    
+
     }
 
     return false;
@@ -40,7 +40,7 @@ bool Event::IsUsed(int event)
 
 void Event::PathChoice(Player* player)
 {
-   cout << "Current folder: "
+    cout << "Current folder: "
         << filesystem::current_path()
         << endl;
 

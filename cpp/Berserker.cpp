@@ -2,7 +2,7 @@
 
 Berserker::Berserker(string n) : Player(n)
 {
-	static const int health = 40;
+	static const int health = 40000;
 	static const int stamina = 10;
 
 	setHealth(health);
