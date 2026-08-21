@@ -1,5 +1,7 @@
 #pragma once
 #include "Entity.h"
+#include "Item.h"
+#include <vector>
 
 class Player : public Entity
 {
@@ -8,12 +10,14 @@ class Player : public Entity
 	int minRange;
 	int maxRange;
 
+	std::vector<Item> inventory;
+
 public:
 	Player(string n);
 	~Player();
 
 	void PlayerMovement(char sym, char input, char mapGrid[12][12]);
-	bool PlayerAtkDirection(char input, int& targetRow, int& targetCol);
+	bool PlayerAtkDirection(char input, int& dirRow, int& dirCol);
 
 	virtual void PlayerAttack(Entity* enemy);
 	virtual void EquipWeapon();
@@ -29,4 +33,9 @@ public:
 
 	void setMaxRange(int);
 	int getMaxRange(void);
+
+	// -------- INVENTORY --------
+	void AddItem(Item item);
+	void DisplayInventory();
+	void UseItem(int index);
 };

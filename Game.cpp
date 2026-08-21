@@ -9,6 +9,7 @@
 #include <fstream>
 #include <conio.h>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -16,7 +17,9 @@ Game::Game()
 {
 	gameRunning = true;
 	player = nullptr;
-	for (int i = 0; i < NUM_ENEMY; i++)
+	enemyCount = 0;
+
+	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		enemy[i] = nullptr;
 	}
@@ -34,7 +37,7 @@ Game::Game()
 Game::~Game()
 {
 	delete player;
-	for (int i = 0; i < NUM_ENEMY; i++)
+	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		delete enemy[i];
 	}
@@ -59,7 +62,7 @@ void Game::Start()
 		return;
 	}
 
-	event.PathChoice();
+	event.PathChoice(player);
 
 	cout << "\nPress any key to continue...";
 	_getch();
@@ -78,71 +81,93 @@ void Game::Start()
 
 		char input = _getch();
 
-		if (input == 'i' || input == 'j' || input == 'k' || input == 'l' ||
-			input == 'I' || input == 'J' || input == 'K' || input == 'L')
+		// -------- INVENTORY --------
+		if (input == 'e' || input == 'E')
 		{
-			int targetRow, targetCol;
-			if (player->PlayerAtkDirection(input, targetRow, targetCol))
+			system("cls");
+
+			player->DisplayInventory();
+
+			int choice;
+
+			cout << "\nChoice: ";
+			cin >> choice;
+
+			if (choice > 0)
+			{
+				player->UseItem(choice - 1);
+			}
+
+			cout << "\nPress any key to continue...";
+			_getch();
+		}
+
+		// -------- ATTACK --------
+		else if (input == 'i' || input == 'j' ||
+			input == 'k' || input == 'l' ||
+			input == 'I' || input == 'J' ||
+			input == 'K' || input == 'L')
+		{
+			int dirRow, dirCol;
+			if (player->PlayerAtkDirection(input, dirRow, dirCol))
 			{
 				bool hit = false;
 
-				for (int i = 0; i < NUM_ENEMY; i++)
+				// Scan tiles from minRange to maxRange along the chosen direction.
+				// A Berserker (1/1) only checks 1 tile away; an Archer (3/4) or Mage (2/3)
+				// can hit further out, so class range actually matters now.
+				for (int dist = player->getMinRange(); dist <= player->getMaxRange() && !hit; dist++)
 				{
-					if (enemy[i] != nullptr &&
-						enemy[i]->getRow() == targetRow &&
-						enemy[i]->getCol() == targetCol)
+					int checkRow = player->getRow() + (dirRow * dist);
+					int checkCol = player->getCol() + (dirCol * dist);
+
+					for (int i = 0; i < enemyCount; i++)
 					{
-						player->PlayerAttack(enemy[i]);
-
-						if (!enemy[i]->IsAlive())
+						if (enemy[i] != nullptr &&
+							enemy[i]->getRow() == checkRow &&
+							enemy[i]->getCol() == checkCol)
 						{
-							mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+							player->PlayerAttack(enemy[i]);
 
-							delete enemy[i];
-							enemy[i] = nullptr;
-
-							bool allEnemiesDead = true;
-
-							for (int j = 0; j < NUM_ENEMY; j++)
+							if (!enemy[i]->IsAlive())
 							{
-								if (enemy[j] != nullptr)
+								mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+
+								delete enemy[i];
+								enemy[i] = nullptr;
+
+								bool allEnemiesDead = true;
+
+								for (int j = 0; j < enemyCount; j++)
 								{
-									allEnemiesDead = false;
-									break;
+									if (enemy[j] != nullptr)
+									{
+										allEnemiesDead = false;
+										break;
+									}
+								}
+
+								if (allEnemiesDead && scene.getCurrentScene() == 1)
+								{
+									mapGrid[4][11] = 'X';  // right border
+									cout << "\nThe exit has opened.";
+								}
+								else if (allEnemiesDead && scene.getCurrentScene() == 2)
+								{
+									mapGrid[7][11] = 'X';
+									cout << "\nThe exit has opened.";
 								}
 							}
 
-							if (allEnemiesDead && scene.getCurrentScene() == 1)
-							{
-								mapGrid[4][11] = 'X';  // right border
-								cout << "\nThe exit has opened.";
-							}
-							else if (allEnemiesDead && scene.getCurrentScene() == 2)
-							{
-								mapGrid[7][11] = 'X';
-								cout << "\nThe exit has opened.";
-							}
+							hit = true;
+							break;
 						}
-						else
-						{
-							// enemy survived the hit, so it attacks back
-							enemy[i]->EnemyAttack(player);
-						}
-
-						hit = true;
-						break;
 					}
 				}
 
 				if (!hit)
 				{
 					cout << player->getName() << " attacks empty space. No enemy there." << endl;
-				}
-
-				if (!player->IsAlive())
-				{
-					cout << "\nYou have been defeated..." << endl;
-					gameRunning = false;
 				}
 			}
 
@@ -154,7 +179,7 @@ void Game::Start()
 			player->PlayerMovement(sym, input, mapGrid);
 
 			// ---- ENEMY MOVEMENT (wanders after the player moves) ----
-			for (int i = 0; i < NUM_ENEMY; i++)
+			for (int i = 0; i < enemyCount; i++)
 			{
 				if (enemy[i] != nullptr)
 				{
@@ -162,6 +187,31 @@ void Game::Start()
 				}
 			}
 			CheckSceneExit(sym);
+		}
+
+		// ---- ENEMY ATTACK CHECK (runs every turn, regardless of what the player just did) ----
+		// Any enemy standing next to the player (including diagonally) gets to attack.
+		
+		for (int i = 0; i < enemyCount; i++)
+		{
+			if (enemy[i] != nullptr)
+			{
+				int rowDist = abs(enemy[i]->getRow() - player->getRow());
+				int colDist = abs(enemy[i]->getCol() - player->getCol());
+
+				// 4-directional adjacency only (matches player movement/attack) —
+				// exactly one tile away on ONE axis, not both at once (no diagonals)
+				if ((rowDist == 1 && colDist == 0) || (rowDist == 0 && colDist == 1))
+				{
+					enemy[i]->EnemyAttack(player);
+				}
+			}
+		}
+
+		if (!player->IsAlive())
+		{
+			cout << "\nYou have been defeated..." << endl;
+			gameRunning = false;
 		}
 
 		// Clears the the rest of the console text, so it doesn't show the previous map
@@ -217,7 +267,7 @@ void Game::MainMenu()
 		{
 			cout << "Invalid option. Try again.\n\n";
 		}
-	} while (option != 1 );
+	} while (option != 1);
 }
 
 char Game::ClassSelection()
@@ -364,7 +414,7 @@ void Game::DisplayGame(char sym)
 		cout << endl;
 	}
 
-	cout << "\n[WASD] Move | [IJKL] Attack" << endl;
+	cout << "\n[WASD] Move | [IJKL] Attack | [E] Inventory" << endl;
 	cout << "Position: Row " << player->getRow()
 		 << ", Column " << player->getCol() << endl;
 }
@@ -389,35 +439,42 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			enemy[i] = new Enemy("Enemy" + std::to_string(i + 1));
-		}
+		enemyCount = ENEMY_FOREST;
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			SpawnEntity(enemy[i], 'E', 2 + i, 8);
-		}
+		enemy[0] = new Enemy("Forest Enemy 1");
+		SpawnEntity(enemy[0], 'E', 2, 8);
+
+		enemy[1] = new Enemy("Forest Enemy 2");
+		SpawnEntity(enemy[1], 'E', 6, 8);
 	}
 	// ------------------------- VILLAGE -------------------------
 	else if (sceneNumber == 2)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			enemy[i] = new Enemy("Village Enemy" + std::to_string(i + 1));
-		}
+		enemyCount = ENEMY_VILLAGE;
 
-		for (int i = 0; i < NUM_ENEMY; i++)
-		{
-			SpawnEntity(enemy[i], 'E', 2 + i, 8);
-		}
+		enemy[0] = new Enemy("Village Enemy 1");
+		SpawnEntity(enemy[0], 'E', 2, 8);
+
+		enemy[1] = new Enemy("Village Enemy 2");
+		SpawnEntity(enemy[1], 'E', 4, 8);
+
+		enemy[2] = new Enemy("Village Enemy 3");
+		SpawnEntity(enemy[2], 'E', 6, 8);
+
+		enemy[3] = new Enemy("Village Enemy 4");
+		SpawnEntity(enemy[3], 'E', 8, 8);
 	}
 	// ------------------------- BOSS -------------------------
 	else if (sceneNumber == 3)
 	{
 		SpawnEntity(player, sym, 7, 1);
+
+		enemyCount = ENEMY_BOSS;
+
+		enemy[0] = new Enemy("Valdrek");
+		SpawnEntity(enemy[0], 'E', 7, 8);
 	}
 }
 
@@ -438,9 +495,11 @@ void Game::CheckSceneExit(char sym)
 
 void Game::ClearEnemies()
 {
-	for (int i = 0; i < NUM_ENEMY; i++)
+	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		delete enemy[i];
 		enemy[i] = nullptr;
 	}
+
+	enemyCount = 0;
 }
