@@ -83,23 +83,32 @@ bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
 
 void Player::PlayerAttack(Entity* enemy)
 {
-	if (enemy != nullptr)
-	{
-		int dmg = getAttack();
-
-		enemy->TakeDamage(dmg);
-
-		cout << getName() << " attacks " << enemy->getName()
-			<< " for " << dmg << " damage!" << endl;
-
-		if (!enemy->IsAlive())
-		{
-			cout << enemy->getName() << " has been defeated!" << endl;
-		}
-		else
-		{
-			cout << enemy->getName() << " has "
-				<< enemy->getHealth() << " HP left." << endl;
+		if (enemy != nullptr) {
+		RNG rng;
+		rng.SetAccuracy(GetAccuracy()); //Equipment Accuracy
+		rng.HitOrMiss();
+	
+		if (rng.GetDidHit()) {
+			int dmg = getAttack() + GetEquipmentDamage();
+			if (rng.CriticalHit(GetCritChance()))
+			{
+				dmg *= 2;
+				cout << "CRITICAL HIT" << endl;
+			}
+			enemy->TakeDamage(dmg);
+	
+			cout << getName() << " attacks " << enemy->getName()
+				<< " for " << dmg << " damage!" << endl;
+	
+			if (!enemy->IsAlive())
+			{
+				cout << enemy->getName() << " has been defeated!" << endl;
+			}
+			else
+			{
+				cout << enemy->getName() << " has "
+					<< enemy->getHealth() << " HP left." << endl;
+			}
 		}
 	}
 	else
