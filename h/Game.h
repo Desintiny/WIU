@@ -18,17 +18,21 @@ class Game
 
 	Player* player;
 
-	static const int NUM_ENEMY = 3;
+	static const int MAX_ENEMIES = 10;
 
-	Enemy* enemy[NUM_ENEMY];
+	Enemy* enemy[MAX_ENEMIES];
+	int enemyCount;
+
+	static const int ENEMY_FOREST = 2;
+	static const int ENEMY_VILLAGE = 4;
+	static const int ENEMY_BOSS = 1;
 
 	GameScene scene;
 	bool exitUnlocked;
 
-	// Stage loop
 	int loopCount;
 	int maxLoops;
-	
+
 	bool encounterFinished;
 
 public:
