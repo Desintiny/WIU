@@ -434,8 +434,9 @@ void Game::DisplayGame(char sym)
 
 	if (inCombat)
 	{
-		cout << STYLE_PURPLE << "ENEMY (E)" << endl;
+		cout << STYLE_PURPLE << "ENEMY (E)";
 	}
+	cout << endl;
 
 	// ------------ PLAYER HEALTH ------------
 
@@ -459,8 +460,9 @@ void Game::DisplayGame(char sym)
 			cout << enemyHealthBar[i];
 		}
 
-		cout << "] \n";
+		cout << "] ";
 	}
+	cout << endl;
 
 	// ------------ PLAYER STAMINA ------------
 
