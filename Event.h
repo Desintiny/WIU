@@ -1,10 +1,1 @@
-#pragma once
-class Event
-{
-private:
-
-public:
-	void SetEvent();
-	void SetTransitionEvent();
-};
-
+Use Events.h in main
