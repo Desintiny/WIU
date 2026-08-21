@@ -23,6 +23,10 @@ class Game
 	Enemy* enemy[MAX_ENEMIES];
 	int enemyCount;
 
+	static const int ENEMY_FOREST = 2;
+	static const int ENEMY_VILLAGE = 4;
+	static const int ENEMY_BOSS = 1;
+
 	GameScene scene;
 	bool exitUnlocked;
 
