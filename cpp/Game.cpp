@@ -21,6 +21,7 @@ Game::Game()
 	loopCount = 0;
 	maxLoops = 3;
 
+	exitUnlocked = false;
 	encounterFinished = false;
 
 	for (int i = 0; i < NUM_ENEMY; i++)
