@@ -1,6 +1,5 @@
 #pragma once
 #include "Entity.h"
-#include "Equipment.h"
 
 class Player : public Entity
 {
@@ -9,21 +8,12 @@ class Player : public Entity
 	int minRange;
 	int maxRange;
 
-	Equipment AttackRing;
-	Equipment HpRing;
-	Equipment SharkToothCharm;
-	Equipment IdolTrinket;
-	Equipment SilverBracelet;
-	Equipment WoodCarvedNecklace;
-	Equipment GemCharm;
-	Equipment TreeEmblem;
-
 public:
 	Player(string n);
 	~Player();
 
 	void PlayerMovement(char sym, char input, char mapGrid[12][12]);
-	bool PlayerAtkDirection(char input, int& dirRow, int& dirCol);
+	bool PlayerAtkDirection(char input, int& targetRow, int& targetCol);
 
 	virtual void PlayerAttack(Entity* enemy);
 	virtual void EquipWeapon();
@@ -40,16 +30,6 @@ public:
 	void setMaxRange(int);
 	int getMaxRange(void);
 
-	int GetAccuracy();	//Equipment Stats	
-	int GetEquipmentHealth();
-	int GetEquipmentDamage();
-
-	void GetAttackRing();	//Indiv equipment
-	void GetHpRing();
-	void GetSharkToothCharm();
-	void GetIdolTrinket();
-	void GetSilverBracelet();
-	void GetWoodCarvedNecklace();
-	void GetGemCharm();
-	void GetTreeEmblem();
+	//Test code
+	bool PlayerAbilityDirection(char input, int& targetRow, int& targetCol);
 };
