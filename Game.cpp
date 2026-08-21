@@ -93,29 +93,35 @@ void Game::Start()
 		if (input == 'i' || input == 'j' || input == 'k' || input == 'l' ||
 			input == 'I' || input == 'J' || input == 'K' || input == 'L')
 		{
-			int targetRow, targetCol;
-			if (player->PlayerAtkDirection(input, targetRow, targetCol))
+			int dirRow, dirCol;
+			if (player->PlayerAtkDirection(input, dirRow, dirCol))
 			{
 				bool hit = false;
 
-				for (int i = 0; i < NUM_ENEMY; i++)
+				for (int dist = player->getMinRange(); dist <= player->getMaxRange() && !hit; dist++)
 				{
-					if (enemy[i] != nullptr &&
-						enemy[i]->getRow() == targetRow &&
-						enemy[i]->getCol() == targetCol)
+					int checkRow = player->getRow() + (dirRow * dist);
+					int checkCol = player->getCol() + (dirCol * dist);
+
+					for (int i = 0; i < NUM_ENEMY; i++)
 					{
-						player->PlayerAttack(enemy[i]);
-
-						if (!enemy[i]->IsAlive())
+						if (enemy[i] != nullptr &&
+							enemy[i]->getRow() == checkRow &&
+							enemy[i]->getCol() == checkCol)
 						{
-							mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+							player->PlayerAttack(enemy[i]);
 
-							delete enemy[i];
-							enemy[i] = nullptr;
+							if (!enemy[i]->IsAlive())
+							{
+								mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+
+								delete enemy[i];
+								enemy[i] = nullptr;
+							}
+
+							hit = true;
+							break;
 						}
-
-						hit = true;
-						break;
 					}
 				}
 
@@ -133,12 +139,14 @@ void Game::Start()
 		else if (input == 'g' || input == 'G')
 		{
 			cout << "\n--- Abilities ---" << endl;
-			cout << "[1] Fireball" << endl;
-			cout << "[2] Magic Missile" << endl;
-			cout << "[3] Blood Pierce" << endl;
+			cout << "[1] Fireball  [2] Magic Missile  [3] Blood Pierce" << endl;
+			cout << "[4] Icicle Spear  [5] Lightningbolt  [6] Blood Bomb" << endl;
+			cout << "[7] Poison Shot  [8] Air Cutter  [9] Boulder Throw" << endl;
+			cout << "[0] Water Bolt" << endl;
+
 
 			char abilityChoice = _getch();
-
+			//fireball
 			if (abilityChoice == '1')
 			{
 				cout << "\nInput a Direction [IJKL]: " << endl;
@@ -148,31 +156,37 @@ void Game::Start()
 				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
 					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
 				{
-					int targetRow, targetCol;
-					if (player->PlayerAbilityDirection(abilityDirection, targetRow, targetCol))
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
 					{
 						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 3;
 
-						for (int i = 0; i < NUM_ENEMY; i++)
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
 						{
-							if (enemy[i] != nullptr &&
-								enemy[i]->getRow() == targetRow &&
-								enemy[i]->getCol() == targetCol)
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
 							{
-								Ability.Fireball(*enemy[i]);
-
-								cout << player->getName() << " casts Fireball on " << enemy[i]->getName()
-									<< "! HP left: " << enemy[i]->getHealth() << endl;
-
-								if (!enemy[i]->IsAlive())
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
 								{
-									mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
-									delete enemy[i];
-									enemy[i] = nullptr;
-								}
+									Ability.Fireball(*enemy[i]);
+									cout << player->getName() << " casts Fireball on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
 
-								hit = true;
-								break;
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
 							}
 						}
 
@@ -186,6 +200,7 @@ void Game::Start()
 					_getch();
 				}
 			}
+			//magic missile
 			else if (abilityChoice == '2')
 			{
 				cout << "\nInput a Direction [IJKL]: " << endl;
@@ -195,37 +210,43 @@ void Game::Start()
 				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
 					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
 				{
-					int targetRow, targetCol;
-					if (player->PlayerAbilityDirection(abilityDirection, targetRow, targetCol))
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
 					{
 						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 4;
 
-						for (int i = 0; i < NUM_ENEMY; i++)
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
 						{
-							if (enemy[i] != nullptr &&
-								enemy[i]->getRow() == targetRow &&
-								enemy[i]->getCol() == targetCol)
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
 							{
-								Ability.MagicMissile(*enemy[i]);
-
-								cout << player->getName() << " casts Magic Missile on " << enemy[i]->getName()
-									<< "! HP left: " << enemy[i]->getHealth() << endl;
-
-								if (!enemy[i]->IsAlive())
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
 								{
-									mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
-									delete enemy[i];
-									enemy[i] = nullptr;
-								}
+									Ability.MagicMissile(*enemy[i]);
+									cout << player->getName() << " casts Magic Missile on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
 
-								hit = true;
-								break;
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
 							}
 						}
 
 						if (!hit)
 						{
-							cout << player->getName() << " casts Fireball at empty space. No enemy there." << endl;
+							cout << player->getName() << " casts Magic Missile at empty space. No enemy there." << endl;
 						}
 					}
 
@@ -233,6 +254,7 @@ void Game::Start()
 					_getch();
 				}
 			}
+			//blood pierce
 			else if (abilityChoice == '3')
 			{
 				cout << "\nInput a Direction [IJKL]: " << endl;
@@ -242,38 +264,421 @@ void Game::Start()
 				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
 					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
 				{
-					int targetRow, targetCol;
-					if (player->PlayerAbilityDirection(abilityDirection, targetRow, targetCol))
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
 					{
 						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 4;
 
-						for (int i = 0; i < NUM_ENEMY; i++)
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
 						{
-							if (enemy[i] != nullptr &&
-								enemy[i]->getRow() == targetRow &&
-								enemy[i]->getCol() == targetCol)
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
 							{
-								Ability.BloodPierce(*enemy[i], *player);
-
-								cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << endl;
-								cout << player->getName() << " sacrifices 5 HP" << endl;
-								cout << enemy[i]->getName() << " HP left: " << enemy[i]->getHealth() << endl;
-
-								if (!enemy[i]->IsAlive())
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
 								{
-									mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
-									delete enemy[i];
-									enemy[i] = nullptr;
-								}
+									Ability.BloodPierce(*enemy[i], *player);
+									cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
 
-								hit = true;
-								break;
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
 							}
 						}
 
 						if (!hit)
 						{
-							cout << player->getName() << " casts Fireball at empty space. No enemy there." << endl;
+							cout << player->getName() << " casts Blood Pierce at empty space. No enemy there." << endl;
+						}
+					}
+
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			//icicle spear
+			else if (abilityChoice == '4')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
+					{
+						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 2;
+
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
+						{
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
+							{
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
+								{
+									Ability.IcicleSpear(*enemy[i]);
+									cout << player->getName() << " casts Icicle Spear on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
+
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
+							}
+						}
+
+						if (!hit)
+						{
+							cout << player->getName() << " casts Icicle Spear at empty space. No enemy there." << endl;
+						}
+					}
+
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			//lightning bolt
+			else if (abilityChoice == '5')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
+					{
+						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 5;
+
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
+						{
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
+							{
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
+								{
+									Ability.LightningBolt(*enemy[i]);
+									cout << player->getName() << " casts Lightningbolt on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
+
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
+							}
+						}
+
+						if (!hit)
+						{
+							cout << player->getName() << " casts Lightningbolt at empty space. No enemy there." << endl;
+						}
+					}
+
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			//blood bomb
+			else if (abilityChoice == '6')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
+					{
+						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 3;
+
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
+						{
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
+							{
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
+								{
+									Ability.BloodBomb(*enemy[i], *player);
+									cout << player->getName() << " casts Blood Bomb on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
+
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
+							}
+						}
+
+						if (!hit)
+						{
+							cout << player->getName() << " casts Blood Bomb at empty space. No enemy there." << endl;
+						}
+					}
+
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			// poison shot
+			else if (abilityChoice == '7')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
+					{
+						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 3;
+
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
+						{
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
+							{
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
+								{
+									Ability.PoisonShot(*enemy[i]);
+									cout << player->getName() << " casts Poison Shot on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
+
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
+							}
+						}
+
+						if (!hit)
+						{
+							cout << player->getName() << " casts Poison Shot at empty space. No enemy there." << endl;
+						}
+					}
+
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			//air cutter
+			else if (abilityChoice == '8')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
+					{
+						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 5;
+
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
+						{
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
+							{
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
+								{
+									Ability.Aircutter(*enemy[i]);
+									cout << player->getName() << " casts Air Cutter on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
+
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
+							}
+						}
+
+						if (!hit)
+						{
+							cout << player->getName() << " casts Air Cutter at empty space. No enemy there." << endl;
+						}
+					}
+
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			//boulder throw
+			else if (abilityChoice == '9')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
+					{
+						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 2;
+
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
+						{
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
+							{
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
+								{
+									Ability.BoulderThrow(*enemy[i]);
+									cout << player->getName() << " casts Boulder Throw on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
+
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
+							}
+						}
+
+						if (!hit)
+						{
+							cout << player->getName() << " casts Boulder Throw at empty space. No enemy there." << endl;
+						}
+					}
+
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			//Water Bolt
+			else if (abilityChoice == '0')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' || abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' || abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int dirRow, dirCol;
+					if (player->PlayerAbilityDirection(abilityDirection, dirRow, dirCol))
+					{
+						bool hit = false;
+						int AbilityRangeMin = 1;
+						int AbilityRangeMax = 3;
+
+						for (int dist = AbilityRangeMin; dist <= AbilityRangeMax && !hit; dist++)
+						{
+							int checkRow = player->getRow() + (dirRow * dist);
+							int checkCol = player->getCol() + (dirCol * dist);
+
+							for (int i = 0; i < NUM_ENEMY; i++)
+							{
+								if (enemy[i] != nullptr &&
+									enemy[i]->getRow() == checkRow &&
+									enemy[i]->getCol() == checkCol)
+								{
+									Ability.WaterBolt(*enemy[i]);
+									cout << player->getName() << " casts Water Bolt on " << enemy[i]->getName()
+										<< "! HP left: " << enemy[i]->getHealth() << endl;
+
+									if (!enemy[i]->IsAlive())
+									{
+										mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+										delete enemy[i];
+										enemy[i] = nullptr;
+									}
+									hit = true;
+									break;
+								}
+							}
+						}
+
+						if (!hit)
+						{
+							cout << player->getName() << " casts Water Bolt at empty space. No enemy there." << endl;
 						}
 					}
 
@@ -496,4 +901,3 @@ void Game::StoryDialogue()
 	system("cls");
 }
 
- 

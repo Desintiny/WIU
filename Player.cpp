@@ -53,62 +53,79 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	}
 }
 
-bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
-{
-	int newRow = getRow();
-	int newCol = getCol();
+//bool Player::PlayerAtkDirection(char input, int& targetRow, int& targetCol)
+//{
+//	int newRow = getRow();
+//	int newCol = getCol();
+//
+//	if (input == 'i' || input == 'I') 
+//	{
+//		newRow--;	// UP
+//	}
+//	else if (input == 'j' || input == 'J') 
+//	{
+//		newCol--;	// LEFT
+//	}
+//	else if (input == 'k' || input == 'K') 
+//	{
+//		newRow++;	// RIGHT
+//	}
+//	else if (input == 'l' || input == 'L') 
+//	{
+//		newCol++;	// DOWN
+//	}
+//	else return false;
+//
+//	targetRow = newRow;
+//	targetCol = newCol;
+//	return true;
+//}
 
-	if (input == 'i' || input == 'I') 
+bool Player::PlayerAtkDirection(char input, int& dirRow, int& dirCol)
+{
+	dirRow = 0;
+	dirCol = 0;
+
+	if (input == 'i' || input == 'I')
 	{
-		newRow--;	// UP
+		dirRow = -1;	// UP
 	}
-	else if (input == 'j' || input == 'J') 
+	else if (input == 'j' || input == 'J')
 	{
-		newCol--;	// LEFT
+		dirCol = -1;	// LEFT
 	}
-	else if (input == 'k' || input == 'K') 
+	else if (input == 'k' || input == 'K')
 	{
-		newRow++;	// RIGHT
+		dirRow = 1;		// RIGHT
 	}
-	else if (input == 'l' || input == 'L') 
+	else if (input == 'l' || input == 'L')
 	{
-		newCol++;	// DOWN
+		dirCol = 1;		// DOWN
 	}
 	else return false;
 
-	targetRow = newRow;
-	targetCol = newCol;
 	return true;
 }
 
 void Player::PlayerAttack(Entity* enemy)
 {
-		if (enemy != nullptr) {
-		RNG rng;
-		rng.SetAccuracy(GetAccuracy()); //Equipment Accuracy
-		rng.HitOrMiss();
-	
-		if (rng.GetDidHit()) {
-			int dmg = getAttack() + GetEquipmentDamage();
-			if (rng.CriticalHit(GetCritChance()))
-			{
-				dmg *= 2;
-				cout << "CRITICAL HIT" << endl;
-			}
-			enemy->TakeDamage(dmg);
-	
-			cout << getName() << " attacks " << enemy->getName()
-				<< " for " << dmg << " damage!" << endl;
-	
-			if (!enemy->IsAlive())
-			{
-				cout << enemy->getName() << " has been defeated!" << endl;
-			}
-			else
-			{
-				cout << enemy->getName() << " has "
-					<< enemy->getHealth() << " HP left." << endl;
-			}
+	if (enemy != nullptr)
+	{
+		int dmg = getAttack();
+
+		enemy->TakeDamage(dmg);
+
+		cout << getName() << " attacks " << enemy->getName()
+			<< " for " << dmg << " damage!" << endl;
+
+		if (!enemy->IsAlive())
+		{
+			cout << enemy->getName() << " has been defeated!" << endl;
+		}
+		else
+		{
+			cout << enemy->getName() << " has "
+				<< enemy->getHealth() << " HP left." << endl;
 		}
 	}
 	else
@@ -162,30 +179,28 @@ int Player::getMaxRange(void)
 }
 
 //test
-bool Player::PlayerAbilityDirection(char input, int& targetRow, int& targetCol)
+bool Player::PlayerAbilityDirection(char input, int& dirRow, int& dirCol)
 {
-	int newRow = getRow();
-	int newCol = getCol();
+	dirRow = 0;
+	dirCol = 0;
 
 	if (input == 'i' || input == 'I')
 	{
-		newRow--;	// UP
+		dirRow--;	// UP
 	}
 	else if (input == 'j' || input == 'J')
 	{
-		newCol--;	// LEFT
+		dirCol--;	// LEFT
 	}
 	else if (input == 'k' || input == 'K')
 	{
-		newRow++;	// DOWN
+		dirRow++;	// DOWN
 	}
 	else if (input == 'l' || input == 'L')
 	{
-		newCol++;	// RIGHT
+		dirCol++;	// RIGHT
 	}
 	else return false;
 
-	targetRow = newRow;
-	targetCol = newCol;
 	return true;
 }
