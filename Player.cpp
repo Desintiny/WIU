@@ -85,13 +85,13 @@ bool Player::PlayerAtkDirection(char input, int& dirRow, int& dirCol)
 }
 void Player::GetAttackRing()
 {
-	AttackRing.AddAccuracy(5);
+	AttackRing.AddAccuracy(2);
 	AttackRing.AddDamage(4);
 }
 
 void Player::GetHpRing()
 {
-	HpRing.AddAccuracy(5);
+	HpRing.AddAccuracy(2);
 	HpRing.AddHealth(10);
 
 	setMaxHealth(getMaxHealth() + HpRing.GetHealth());
@@ -100,13 +100,13 @@ void Player::GetHpRing()
 
 void Player::GetSharkToothCharm()
 {
-	SharkToothCharm.AddAccuracy(5);
+	SharkToothCharm.AddAccuracy(2);
 	SharkToothCharm.AddDamage(2);
 }
 
 void Player::GetIdolTrinket()
 {
-	IdolTrinket.AddAccuracy(5);
+	IdolTrinket.AddAccuracy(2);
 	IdolTrinket.AddDamage(2);
 	IdolTrinket.AddHealth(2);
 
@@ -116,7 +116,7 @@ void Player::GetIdolTrinket()
 
 void Player::GetSilverBracelet()
 {
-	SilverBracelet.AddAccuracy(5);
+	SilverBracelet.AddAccuracy(2);
 	SilverBracelet.AddHealth(5);
 
 	setMaxHealth(getMaxHealth() + SilverBracelet.GetHealth());
@@ -125,7 +125,7 @@ void Player::GetSilverBracelet()
 
 void Player::GetWoodCarvedNecklace()
 {
-	WoodCarvedNecklace.AddAccuracy(5);
+	WoodCarvedNecklace.AddAccuracy(2);
 	WoodCarvedNecklace.AddHealth(2);
 
 	setMaxHealth(getMaxHealth() + WoodCarvedNecklace.GetHealth());
@@ -134,7 +134,7 @@ void Player::GetWoodCarvedNecklace()
 
 void Player::GetGemCharm()
 {
-	GemCharm.AddAccuracy(5);
+	GemCharm.AddAccuracy(2);
 	GemCharm.AddHealth(7);
 
 	setMaxHealth(getMaxHealth() + GemCharm.GetHealth());
@@ -143,7 +143,7 @@ void Player::GetGemCharm()
 
 void Player::GetTreeEmblem()
 {
-	TreeEmblem.AddAccuracy(5);
+	TreeEmblem.AddAccuracy(2);
 	TreeEmblem.AddHealth(5);
 	TreeEmblem.AddDamage(2);
 
