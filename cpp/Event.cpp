@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 using namespace std;
 
@@ -21,6 +22,14 @@ bool Event::IsUsed(int event)
         }
     }
 
+    ifstream inputFile("eventnames.txt");
+
+    if (!inputFile.is_open())
+    {
+        cout << "ERROR: Could not open eventnames.txt\n";
+    
+    }
+
     return false;
 }
 
@@ -31,7 +40,19 @@ bool Event::IsUsed(int event)
 
 void Event::PathChoice(Player* player)
 {
+   cout << "Current folder: "
+        << filesystem::current_path()
+        << endl;
+
     ifstream inputFile("eventnames.txt");
+
+    if (!inputFile.is_open())
+    {
+        cout << "ERROR: eventnames.txt could not be opened!" << endl;
+        cout << "Current working directory may be wrong." << endl;
+        return;
+    }
+
 
     vector<string> eventNames;
     string line;

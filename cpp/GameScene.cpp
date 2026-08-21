@@ -10,6 +10,21 @@ GameScene::~GameScene()
 
 }
 
+void GameScene::SceneForest()
+{
+
+}
+
+void GameScene::SceneVillage()
+{
+
+}
+
+void GameScene::SceneBoss()
+{
+
+}
+
 void GameScene::ChangeScene(int newScene)
 {
 	currentScene = newScene;
