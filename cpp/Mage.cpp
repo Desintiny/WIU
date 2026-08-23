@@ -22,11 +22,6 @@ Mage::~Mage()
 
 }
 
-void Mage::PlayerAttack()
-{
-
-}
-
 void Mage::EquipWeapon()
 {
 

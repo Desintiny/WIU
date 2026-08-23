@@ -108,6 +108,40 @@ void Game::Start()
 			_getch();
 		}
 
+		// -------- ABILITIES --------
+		else if (input == '2')
+		{
+			cout << "\n--- Abilities ---" << endl;
+			cout << "[1] Fireball  [2] Magic Missile  [3] Blood Pierce" << endl;
+			cout << "[4] Icicle Spear  [5] Lightning Bolt  [6] Blood Bomb" << endl;
+			cout << "[7] Poison Shot  [8] Air Cutter  [9] Boulder Throw" << endl;
+			cout << "[0] Water Bolt" << endl;
+
+			char abilityChoice = _getch();
+
+			if (abilityChoice >= '0' && abilityChoice <= '9')
+			{
+				cout << "\nInput a Direction [IJKL]: " << endl;
+
+				char abilityDirection = _getch();
+
+				if (abilityDirection == 'i' || abilityDirection == 'j' ||
+					abilityDirection == 'k' || abilityDirection == 'l' ||
+					abilityDirection == 'I' || abilityDirection == 'J' ||
+					abilityDirection == 'K' || abilityDirection == 'L')
+				{
+					int abilityIndex = abilityChoice - '0';
+					CastAbility(abilityIndex, abilityDirection);
+				}
+			}
+
+			if (!encounterFinished)
+			{
+				cout << "\nPress any key to continue...";
+				_getch();
+			}
+		}
+
 		// -------- ATTACK --------
 		else if (input == 'i' || input == 'j' ||
 			input == 'k' || input == 'l' ||
@@ -500,7 +534,7 @@ void Game::DisplayGame(char sym)
 		cout << endl;
 	}
 
-	cout << "\n[WASD] Move | [IJKL] Attack | [E] Inventory" << endl;
+	cout << "\n[WASD] Move | [IJKL] Attack | [2] Abilities | [E] Inventory" << endl;
 	cout << "Position: Row " << player->getRow()
 		 << ", Column " << player->getCol() << endl;
 }
@@ -573,4 +607,98 @@ void Game::ClearEnemies()
 	}
 
 	enemyCount = 0;
+}
+
+void Game::CastAbility(int abilityChoice, char direction)
+{
+	int dirRow, dirCol;
+
+	if (!player->PlayerAbilityDirection(direction, dirRow, dirCol))
+	{
+		return;
+	}
+
+	const int abilityRangeMin = 1;
+	const int abilityRangeMax = 3;
+
+	bool hit = false;
+
+	for (int dist = abilityRangeMin; dist <= abilityRangeMax && !hit; dist++)
+	{
+		int checkRow = player->getRow() + (dirRow * dist);
+		int checkCol = player->getCol() + (dirCol * dist);
+
+		for (int i = 0; i < enemyCount; i++)
+		{
+			if (enemy[i] != nullptr &&
+				enemy[i]->getRow() == checkRow &&
+				enemy[i]->getCol() == checkCol)
+			{
+				switch (abilityChoice)
+				{
+					case 1: Ability.Fireball(*enemy[i]); cout << player->getName() << " casts Fireball on " << enemy[i]->getName() << "!" << endl; break;
+					case 2: Ability.MagicMissile(*enemy[i]); cout << player->getName() << " casts Magic Missile on " << enemy[i]->getName() << "!" << endl; break;
+					case 3: Ability.BloodPierce(*enemy[i], *player); cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << "!" << endl; break;
+					case 4: Ability.IcicleSpear(*enemy[i]); cout << player->getName() << " casts Icicle Spear on " << enemy[i]->getName() << "!" << endl; break;
+					case 5: Ability.LightningBolt(*enemy[i]); cout << player->getName() << " casts Lightning Bolt on " << enemy[i]->getName() << "!" << endl; break;
+					case 6: Ability.BloodBomb(*enemy[i], *player); cout << player->getName() << " casts Blood Bomb on " << enemy[i]->getName() << "!" << endl; break;
+					case 7: Ability.PoisonShot(*enemy[i]); cout << player->getName() << " casts Poison Shot on " << enemy[i]->getName() << "!" << endl; break;
+					case 8: Ability.Aircutter(*enemy[i]); cout << player->getName() << " casts Air Cutter on " << enemy[i]->getName() << "!" << endl; break;
+					case 9: Ability.BoulderThrow(*enemy[i]); cout << player->getName() << " casts Boulder Throw on " << enemy[i]->getName() << "!" << endl; break;
+					case 0: Ability.WaterBolt(*enemy[i]); cout << player->getName() << " casts Water Bolt on " << enemy[i]->getName() << "!" << endl; break;
+					default: cout << "Invalid ability." << endl; break;
+				}
+
+				if (enemy[i]->IsAlive())
+				{
+					cout << enemy[i]->getName() << " has " << enemy[i]->getHealth() << " HP left." << endl;
+				}
+				else
+				{
+					cout << enemy[i]->getName() << " has been defeated!" << endl;
+
+					mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+
+					delete enemy[i];
+					enemy[i] = nullptr;
+
+					bool allEnemiesDead = true;
+
+					for (int j = 0; j < enemyCount; j++)
+					{
+						if (enemy[j] != nullptr)
+						{
+							allEnemiesDead = false;
+							break;
+						}
+					}
+
+					if (allEnemiesDead && (scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2))
+					{
+						loopCount++;
+						encounterFinished = true;
+
+						cout << "\nEncounter completed!";
+						cout << "\nProgress: " << loopCount << "/" << maxLoops;
+					}
+				}
+
+				// If this player also took self-damage (Blood Pierce / Blood Bomb),
+				// the caster HP is already reduced by TakeDamage inside the ability call.
+				if (!player->IsAlive())
+				{
+					cout << "\nYou have been defeated..." << endl;
+					gameRunning = false;
+				}
+
+				hit = true;
+				break;
+			}
+		}
+	}
+
+	if (!hit)
+	{
+		cout << player->getName() << " casts the ability at empty space. No enemy there." << endl;
+	}
 }

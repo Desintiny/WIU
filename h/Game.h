@@ -9,6 +9,8 @@
 #include "Event.h"
 #include "Enemy.h"
 
+#include "Abilities.h"
+
 class Game
 {
 	bool gameRunning;
@@ -35,6 +37,8 @@ class Game
 
 	bool encounterFinished;
 
+	Abilities Ability;
+
 public:
 	Game();
 	~Game();
@@ -50,4 +54,9 @@ public:
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
 	void CheckSceneExit(char sym);
+
+	// Resolves one ability cast: scans tiles in the chosen direction (range 1-3),
+	// applies the matching Ability function to the first enemy found.
+	void CastAbility(int abilityChoice, char direction);
 };
+

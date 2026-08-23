@@ -11,6 +11,9 @@ Entity::Entity(string n)
 
 	row = 0;
 	col = 0;
+
+	DoTDamage = 0;
+	DoTTurnRemain = 0;
 }
 
 Entity::~Entity()
@@ -88,4 +91,19 @@ void Entity::setCol(int c)
 int Entity::getCol(void)
 {
 	return col;
+}
+
+void Entity::SetDoT(int Damage, int Turns)
+{
+	DoTDamage = Damage;
+	DoTTurnRemain = Turns;
+}
+
+void Entity::TickDoT()
+{
+	if (DoTTurnRemain > 0)
+	{
+		TakeDamage(DoTDamage);
+		DoTTurnRemain--;
+	}
 }

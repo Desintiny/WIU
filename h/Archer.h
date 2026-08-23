@@ -7,7 +7,6 @@ public:
 	Archer(string n);
 	~Archer();
 
-	void PlayerAttack();
 	void EquipWeapon();
 };
 

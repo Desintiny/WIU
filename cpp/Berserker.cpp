@@ -22,11 +22,6 @@ Berserker::~Berserker()
 
 }
 
-void Berserker::PlayerAttack()
-{
-
-}
-
 void Berserker::EquipWeapon()
 {
 
