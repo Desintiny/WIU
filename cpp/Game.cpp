@@ -522,7 +522,7 @@ void Game::DisplayGame(char sym)
 		 << ", Column " << player->getCol() << endl;
 }
 
-void Game::DisplayEnemyHP(Entity* enemy)
+void Game::DisplayEnemyHP(Enemy* enemy)
 {
 	if (enemy == nullptr)
 	{
@@ -554,13 +554,17 @@ void Game::DisplayEnemyHP(Entity* enemy)
 		<< STYLE_NONE << endl;
 }
 
+int Game::RandNumber(int min, int max)
+{
+	return min + rand() % (max - min + 1);
+}
+
 void Game::LoadScene(char sym, int sceneNumber)
 {
 	scene.ChangeScene(sceneNumber);
 
 	ClearEnemies();
 
-	// Rebuild the 12 x 12 map.
 	for (int row = 0; row < 12; row++)
 	{
 		for (int col = 0; col < 12; col++)
@@ -574,32 +578,108 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		enemyCount = ENEMY_FOREST;
+		enemyCount = RandNumber(2, 5); // 2–5 forest enemies
 
-		enemy[0] = new Slime("Slime");
-		SpawnEntity(enemy[0], 'S', 2, 8);
+		for (int i = 0; i < enemyCount; i++)
+		{
+			int enemyType = RandNumber(1, 3);
 
-		enemy[1] = new Goblin("Goblin");
-		SpawnEntity(enemy[1], 'G', 6, 8);
+			if (enemyType == 1)
+			{
+				enemy[i] = new Slime("Slime");
+			}
+			else if (enemyType == 2)
+			{
+				enemy[i] = new Goblin("Goblin");
+			}
+			else
+			{
+				enemy[i] = new WildBoar("Wild Boar");
+			}
 
-		enemy[2] = new WildBoar("Wild Boar");
-		SpawnEntity(enemy[2], 'W', 10, 8);
+			int row;
+			int col;
+
+			// Check if that tile is an empty space
+			do
+			{
+				// Spawn enemies on the left
+
+				row = RandNumber(1, 10);
+				col = RandNumber(5, 10);
+			} while (mapGrid[row][col] != '.');
+
+			char symbol;
+
+			if (enemyType == 1)
+			{
+				symbol = 'S';
+			}
+			else if (enemyType == 2)
+			{
+				symbol = 'G';
+			}
+			else
+			{
+				symbol = 'W';
+			}
+
+			SpawnEntity(enemy[i], symbol, row, col);
+		}
 	}
 	// ------------------------- VILLAGE -------------------------
 	else if (sceneNumber == 2)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		enemyCount = ENEMY_VILLAGE;
+		enemyCount = RandNumber(2, 5); // 2–5 village enemies
 
-		enemy[0] = new ValSwordman("Valdrek Swordman");
-		SpawnEntity(enemy[0], 'S', 2, 8);
+		for (int i = 0; i < enemyCount; i++)
+		{
+			int enemyType = RandNumber(1, 3);
 
-		enemy[1] = new ValEnforcer("Valdrek Enforcer");
-		SpawnEntity(enemy[1], 'E', 4, 8);
+			if (enemyType == 1)
+			{
+				enemy[i] = new ValSwordman("Valdrek Swordman");
+			}
+			else if (enemyType == 2)
+			{
+				enemy[i] = new ValEnforcer("Valdrek Enforcer");
+			}
+			else
+			{
+				enemy[i] = new ValArcher("Valdrek Archer");
+			}
 
-		enemy[2] = new ValArcher("Valdrek Archer");
-		SpawnEntity(enemy[2], 'A', 6, 8);
+			int row;
+			int col;
+
+			// Check if that tile is an empty space
+			do
+			{
+				// Spawn enemies on the left
+
+				row = RandNumber(1, 10);
+				col = RandNumber(5, 10);
+			} while (mapGrid[row][col] != '.');
+
+			char symbol;
+
+			if (enemyType == 1)
+			{
+				symbol = 'S';
+			}
+			else if (enemyType == 2)
+			{
+				symbol = 'E';
+			}
+			else
+			{
+				symbol = 'A';
+			}
+
+			SpawnEntity(enemy[i], symbol, row, col);
+		}
 	}
 	// ------------------------- BOSS -------------------------
 	else if (sceneNumber == 3)
