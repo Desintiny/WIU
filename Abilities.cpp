@@ -34,7 +34,7 @@ void Abilities::MagicMissile(Entity& target)
 }
 
 
-void Abilities::WaterBolt(Entity& target)
+void Abilities::WaterBolt(Entity& target, Entity& caster)
 {
     RNG rng;
     rng.AbilityHitOrMiss(90);
@@ -42,6 +42,13 @@ void Abilities::WaterBolt(Entity& target)
     if (rng.GetDidHit())
     {
         target.TakeDamage(3);
+        
+        int newHP = caster.getHealth() + 5;
+        if (newHP > caster.getMaxHealth())
+        {
+            newHP = caster.getMaxHealth();
+        }
+        caster.setHealth(newHP);
     }
 }
 
@@ -117,7 +124,7 @@ void Abilities::PoisonShot(Entity& target)
 // RESOURCE TRADEOFF ABILITIES
 // ============================================================
 
-void Abilities::BloodPierce(Entity& target, Entity& caster)
+void Abilities::BloodPierce(Entity& target)
 {
     RNG rng;
     rng.AbilityHitOrMiss(100);
@@ -125,7 +132,7 @@ void Abilities::BloodPierce(Entity& target, Entity& caster)
     if (rng.GetDidHit())
     {
         target.TakeDamage(6);
-        caster.TakeDamage(5);
+        //caster.TakeDamage(5);
     }
 }
 

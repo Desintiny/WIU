@@ -62,7 +62,7 @@ public:
     // Direct Damage
     void LightningBolt(Entity& target);
     void MagicMissile(Entity& target);
-    void WaterBolt(Entity& target);
+    void WaterBolt(Entity& target, Entity& caster);
     void BoulderThrow(Entity& target);
     void Aircutter(Entity& target);
 
@@ -72,8 +72,11 @@ public:
     void PoisonShot(Entity& target);
 
     // Resource Tradeoff
-    void BloodPierce(Entity& target, Entity& caster);
+    void BloodPierce(Entity& target);
     void BloodBomb(Entity& target, Entity& caster);
+
+    /*void BloodPierce(Entity& target, Entity& caster);
+    void BloodBomb(Entity& target, Entity& caster);*/
 
     // Range getters
     int GetMinRange(int ability);

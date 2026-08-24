@@ -864,6 +864,87 @@ void Game::CastAbility(int abilityChoice, char direction)
 		return;
 	}
 
+	// Blood Pierce can hit up to 2 enemies in a straight line.
+	// The player pays the 5 HP cost once, only if at least one enemy is hit.
+	if (abilityChoice == 3)
+	{
+		int enemyHits = 0;
+		const int maxTargets = 2;
+		int pierceRangeMin = Ability.GetMinRange(Abilities::BLOOD_PIERCE);
+		int pierceRangeMax = Ability.GetMaxRange(Abilities::BLOOD_PIERCE);
+
+		for (int dist = pierceRangeMin; dist <= pierceRangeMax && enemyHits < maxTargets; dist++)
+		{
+			int checkRow = player->getRow() + (dirRow * dist);
+			int checkCol = player->getCol() + (dirCol * dist);
+
+			for (int i = 0; i < enemyCount; i++)
+			{
+				if (enemy[i] != nullptr &&
+					enemy[i]->getRow() == checkRow &&
+					enemy[i]->getCol() == checkCol)
+				{
+					Ability.BloodPierce(*enemy[i]);
+					cout << player->getName() << " casts Blood Pierce on "
+						<< enemy[i]->getName() << "!" << endl;
+
+					if (enemy[i]->IsAlive())
+					{
+						cout << enemy[i]->getName() << " has "
+							<< enemy[i]->getHealth() << " HP left." << endl;
+					}
+					else
+					{
+						cout << enemy[i]->getName() << " has been defeated!" << endl;
+						mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+						delete enemy[i];
+						enemy[i] = nullptr;
+					}
+
+					enemyHits++;
+					break;
+				}
+			}
+		}
+
+		if (enemyHits == 0)
+		{
+			cout << player->getName()
+				<< " casts Blood Pierce at empty space. No enemy there." << endl;
+		}
+		else
+		{
+			player->TakeDamage(5);
+
+			bool allEnemiesDead = true;
+			for (int j = 0; j < enemyCount; j++)
+			{
+				if (enemy[j] != nullptr)
+				{
+					allEnemiesDead = false;
+					break;
+				}
+			}
+
+			if (allEnemiesDead &&
+				(scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2))
+			{
+				loopCount++;
+				encounterFinished = true;
+				cout << "\nEncounter completed!";
+				cout << "\nProgress: " << loopCount << "/" << maxLoops;
+			}
+
+			if (!player->IsAlive())
+			{
+				cout << "\nYou have been defeated..." << endl;
+				gameRunning = false;
+			}
+		}
+
+		return;
+	}
+
 	// Convert the menu choice to the matching private range entry
 	// stored inside Abilities.
 	int abilityId;
@@ -905,14 +986,14 @@ void Game::CastAbility(int abilityChoice, char direction)
 				{
 				case 1: Ability.Fireball(*enemy[i]); cout << player->getName() << " casts Fireball on " << enemy[i]->getName() << "!" << endl; break;
 				case 2: Ability.MagicMissile(*enemy[i]); cout << player->getName() << " casts Magic Missile on " << enemy[i]->getName() << "!" << endl; break;
-				case 3: Ability.BloodPierce(*enemy[i], *player); cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << "!" << endl; break;
+				case 3: Ability.BloodPierce(*enemy[i]); cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << "!" << endl; break;
 				case 4: Ability.IcicleSpear(*enemy[i]); cout << player->getName() << " casts Icicle Spear on " << enemy[i]->getName() << "!" << endl; break;
 				case 5: Ability.LightningBolt(*enemy[i]); cout << player->getName() << " casts Lightning Bolt on " << enemy[i]->getName() << "!" << endl; break;
 				case 6: Ability.BloodBomb(*enemy[i], *player); cout << player->getName() << " casts Blood Bomb on " << enemy[i]->getName() << "!" << endl; break;
 				case 7: Ability.PoisonShot(*enemy[i]); cout << player->getName() << " casts Poison Shot on " << enemy[i]->getName() << "!" << endl; break;
 				case 8: Ability.Aircutter(*enemy[i]); cout << player->getName() << " casts Air Cutter on " << enemy[i]->getName() << "!" << endl; break;
 				case 9: Ability.BoulderThrow(*enemy[i]); cout << player->getName() << " casts Boulder Throw on " << enemy[i]->getName() << "!" << endl; break;
-				case 0: Ability.WaterBolt(*enemy[i]); cout << player->getName() << " casts Water Bolt on " << enemy[i]->getName() << "!" << endl; break;
+				case 0: Ability.WaterBolt(*enemy[i], *player); cout << player->getName() << " casts Water Bolt on " << enemy[i]->getName() << " and heals 5 HP!" << endl; break;
 				default: cout << "Invalid ability." << endl; break;
 				}
 

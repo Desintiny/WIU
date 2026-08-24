@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "RNG.h"
 #include <iostream>
 
 Player::Player(string n) : Entity(n)
@@ -92,25 +93,136 @@ bool Player::PlayerAbilityDirection(char input, int& dirRow, int& dirCol)
 	return PlayerAtkDirection(input, dirRow, dirCol);
 }
 
+void Player::GetAttackRing()
+{
+	AttackRing.AddAccuracy(2);
+	AttackRing.AddDamage(4);
+}
+
+void Player::GetHpRing()
+{
+	HpRing.AddAccuracy(2);
+	HpRing.AddHealth(10);
+
+	setMaxHealth(getMaxHealth() + HpRing.GetHealth());
+	setHealth(getHealth() + HpRing.GetHealth());
+}
+
+void Player::GetSharkToothCharm()
+{
+	SharkToothCharm.AddAccuracy(2);
+	SharkToothCharm.AddDamage(2);
+}
+
+void Player::GetIdolTrinket()
+{
+	IdolTrinket.AddAccuracy(2);
+	IdolTrinket.AddDamage(2);
+	IdolTrinket.AddHealth(2);
+
+	setMaxHealth(getMaxHealth() + IdolTrinket.GetHealth());
+	setHealth(getHealth() + IdolTrinket.GetHealth());
+}
+
+void Player::GetSilverBracelet()
+{
+	SilverBracelet.AddAccuracy(2);
+	SilverBracelet.AddHealth(5);
+
+	setMaxHealth(getMaxHealth() + SilverBracelet.GetHealth());
+	setHealth(getHealth() + SilverBracelet.GetHealth());
+}
+
+void Player::GetWoodCarvedNecklace()
+{
+	WoodCarvedNecklace.AddAccuracy(2);
+	WoodCarvedNecklace.AddHealth(2);
+
+	setMaxHealth(getMaxHealth() + WoodCarvedNecklace.GetHealth());
+	setHealth(getHealth() + WoodCarvedNecklace.GetHealth());
+}
+
+void Player::GetGemCharm()
+{
+	GemCharm.AddAccuracy(2);
+	GemCharm.AddHealth(7);
+
+	setMaxHealth(getMaxHealth() + GemCharm.GetHealth());
+	setHealth(getHealth() + GemCharm.GetHealth());
+}
+
+void Player::GetTreeEmblem()
+{
+	TreeEmblem.AddAccuracy(2);
+	TreeEmblem.AddHealth(5);
+	TreeEmblem.AddDamage(2);
+
+	setMaxHealth(getMaxHealth() + TreeEmblem.GetHealth());
+	setHealth(getHealth() + TreeEmblem.GetHealth());
+}
+int Player::GetAccuracy()
+{
+	return AttackRing.GetAccuracy()
+		+ HpRing.GetAccuracy()
+		+ SharkToothCharm.GetAccuracy()
+		+ IdolTrinket.GetAccuracy()
+		+ SilverBracelet.GetAccuracy()
+		+ WoodCarvedNecklace.GetAccuracy()
+		+ GemCharm.GetAccuracy()
+		+ TreeEmblem.GetAccuracy();
+}
+int Player::GetEquipmentDamage()
+{
+	return AttackRing.GetDamage()
+		+ HpRing.GetDamage()
+		+ SharkToothCharm.GetDamage()
+		+ IdolTrinket.GetDamage()
+		+ SilverBracelet.GetDamage()
+		+ WoodCarvedNecklace.GetDamage()
+		+ GemCharm.GetDamage()
+		+ TreeEmblem.GetDamage();
+}
+int Player::GetEquipmentHealth()
+{
+	return AttackRing.GetHealth()
+		+ HpRing.GetHealth()
+		+ SharkToothCharm.GetHealth()
+		+ IdolTrinket.GetHealth()
+		+ SilverBracelet.GetHealth()
+		+ WoodCarvedNecklace.GetHealth()
+		+ GemCharm.GetHealth()
+		+ TreeEmblem.GetHealth();
+}
+
 void Player::PlayerAttack(Entity* enemy)
 {
 	if (enemy != nullptr)
 	{
-		int dmg = getAttack();
+		RNG rng;
+		rng.SetAccuracy(GetAccuracy()); //Equipment Accuracy
+		rng.HitOrMiss();
 
-		enemy->TakeDamage(dmg);
+		if (rng.GetDidHit()) {
+			int dmg = getAttack() + GetEquipmentDamage();
+			if (rng.CriticalHit(5))
+			{
+				dmg *= 2;
+				cout << "CRITICAL HIT" << endl;
+			}
+			enemy->TakeDamage(dmg);
 
-		cout << getName() << " attacks " << enemy->getName()
-			<< " for " << dmg << " damage!" << endl;
+			cout << getName() << " attacks " << enemy->getName()
+				<< " for " << dmg << " damage!" << endl;
 
-		if (!enemy->IsAlive())
-		{
-			cout << enemy->getName() << " has been defeated!" << endl;
-		}
-		else
-		{
-			cout << enemy->getName() << " has "
-				<< enemy->getHealth() << " HP left." << endl;
+			if (!enemy->IsAlive())
+			{
+				cout << enemy->getName() << " has been defeated!" << endl;
+			}
+			else
+			{
+				cout << enemy->getName() << " has "
+					<< enemy->getHealth() << " HP left." << endl;
+			}
 		}
 	}
 	else
