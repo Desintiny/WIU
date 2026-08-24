@@ -240,7 +240,7 @@ void Game::Start()
 			{
 				if (enemy[i] != nullptr)
 				{
-					enemy[i]->EnemyMovement(mapGrid);
+					enemy[i]->EnemyMovement(player, mapGrid);
 				}
 			}
 		}
@@ -561,11 +561,14 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemyCount = ENEMY_FOREST;
 
-		enemy[0] = new Enemy("Forest Enemy 1");
-		SpawnEntity(enemy[0], 'E', 2, 8);
+		enemy[0] = new Slime("Slime");
+		SpawnEntity(enemy[0], 'S', 2, 8);
 
-		enemy[1] = new Enemy("Forest Enemy 2");
-		SpawnEntity(enemy[1], 'E', 6, 8);
+		enemy[1] = new Goblin("Goblin");
+		SpawnEntity(enemy[1], 'G', 6, 8);
+
+		enemy[2] = new WildBoar("Wild Boar");
+		SpawnEntity(enemy[2], 'W', 10, 8);
 	}
 	// ------------------------- VILLAGE -------------------------
 	else if (sceneNumber == 2)
@@ -574,17 +577,14 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemyCount = ENEMY_VILLAGE;
 
-		enemy[0] = new Enemy("Village Enemy 1");
-		SpawnEntity(enemy[0], 'E', 2, 8);
+		enemy[0] = new ValSwordman("Valdrek Swordman");
+		SpawnEntity(enemy[0], 'S', 2, 8);
 
-		enemy[1] = new Enemy("Village Enemy 2");
+		enemy[1] = new ValEnforcer("Valdrek Enforcer");
 		SpawnEntity(enemy[1], 'E', 4, 8);
 
-		enemy[2] = new Enemy("Village Enemy 3");
-		SpawnEntity(enemy[2], 'E', 6, 8);
-
-		enemy[3] = new Enemy("Village Enemy 4");
-		SpawnEntity(enemy[3], 'E', 8, 8);
+		enemy[2] = new ValArcher("Valdrek Archer");
+		SpawnEntity(enemy[2], 'A', 6, 8);
 	}
 	// ------------------------- BOSS -------------------------
 	else if (sceneNumber == 3)
@@ -593,8 +593,8 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemyCount = ENEMY_BOSS;
 
-		enemy[0] = new Enemy("Valdrek");
-		SpawnEntity(enemy[0], 'E', 7, 8);
+		enemy[0] = new ValSwordman("Valdrek");
+		SpawnEntity(enemy[0], 'V', 7, 8);
 	}
 }
 
