@@ -606,6 +606,7 @@ void Game::DisplayEnemyHP(Enemy* enemy)
 	{
 		enemyHealthBar[i] = (i < healthFilled) ? '#' : '-';
 	}
+	cout << endl;
 
 	cout << STYLE_PURPLE
 		<< enemy->getName()
@@ -649,7 +650,7 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		enemyCount = RandNumber(2, 5); // 2–5 forest enemies
+		enemyCount = RandNumber(2, 5); // 2ï¿½5 forest enemies
 
 		for (int i = 0; i < enemyCount; i++)
 		{
@@ -703,7 +704,7 @@ void Game::LoadScene(char sym, int sceneNumber)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
-		enemyCount = RandNumber(2, 5); // 2–5 village enemies
+		enemyCount = RandNumber(2, 5); // 2ï¿½5 village enemies
 
 		for (int i = 0; i < enemyCount; i++)
 		{
