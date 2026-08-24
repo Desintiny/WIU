@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include "Equipment.h"
 #include "Item.h"
 #include <vector>
 
@@ -11,6 +12,15 @@ class Player : public Entity
 	int maxRange;
 
 	std::vector<Item> inventory;
+
+	Equipment AttackRing;
+	Equipment HpRing;
+	Equipment SharkToothCharm;
+	Equipment IdolTrinket;
+	Equipment SilverBracelet;
+	Equipment WoodCarvedNecklace;
+	Equipment GemCharm;
+	Equipment TreeEmblem;
 
 public:
 	Player(string n);
@@ -39,4 +49,17 @@ public:
 	void AddItem(Item item);
 	void DisplayInventory();
 	void UseItem(int index);
+
+	int GetAccuracy();	//Equipment Stats	
+	int GetEquipmentHealth();
+	int GetEquipmentDamage();
+
+	void GetAttackRing();	//Indiv equipment
+	void GetHpRing();
+	void GetSharkToothCharm();
+	void GetIdolTrinket();
+	void GetSilverBracelet();
+	void GetWoodCarvedNecklace();
+	void GetGemCharm();
+	void GetTreeEmblem();
 };
