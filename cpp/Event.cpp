@@ -257,6 +257,28 @@ void Event::ForestEvent(int event, Player* player)
         // ====================================================
         // EVENT ITEM REWARDS
         // ====================================================
+        
+        
+        // ----------------------------------------------------
+        // EVENT 1 - CAMPFIRE REST
+        // Choice 1 gives full heal
+        // ----------------------------------------------------
+
+        if (event == 0 && choice == 1)
+        {
+            //ADD FULL HEAL
+        }
+
+
+        // ----------------------------------------------------
+       // EVENT 2 - FOREST COTTAGE
+       // Choice 1 gives full heal
+       // ----------------------------------------------------
+
+        if (event == 0 && choice == 1)
+        {
+            //ADD FULL HEAL
+        }
 
 
         // ----------------------------------------------------
@@ -296,6 +318,18 @@ void Event::ForestEvent(int event, Player* player)
             player->AddItem(water);
         }
 
+
+        // ----------------------------------------------------
+       // EVENT 3 - FLOWING RIVER
+       // Choice 2 gives full heal
+       // ----------------------------------------------------
+
+        if (event == 2 && choice == 2)
+        {
+            //ADD FULL HEAL
+        }
+
+
         // ----------------------------------------------------
         // EVENT 4 - WANDERING TRAVELLER
         // Choices can give a Charm
@@ -318,6 +352,17 @@ void Event::ForestEvent(int event, Player* player)
         {
             player->GetIdolTrinket();
             cout << "You have recieved and equipped --Idol Trinket--" << endl;
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 6 - WATERFALL
+        // Choice 1 gives full heal
+        // ----------------------------------------------------
+
+        if (event == 5 && choice == 1)
+        {
+            //ADD FULL HEAL
         }
 
 
@@ -372,6 +417,17 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
+        // EVENT 8 - MEDICINAL HERBS
+        // Choice 2 gives 20 HP
+        // ----------------------------------------------------
+
+        if (event == 7 && choice == 2)
+        {
+            //ADD 20 HP
+        }
+
+
+        // ----------------------------------------------------
         // EVENT 9 - TRAINING GROUNDS
         // Choice 1 gives a Weapon
         // ----------------------------------------------------
@@ -387,6 +443,17 @@ void Event::ForestEvent(int event, Player* player)
             weapon.consumable = false;
 
             player->AddItem(weapon);
+        }
+
+
+        // ----------------------------------------------------
+       // EVENT 9 - TRAINING GROUNDS
+       // Choice 2 gives 20 HP
+       // ----------------------------------------------------
+
+        if (event == 8 && choice == 2)
+        {
+            //ADD 20 HP
         }
 
 
@@ -519,6 +586,17 @@ void Event::ForestEvent(int event, Player* player)
         {
             player->GetGemCharm();
             cout << "You have recieved and equipped --Gem Charm--" << endl;
+        }
+
+
+        // ----------------------------------------------------
+       // EVENT 15 - GIANT TREE
+       // Choice 1 gives full heal
+       // ----------------------------------------------------
+
+        if (event == 14 && choice == 2)
+        {
+            //ADD FULL HEAL
         }
 
 
