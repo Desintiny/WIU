@@ -83,192 +83,242 @@ void Game::Start()
 
 	while (gameRunning)
 	{
-		DisplayGame(sym);
+		// Apply existing damage-over-time effects at the START of the next turn.
+		// This means Fireball / Icicle Spear / Poison Shot do not tick immediately
+		// on the same turn they are cast.
+		TickEnemyDoT();
 
-		char input = _getch();
-
-		// -------- INVENTORY --------
-		if (input == 'e' || input == 'E')
+		// A DoT tick may kill the last enemy and finish the encounter.
+		if (encounterFinished)
 		{
-			system("cls");
-
-			player->DisplayInventory();
-
-			int choice;
-
-			cout << "\nChoice: ";
-			cin >> choice;
-
-			if (choice > 0)
-			{
-				player->UseItem(choice - 1);
-			}
-
-			cout << "\nPress any key to continue...";
-			_getch();
-		}
-
-		// -------- ABILITIES --------
-		else if (input == '2')
-		{
-			cout << "\n--- Abilities ---" << endl;
-			cout << "[1] Fireball (rng 1-3)  [2] Magic Missile (rng 1-4)  [3] Blood Pierce (rng 1-4)" << endl;
-			cout << "[4] Icicle Spear (rng 1-2)  [5] Lightning Bolt (rng 1-5)  [6] Blood Bomb (rng 1-3)" << endl;
-			cout << "[7] Poison Shot (rng 1-3)  [8] Air Cutter (rng 1-5)  [9] Boulder Throw (rng 1-2)" << endl;
-			cout << "[0] Water Bolt (rng 1-3)" << endl;
-
-			char abilityChoice = _getch();
-
-			if (abilityChoice >= '0' && abilityChoice <= '9')
-			{
-				cout << "\nInput a Direction [IJKL]: " << endl;
-
-				char abilityDirection = _getch();
-
-				if (abilityDirection == 'i' || abilityDirection == 'j' ||
-					abilityDirection == 'k' || abilityDirection == 'l' ||
-					abilityDirection == 'I' || abilityDirection == 'J' ||
-					abilityDirection == 'K' || abilityDirection == 'L')
-				{
-					int abilityIndex = abilityChoice - '0';
-					CastAbility(abilityIndex, abilityDirection);
-				}
-			}
-
-			if (!encounterFinished)
-			{
-				cout << "\nPress any key to continue...";
-				_getch();
-			}
-		}
-
-		// -------- ATTACK --------
-		else if (input == 'i' || input == 'j' ||
-			input == 'k' || input == 'l' ||
-			input == 'I' || input == 'J' ||
-			input == 'K' || input == 'L')
-		{
-			int dirRow, dirCol;
-			if (player->PlayerAtkDirection(input, dirRow, dirCol))
-			{
-				bool hit = false;
-
-				// Scan tiles from minRange to maxRange along the chosen direction.
-				// A Berserker (1/1) only checks 1 tile away; an Archer (3/4) or Mage (2/3)
-				// can hit further out, so class range actually matters now.
-				for (int dist = player->getMinRange(); dist <= player->getMaxRange() && !hit; dist++)
-				{
-					int checkRow = player->getRow() + (dirRow * dist);
-					int checkCol = player->getCol() + (dirCol * dist);
-
-					for (int i = 0; i < enemyCount; i++)
-					{
-						if (enemy[i] != nullptr &&
-							enemy[i]->getRow() == checkRow &&
-							enemy[i]->getCol() == checkCol)
-						{
-							player->PlayerAttack(enemy[i]);
-
-							if (!enemy[i]->IsAlive())
-							{
-								mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
-
-								delete enemy[i];
-								enemy[i] = nullptr;
-
-								bool allEnemiesDead = true;
-
-								for (int j = 0; j < enemyCount; j++)
-								{
-									if (enemy[j] != nullptr)
-									{
-										allEnemiesDead = false;
-										break;
-									}
-								}
-
-								if (allEnemiesDead && scene.getCurrentScene() == 1)
-								{
-									loopCount++;
-
-									encounterFinished = true;
-
-									cout << "\nEncounter completed!";
-									cout << "\nProgress: "
-										<< loopCount
-										<< "/"
-										<< maxLoops;
-								}
-								else if (allEnemiesDead && scene.getCurrentScene() == 2)
-								{
-									loopCount++;
-
-									encounterFinished = true;
-
-									cout << "\nEncounter completed!";
-									cout << "\nProgress: "
-										<< loopCount
-										<< "/"
-										<< maxLoops;
-								}
-							}
-
-							hit = true;
-							break;
-						}
-					}
-				}
-
-				if (!hit)
-				{
-					cout << player->getName() << " attacks empty space. No enemy there." << endl;
-				}
-			}
-
-			if (!encounterFinished)
-			{
-				cout << "\nPress any key to continue...";
-				_getch();
-			}
+			// Skip player input this turn so the normal encounter-finished
+			// section below can move to the next event/scene.
 		}
 		else
 		{
-			player->PlayerMovement(sym, input, mapGrid);
+			DisplayGame(sym);
 
-			// ---- ENEMY MOVEMENT (wanders / chases after the player moves) ----
+			char input = _getch();
+
+			// -------- INVENTORY --------
+			if (input == 'e' || input == 'E')
+			{
+				system("cls");
+
+				player->DisplayInventory();
+
+				int choice;
+
+				cout << "\nChoice: ";
+				cin >> choice;
+
+				if (choice > 0)
+				{
+					player->UseItem(choice - 1);
+				}
+
+				cout << "\nPress any key to continue...";
+				_getch();
+			}
+
+			// -------- ABILITIES --------
+			else if (input == '2')
+			{
+				cout << "\n--- Abilities ---" << endl;
+
+				cout << "[1] Fireball (rng "
+					<< Ability.GetMinRange(Abilities::FIREBALL) << "-"
+					<< Ability.GetMaxRange(Abilities::FIREBALL) << ")  ";
+
+				cout << "[2] Magic Missile (rng "
+					<< Ability.GetMinRange(Abilities::MAGIC_MISSILE) << "-"
+					<< Ability.GetMaxRange(Abilities::MAGIC_MISSILE) << ")  ";
+
+				cout << "[3] Blood Pierce (rng "
+					<< Ability.GetMinRange(Abilities::BLOOD_PIERCE) << "-"
+					<< Ability.GetMaxRange(Abilities::BLOOD_PIERCE) << ")" << endl;
+
+				cout << "[4] Icicle Spear (rng "
+					<< Ability.GetMinRange(Abilities::ICICLE_SPEAR) << "-"
+					<< Ability.GetMaxRange(Abilities::ICICLE_SPEAR) << ")  ";
+
+				cout << "[5] Lightning Bolt (rng "
+					<< Ability.GetMinRange(Abilities::LIGHTNING_BOLT) << "-"
+					<< Ability.GetMaxRange(Abilities::LIGHTNING_BOLT) << ")  ";
+
+				cout << "[6] Blood Bomb (rng "
+					<< Ability.GetMinRange(Abilities::BLOOD_BOMB) << "-"
+					<< Ability.GetMaxRange(Abilities::BLOOD_BOMB) << ")" << endl;
+
+				cout << "[7] Poison Shot (rng "
+					<< Ability.GetMinRange(Abilities::POISON_SHOT) << "-"
+					<< Ability.GetMaxRange(Abilities::POISON_SHOT) << ")  ";
+
+				cout << "[8] Air Cutter (rng "
+					<< Ability.GetMinRange(Abilities::AIR_CUTTER) << "-"
+					<< Ability.GetMaxRange(Abilities::AIR_CUTTER) << ")  ";
+
+				cout << "[9] Boulder Throw (rng "
+					<< Ability.GetMinRange(Abilities::BOULDER_THROW) << "-"
+					<< Ability.GetMaxRange(Abilities::BOULDER_THROW) << ")" << endl;
+
+				cout << "[0] Water Bolt (rng "
+					<< Ability.GetMinRange(Abilities::WATER_BOLT) << "-"
+					<< Ability.GetMaxRange(Abilities::WATER_BOLT) << ")" << endl;
+
+				char abilityChoice = _getch();
+
+				if (abilityChoice >= '0' && abilityChoice <= '9')
+				{
+					cout << "\nInput a Direction [IJKL]: " << endl;
+
+					char abilityDirection = _getch();
+
+					if (abilityDirection == 'i' || abilityDirection == 'j' ||
+						abilityDirection == 'k' || abilityDirection == 'l' ||
+						abilityDirection == 'I' || abilityDirection == 'J' ||
+						abilityDirection == 'K' || abilityDirection == 'L')
+					{
+						int abilityIndex = abilityChoice - '0';
+						CastAbility(abilityIndex, abilityDirection);
+					}
+				}
+
+				if (!encounterFinished)
+				{
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+
+			// -------- ATTACK --------
+			else if (input == 'i' || input == 'j' ||
+				input == 'k' || input == 'l' ||
+				input == 'I' || input == 'J' ||
+				input == 'K' || input == 'L')
+			{
+				int dirRow, dirCol;
+				if (player->PlayerAtkDirection(input, dirRow, dirCol))
+				{
+					bool hit = false;
+
+					// Scan tiles from minRange to maxRange along the chosen direction.
+					// A Berserker (1/1) only checks 1 tile away; an Archer (3/4) or Mage (2/3)
+					// can hit further out, so class range actually matters now.
+					for (int dist = player->getMinRange(); dist <= player->getMaxRange() && !hit; dist++)
+					{
+						int checkRow = player->getRow() + (dirRow * dist);
+						int checkCol = player->getCol() + (dirCol * dist);
+
+						for (int i = 0; i < enemyCount; i++)
+						{
+							if (enemy[i] != nullptr &&
+								enemy[i]->getRow() == checkRow &&
+								enemy[i]->getCol() == checkCol)
+							{
+								player->PlayerAttack(enemy[i]);
+
+								if (!enemy[i]->IsAlive())
+								{
+									mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+
+									delete enemy[i];
+									enemy[i] = nullptr;
+
+									bool allEnemiesDead = true;
+
+									for (int j = 0; j < enemyCount; j++)
+									{
+										if (enemy[j] != nullptr)
+										{
+											allEnemiesDead = false;
+											break;
+										}
+									}
+
+									if (allEnemiesDead && scene.getCurrentScene() == 1)
+									{
+										loopCount++;
+
+										encounterFinished = true;
+
+										cout << "\nEncounter completed!";
+										cout << "\nProgress: "
+											<< loopCount
+											<< "/"
+											<< maxLoops;
+									}
+									else if (allEnemiesDead && scene.getCurrentScene() == 2)
+									{
+										loopCount++;
+
+										encounterFinished = true;
+
+										cout << "\nEncounter completed!";
+										cout << "\nProgress: "
+											<< loopCount
+											<< "/"
+											<< maxLoops;
+									}
+								}
+
+								hit = true;
+								break;
+							}
+						}
+					}
+
+					if (!hit)
+					{
+						cout << player->getName() << " attacks empty space. No enemy there." << endl;
+					}
+				}
+
+				if (!encounterFinished)
+				{
+					cout << "\nPress any key to continue...";
+					_getch();
+				}
+			}
+			else
+			{
+				player->PlayerMovement(sym, input, mapGrid);
+
+				// ---- ENEMY MOVEMENT (wanders / chases after the player moves) ----
+				for (int i = 0; i < enemyCount; i++)
+				{
+					if (enemy[i] != nullptr)
+					{
+						enemy[i]->EnemyMovement(player, mapGrid);
+					}
+				}
+			}
+
+			// ---- ENEMY ATTACK CHECK (runs every turn, regardless of what the player just did) ----
+			// Any enemy standing next to the player (including diagonally) gets to attack.
+
 			for (int i = 0; i < enemyCount; i++)
 			{
 				if (enemy[i] != nullptr)
 				{
-					enemy[i]->EnemyMovement(player, mapGrid);
+					int rowDist = abs(enemy[i]->getRow() - player->getRow());
+					int colDist = abs(enemy[i]->getCol() - player->getCol());
+
+					// 4-directional adjacency only (matches player movement/attack) —
+					// exactly one tile away on ONE axis, not both at once (no diagonals)
+					if ((rowDist == 1 && colDist == 0) || (rowDist == 0 && colDist == 1))
+					{
+						enemy[i]->EnemyAttack(player);
+					}
 				}
 			}
-		}
 
-		// ---- ENEMY ATTACK CHECK (runs every turn, regardless of what the player just did) ----
-		// Any enemy standing next to the player (including diagonally) gets to attack.
-		
-		for (int i = 0; i < enemyCount; i++)
-		{
-			if (enemy[i] != nullptr)
+			if (!player->IsAlive())
 			{
-				int rowDist = abs(enemy[i]->getRow() - player->getRow());
-				int colDist = abs(enemy[i]->getCol() - player->getCol());
-
-				// 4-directional adjacency only (matches player movement/attack) —
-				// exactly one tile away on ONE axis, not both at once (no diagonals)
-				if ((rowDist == 1 && colDist == 0) || (rowDist == 0 && colDist == 1))
-				{
-					enemy[i]->EnemyAttack(player);
-				}
+				cout << "\nYou have been defeated..." << endl;
+				gameRunning = false;
 			}
-		}
-
-		if (!player->IsAlive())
-		{
-			cout << "\nYou have been defeated..." << endl;
-			gameRunning = false;
-		}
+		} // end normal player/enemy turn
 
 		if (encounterFinished)
 		{
@@ -509,15 +559,15 @@ void Game::DisplayGame(char sym)
 
 	cout << "] " << player->getStamina() << '/' << displayStamina << "\n" << STYLE_NONE << endl;
 
-	if (scene.getCurrentScene() == 1) 
+	if (scene.getCurrentScene() == 1)
 	{
 		cout << "FOREST\n";
 	}
-	else if (scene.getCurrentScene() == 2) 
+	else if (scene.getCurrentScene() == 2)
 	{
 		cout << "VILLAGE\n";
 	}
-	else 
+	else
 	{
 		cout << "BOSS ARENA\n";
 	}
@@ -536,7 +586,7 @@ void Game::DisplayGame(char sym)
 
 	cout << "\n[WASD] Move | [IJKL] Attack | [2] Abilities | [E] Inventory" << endl;
 	cout << "Position: Row " << player->getRow()
-		 << ", Column " << player->getCol() << endl;
+		<< ", Column " << player->getCol() << endl;
 }
 
 void Game::LoadScene(char sym, int sceneNumber)
@@ -555,7 +605,7 @@ void Game::LoadScene(char sym, int sceneNumber)
 		}
 	}
 	// ------------------------- FOREST -------------------------
-	if (sceneNumber == 1) 
+	if (sceneNumber == 1)
 	{
 		SpawnEntity(player, sym, 4, 1);
 
@@ -609,6 +659,86 @@ void Game::ClearEnemies()
 	enemyCount = 0;
 }
 
+void Game::TickEnemyDoT()
+{
+	bool anyDotDamage = false;
+
+	for (int i = 0; i < enemyCount; i++)
+	{
+		if (enemy[i] == nullptr)
+		{
+			continue;
+		}
+
+		int healthBefore = enemy[i]->getHealth();
+
+		// TickDoT() only deals damage when this enemy currently has a DoT.
+		enemy[i]->TickDoT();
+
+		if (enemy[i]->getHealth() < healthBefore)
+		{
+			anyDotDamage = true;
+
+			cout << enemy[i]->getName()
+				<< " takes "
+				<< (healthBefore - enemy[i]->getHealth())
+				<< " damage from a damage-over-time effect!" << endl;
+
+			if (enemy[i]->IsAlive())
+			{
+				cout << enemy[i]->getName()
+					<< " has "
+					<< enemy[i]->getHealth()
+					<< " HP left." << endl;
+			}
+			else
+			{
+				cout << enemy[i]->getName()
+					<< " has been defeated by the damage-over-time effect!"
+					<< endl;
+
+				mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+
+				delete enemy[i];
+				enemy[i] = nullptr;
+			}
+		}
+	}
+
+	// If DoT killed an enemy, check whether that was the final enemy.
+	if (anyDotDamage)
+	{
+		bool allEnemiesDead = true;
+
+		for (int i = 0; i < enemyCount; i++)
+		{
+			if (enemy[i] != nullptr)
+			{
+				allEnemiesDead = false;
+				break;
+			}
+		}
+
+		if (allEnemiesDead &&
+			(scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2))
+		{
+			loopCount++;
+			encounterFinished = true;
+
+			cout << "\nEncounter completed!";
+			cout << "\nProgress: " << loopCount << "/" << maxLoops;
+		}
+	}
+
+	if (anyDotDamage && !encounterFinished)
+	{
+		cout << "\nPress any key to continue...";
+		_getch();
+		system("cls");
+	}
+}
+
+
 void Game::CastAbility(int abilityChoice, char direction)
 {
 	int dirRow, dirCol;
@@ -618,25 +748,29 @@ void Game::CastAbility(int abilityChoice, char direction)
 		return;
 	}
 
-	// Each ability keeps its own range, as originally designed —
-	// short range for heavy/tradeoff hits, long range for precise bolts.
-	int abilityRangeMin = 1;
-	int abilityRangeMax = 3;
+	// Convert the menu choice to the matching private range entry
+	// stored inside Abilities.
+	int abilityId;
 
 	switch (abilityChoice)
 	{
-		case 1: abilityRangeMax = 3; break; // Fireball
-		case 2: abilityRangeMax = 4; break; // Magic Missile
-		case 3: abilityRangeMax = 4; break; // Blood Pierce
-		case 4: abilityRangeMax = 2; break; // Icicle Spear
-		case 5: abilityRangeMax = 5; break; // Lightning Bolt
-		case 6: abilityRangeMax = 3; break; // Blood Bomb
-		case 7: abilityRangeMax = 3; break; // Poison Shot
-		case 8: abilityRangeMax = 5; break; // Air Cutter
-		case 9: abilityRangeMax = 2; break; // Boulder Throw
-		case 0: abilityRangeMax = 3; break; // Water Bolt
-		default: cout << "Invalid ability." << endl; return;
+	case 1: abilityId = Abilities::FIREBALL; break;
+	case 2: abilityId = Abilities::MAGIC_MISSILE; break;
+	case 3: abilityId = Abilities::BLOOD_PIERCE; break;
+	case 4: abilityId = Abilities::ICICLE_SPEAR; break;
+	case 5: abilityId = Abilities::LIGHTNING_BOLT; break;
+	case 6: abilityId = Abilities::BLOOD_BOMB; break;
+	case 7: abilityId = Abilities::POISON_SHOT; break;
+	case 8: abilityId = Abilities::AIR_CUTTER; break;
+	case 9: abilityId = Abilities::BOULDER_THROW; break;
+	case 0: abilityId = Abilities::WATER_BOLT; break;
+	default:
+		cout << "Invalid ability." << endl;
+		return;
 	}
+
+	int abilityRangeMin = Ability.GetMinRange(abilityId);
+	int abilityRangeMax = Ability.GetMaxRange(abilityId);
 
 	bool hit = false;
 
@@ -653,17 +787,17 @@ void Game::CastAbility(int abilityChoice, char direction)
 			{
 				switch (abilityChoice)
 				{
-					case 1: Ability.Fireball(*enemy[i]); cout << player->getName() << " casts Fireball on " << enemy[i]->getName() << "!" << endl; break;
-					case 2: Ability.MagicMissile(*enemy[i]); cout << player->getName() << " casts Magic Missile on " << enemy[i]->getName() << "!" << endl; break;
-					case 3: Ability.BloodPierce(*enemy[i], *player); cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << "!" << endl; break;
-					case 4: Ability.IcicleSpear(*enemy[i]); cout << player->getName() << " casts Icicle Spear on " << enemy[i]->getName() << "!" << endl; break;
-					case 5: Ability.LightningBolt(*enemy[i]); cout << player->getName() << " casts Lightning Bolt on " << enemy[i]->getName() << "!" << endl; break;
-					case 6: Ability.BloodBomb(*enemy[i], *player); cout << player->getName() << " casts Blood Bomb on " << enemy[i]->getName() << "!" << endl; break;
-					case 7: Ability.PoisonShot(*enemy[i]); cout << player->getName() << " casts Poison Shot on " << enemy[i]->getName() << "!" << endl; break;
-					case 8: Ability.Aircutter(*enemy[i]); cout << player->getName() << " casts Air Cutter on " << enemy[i]->getName() << "!" << endl; break;
-					case 9: Ability.BoulderThrow(*enemy[i]); cout << player->getName() << " casts Boulder Throw on " << enemy[i]->getName() << "!" << endl; break;
-					case 0: Ability.WaterBolt(*enemy[i]); cout << player->getName() << " casts Water Bolt on " << enemy[i]->getName() << "!" << endl; break;
-					default: cout << "Invalid ability." << endl; break;
+				case 1: Ability.Fireball(*enemy[i]); cout << player->getName() << " casts Fireball on " << enemy[i]->getName() << "!" << endl; break;
+				case 2: Ability.MagicMissile(*enemy[i]); cout << player->getName() << " casts Magic Missile on " << enemy[i]->getName() << "!" << endl; break;
+				case 3: Ability.BloodPierce(*enemy[i], *player); cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << "!" << endl; break;
+				case 4: Ability.IcicleSpear(*enemy[i]); cout << player->getName() << " casts Icicle Spear on " << enemy[i]->getName() << "!" << endl; break;
+				case 5: Ability.LightningBolt(*enemy[i]); cout << player->getName() << " casts Lightning Bolt on " << enemy[i]->getName() << "!" << endl; break;
+				case 6: Ability.BloodBomb(*enemy[i], *player); cout << player->getName() << " casts Blood Bomb on " << enemy[i]->getName() << "!" << endl; break;
+				case 7: Ability.PoisonShot(*enemy[i]); cout << player->getName() << " casts Poison Shot on " << enemy[i]->getName() << "!" << endl; break;
+				case 8: Ability.Aircutter(*enemy[i]); cout << player->getName() << " casts Air Cutter on " << enemy[i]->getName() << "!" << endl; break;
+				case 9: Ability.BoulderThrow(*enemy[i]); cout << player->getName() << " casts Boulder Throw on " << enemy[i]->getName() << "!" << endl; break;
+				case 0: Ability.WaterBolt(*enemy[i]); cout << player->getName() << " casts Water Bolt on " << enemy[i]->getName() << "!" << endl; break;
+				default: cout << "Invalid ability." << endl; break;
 				}
 
 				if (enemy[i]->IsAlive())
