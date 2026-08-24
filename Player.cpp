@@ -8,6 +8,9 @@ Player::Player(string n) : Entity(n)
 
 	minRange = 0;
 	maxRange = 0;
+
+	equippedWeaponBonus = 0;
+	equippedWeaponName = "None";
 }
 
 Player::~Player()
@@ -178,6 +181,7 @@ void Player::DisplayInventory()
         << "/" << getMaxHealth() << endl;
 
     cout << "ATK: " << getAttack() << endl;
+    cout << "Weapon: " << equippedWeaponName << endl;
 
     cout << "-------------------------------------" << endl;
 
@@ -258,7 +262,14 @@ void Player::UseItem(int index)
     {
         int oldAttack = getAttack();
 
-        setAttack(getAttack() + item.atkBonus);
+        // remove the previous weapon's bonus before applying the new one,
+        // so switching weapons replaces rather than stacks
+        setAttack(getAttack() - equippedWeaponBonus);
+
+        equippedWeaponBonus = item.atkBonus;
+        equippedWeaponName = item.name;
+
+        setAttack(getAttack() + equippedWeaponBonus);
 
         cout << "\nYou equipped "
             << item.name << "!" << endl;
@@ -281,4 +292,9 @@ void Player::UseItem(int index)
     {
         inventory.erase(inventory.begin() + index);
     }
+}
+
+std::string Player::getEquippedWeaponName(void)
+{
+    return equippedWeaponName;
 }

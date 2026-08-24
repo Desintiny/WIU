@@ -112,10 +112,10 @@ void Game::Start()
 		else if (input == '2')
 		{
 			cout << "\n--- Abilities ---" << endl;
-			cout << "[1] Fireball  [2] Magic Missile  [3] Blood Pierce" << endl;
-			cout << "[4] Icicle Spear  [5] Lightning Bolt  [6] Blood Bomb" << endl;
-			cout << "[7] Poison Shot  [8] Air Cutter  [9] Boulder Throw" << endl;
-			cout << "[0] Water Bolt" << endl;
+			cout << "[1] Fireball (rng 1-3)  [2] Magic Missile (rng 1-4)  [3] Blood Pierce (rng 1-4)" << endl;
+			cout << "[4] Icicle Spear (rng 1-2)  [5] Lightning Bolt (rng 1-5)  [6] Blood Bomb (rng 1-3)" << endl;
+			cout << "[7] Poison Shot (rng 1-3)  [8] Air Cutter (rng 1-5)  [9] Boulder Throw (rng 1-2)" << endl;
+			cout << "[0] Water Bolt (rng 1-3)" << endl;
 
 			char abilityChoice = _getch();
 
@@ -235,7 +235,7 @@ void Game::Start()
 		{
 			player->PlayerMovement(sym, input, mapGrid);
 
-			// ---- ENEMY MOVEMENT (wanders after the player moves) ----
+			// ---- ENEMY MOVEMENT (wanders / chases after the player moves) ----
 			for (int i = 0; i < enemyCount; i++)
 			{
 				if (enemy[i] != nullptr)
@@ -566,9 +566,6 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemy[1] = new Goblin("Goblin");
 		SpawnEntity(enemy[1], 'G', 6, 8);
-
-		enemy[2] = new WildBoar("Wild Boar");
-		SpawnEntity(enemy[2], 'W', 10, 8);
 	}
 	// ------------------------- VILLAGE -------------------------
 	else if (sceneNumber == 2)
@@ -577,14 +574,17 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemyCount = ENEMY_VILLAGE;
 
-		enemy[0] = new ValSwordman("Valdrek Swordman");
-		SpawnEntity(enemy[0], 'S', 2, 8);
+		enemy[0] = new ValArcher("Valdrek Archer");
+		SpawnEntity(enemy[0], 'A', 2, 8);
 
-		enemy[1] = new ValEnforcer("Valdrek Enforcer");
-		SpawnEntity(enemy[1], 'E', 4, 8);
+		enemy[1] = new ValSwordman("Valdrek Swordsman");
+		SpawnEntity(enemy[1], 'S', 4, 8);
 
-		enemy[2] = new ValArcher("Valdrek Archer");
-		SpawnEntity(enemy[2], 'A', 6, 8);
+		enemy[2] = new ValEnforcer("Valdrek Enforcer");
+		SpawnEntity(enemy[2], 'E', 6, 8);
+
+		enemy[3] = new WildBoar("Wild Boar");
+		SpawnEntity(enemy[3], 'W', 8, 8);
 	}
 	// ------------------------- BOSS -------------------------
 	else if (sceneNumber == 3)
@@ -593,8 +593,8 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemyCount = ENEMY_BOSS;
 
-		enemy[0] = new ValSwordman("Valdrek");
-		SpawnEntity(enemy[0], 'V', 7, 8);
+		enemy[0] = new ValEnforcer("Valdrek");
+		SpawnEntity(enemy[0], 'E', 7, 8);
 	}
 }
 
@@ -618,8 +618,25 @@ void Game::CastAbility(int abilityChoice, char direction)
 		return;
 	}
 
-	const int abilityRangeMin = 1;
-	const int abilityRangeMax = 3;
+	// Each ability keeps its own range, as originally designed —
+	// short range for heavy/tradeoff hits, long range for precise bolts.
+	int abilityRangeMin = 1;
+	int abilityRangeMax = 3;
+
+	switch (abilityChoice)
+	{
+		case 1: abilityRangeMax = 3; break; // Fireball
+		case 2: abilityRangeMax = 4; break; // Magic Missile
+		case 3: abilityRangeMax = 4; break; // Blood Pierce
+		case 4: abilityRangeMax = 2; break; // Icicle Spear
+		case 5: abilityRangeMax = 5; break; // Lightning Bolt
+		case 6: abilityRangeMax = 3; break; // Blood Bomb
+		case 7: abilityRangeMax = 3; break; // Poison Shot
+		case 8: abilityRangeMax = 5; break; // Air Cutter
+		case 9: abilityRangeMax = 2; break; // Boulder Throw
+		case 0: abilityRangeMax = 3; break; // Water Bolt
+		default: cout << "Invalid ability." << endl; return;
+	}
 
 	bool hit = false;
 

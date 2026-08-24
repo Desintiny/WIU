@@ -12,6 +12,11 @@ class Player : public Entity
 
 	std::vector<Item> inventory;
 
+	// Tracks the ATK bonus from the currently equipped weapon, so equipping
+	// a new one replaces it instead of stacking on top of the old bonus.
+	int equippedWeaponBonus;
+	std::string equippedWeaponName;
+
 public:
 	Player(string n);
 	~Player();
@@ -39,4 +44,5 @@ public:
 	void AddItem(Item item);
 	void DisplayInventory();
 	void UseItem(int index);
+	std::string getEquippedWeaponName(void);
 };
