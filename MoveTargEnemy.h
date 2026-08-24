@@ -11,4 +11,3 @@ public:
 
 	virtual char getChar(void);
 };
-
