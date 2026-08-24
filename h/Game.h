@@ -57,6 +57,7 @@ public:
 	void MainMenu();
 	char ClassSelection(void);
 	void DisplayGame(char sym);
+	void DisplayEnemyHP(Entity* enemy);
 
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
