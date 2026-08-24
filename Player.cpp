@@ -82,6 +82,13 @@ bool Player::PlayerAtkDirection(char input, int& dirRow, int& dirCol)
 	return true;
 }
 
+// Same direction logic as PlayerAtkDirection, kept separate so ability targeting
+// can diverge later (e.g. different key scheme or AoE) without touching basic attacks.
+bool Player::PlayerAbilityDirection(char input, int& dirRow, int& dirCol)
+{
+	return PlayerAtkDirection(input, dirRow, dirCol);
+}
+
 void Player::PlayerAttack(Entity* enemy)
 {
 	if (enemy != nullptr)

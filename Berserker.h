@@ -7,7 +7,6 @@ public:
 	Berserker(string n);
 	~Berserker();
 
-	void PlayerAttack();
 	void EquipWeapon();
 };
 

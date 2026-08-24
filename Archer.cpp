@@ -22,11 +22,6 @@ Archer::~Archer()
 
 }
 
-void Archer::PlayerAttack()
-{
-
-}
-
 void Archer::EquipWeapon()
 {
 

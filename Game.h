@@ -9,6 +9,15 @@
 #include "Event.h"
 #include "Enemy.h"
 
+#include "Abilities.h"
+
+#include "Slime.h"
+#include "Goblin.h"
+#include "WildBoar.h"
+#include "ValSwordman.h"
+#include "ValEnforcer.h"
+#include "ValArcher.h"
+
 class Game
 {
 	bool gameRunning;
@@ -23,8 +32,8 @@ class Game
 	Enemy* enemy[MAX_ENEMIES];
 	int enemyCount;
 
-	static const int ENEMY_FOREST = 2;
-	static const int ENEMY_VILLAGE = 4;
+	static const int ENEMY_FOREST = 3;
+	static const int ENEMY_VILLAGE = 3;
 	static const int ENEMY_BOSS = 1;
 
 	GameScene scene;
@@ -34,6 +43,8 @@ class Game
 	int maxLoops;
 
 	bool encounterFinished;
+
+	Abilities Ability;
 
 public:
 	Game();
@@ -50,4 +61,9 @@ public:
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
 	void CheckSceneExit(char sym);
+
+	// Resolves one ability cast: scans tiles in the chosen direction (range 1-3),
+	// applies the matching Ability function to the first enemy found.
+	void CastAbility(int abilityChoice, char direction);
 };
+

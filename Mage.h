@@ -7,7 +7,6 @@ public:
 	Mage(string n);
 	~Mage();
 
-	void PlayerAttack();
 	void EquipWeapon();
 };
 

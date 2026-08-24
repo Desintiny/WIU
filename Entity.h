@@ -32,4 +32,11 @@ public:
 
 	void setCol(int);
 	int getCol(void);
+
+	// Damage-over-time support (used by DoT abilities e.g. Fireball, Poison Shot)
+	int DoTDamage;
+	int DoTTurnRemain;
+
+	void SetDoT(int Damage, int Turns);
+	void TickDoT();
 };
