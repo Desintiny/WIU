@@ -58,11 +58,12 @@ public:
 	char ClassSelection(void);
 	void DisplayGame(char sym);
 
+	void DisplayEnemyHP(Enemy* enemy);
+	int RandNumber(int min, int max);
+
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
 	void CheckSceneExit(char sym);
-	void DisplayEnemyHP(Enemy* enemy);
-	int RandNumber(int min, int max);
 
 	// Resolves one ability cast: scans tiles in the chosen direction (range 1-3),
 	// applies the matching Ability function to the first enemy found.
