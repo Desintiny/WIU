@@ -1,4 +1,5 @@
 #include "Event.h"
+#include "Item.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -22,6 +23,32 @@ bool Event::IsUsed(int event)
     }
 
     return false;
+}
+
+
+// ============================================================
+// HEAL FUNCTIONS
+// ============================================================
+
+void Event::HealToMax(Player* player)
+{
+    if (player == nullptr) return;
+
+    player->setHealth(player->getMaxHealth());
+    cout << "You have been fully healed!" << endl;
+}
+
+void Event::Heal20(Player* player)
+{
+    if (player == nullptr) return;
+
+    int newHp = player->getHealth() + 20;
+    if (newHp > player->getMaxHealth())
+    {
+        newHp = player->getMaxHealth();
+    }
+    player->setHealth(newHp);
+    cout << "You recovered 20 HP." << endl;
 }
 
 
@@ -256,8 +283,8 @@ void Event::ForestEvent(int event, Player* player)
         // ====================================================
         // EVENT ITEM REWARDS
         // ====================================================
-        
-        
+
+
         // ----------------------------------------------------
         // EVENT 1 - CAMPFIRE REST
         // Choice 1 gives full heal
@@ -265,7 +292,7 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 0 && choice == 1)
         {
-            //ADD FULL HEAL
+            HealToMax(player);
         }
 
 
@@ -274,9 +301,9 @@ void Event::ForestEvent(int event, Player* player)
        // Choice 1 gives full heal
        // ----------------------------------------------------
 
-        if (event == 0 && choice == 1)
+        if (event == 1 && choice == 1)
         {
-            //ADD FULL HEAL
+            HealToMax(player);
         }
 
 
@@ -325,7 +352,7 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 2 && choice == 2)
         {
-            //ADD FULL HEAL
+            HealToMax(player);
         }
 
 
@@ -361,7 +388,7 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 5 && choice == 1)
         {
-            //ADD FULL HEAL
+            HealToMax(player);
         }
 
 
@@ -422,7 +449,7 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 7 && choice == 2)
         {
-            //ADD 20 HP
+            Heal20(player);
         }
 
 
@@ -452,7 +479,7 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 8 && choice == 2)
         {
-            //ADD 20 HP
+            Heal20(player);
         }
 
 
@@ -593,9 +620,9 @@ void Event::ForestEvent(int event, Player* player)
        // Choice 1 gives full heal
        // ----------------------------------------------------
 
-        if (event == 14 && choice == 2)
+        if (event == 14 && choice == 1)
         {
-            //ADD FULL HEAL
+            HealToMax(player);
         }
 
 
