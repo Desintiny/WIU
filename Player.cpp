@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "RNG.h"
 #include <iostream>
 
 Player::Player(string n) : Entity(n)
