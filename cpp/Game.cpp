@@ -446,7 +446,6 @@ void Game::DisplayGame(char sym)
 
 	char healthBar[10];
 	char staminaBar[10];
-	char enemyHealthBar[10];
 
 	int healthFilled = (player->getHealth() * 10) / player->getMaxHealth();
 	int staminaFilled = (player->getStamina() * 10) / player->getMaxStamina();
@@ -455,21 +454,11 @@ void Game::DisplayGame(char sym)
 	{
 		healthBar[i] = (i < healthFilled) ? '#' : '-';
 		staminaBar[i] = (i < staminaFilled) ? '#' : '-';
-		enemyHealthBar[i] = '#'; // leave as-is until enemy HP tracking is wired into combat
 	}
-
-	bool inCombat = true;
 
 	// ------------ PLAYER UI ------------
 
 	cout << STYLE_ORANGE << "YOU (" << sym << ")\t\t\t";
-
-	// ------------ ENEMY UI DURING COMBAT ------------
-
-	if (inCombat)
-	{
-		cout << STYLE_PURPLE << "ENEMY (E)";
-	}
 	cout << endl;
 
 	// ------------ PLAYER HEALTH ------------
@@ -482,20 +471,6 @@ void Game::DisplayGame(char sym)
 	}
 
 	cout << "] " << player->getHealth() << '/' << displayHealth << "\t";
-
-	// ------------ ENEMY HEALTH DURING COMBAT ------------
-
-	if (inCombat)
-	{
-		cout << "HP [";
-
-		for (int i = 0; i < 10; i++)
-		{
-			cout << enemyHealthBar[i];
-		}
-
-		cout << "] ";
-	}
 	cout << endl;
 
 	// ------------ PLAYER STAMINA ------------
@@ -534,9 +509,49 @@ void Game::DisplayGame(char sym)
 		cout << endl;
 	}
 
+	for (int i = 0; i < enemyCount; i++)
+	{
+		if (enemy[i] != nullptr)
+		{
+			DisplayEnemyHP(enemy[i]);
+		}
+	}
+
 	cout << "\n[WASD] Move | [IJKL] Attack | [2] Abilities | [E] Inventory" << endl;
 	cout << "Position: Row " << player->getRow()
 		 << ", Column " << player->getCol() << endl;
+}
+
+void Game::DisplayEnemyHP(Entity* enemy)
+{
+	if (enemy == nullptr)
+	{
+		return;
+	}
+
+	char enemyHealthBar[10];
+
+	int healthFilled = (enemy->getHealth() * 10) / enemy->getMaxHealth();
+
+	for (int i = 0; i < 10; i++)
+	{
+		enemyHealthBar[i] = (i < healthFilled) ? '#' : '-';
+	}
+
+	cout << STYLE_PURPLE
+		<< enemy->getName()
+		<< STYLE_RED
+		<< " HP [";
+
+	for (int i = 0; i < 10; i++)
+	{
+		cout << enemyHealthBar[i];
+	}
+
+	cout << "] "
+		<< enemy->getHealth()
+		<< '/' << enemy->getMaxHealth()
+		<< STYLE_NONE << endl;
 }
 
 void Game::LoadScene(char sym, int sceneNumber)
