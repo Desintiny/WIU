@@ -9,6 +9,8 @@ Player::Player(string n) : Entity(n)
 
 	minRange = 0;
 	maxRange = 0;
+
+	dodgeChance = 0;
 }
 
 Player::~Player()
@@ -188,6 +190,16 @@ int Player::GetEquipmentHealth()
 		+ WoodCarvedNecklace.GetHealth()
 		+ GemCharm.GetHealth()
 		+ TreeEmblem.GetHealth();
+}
+
+void Player::setDodgeChance(int dodge)
+{
+	dodgeChance = dodge;
+}
+
+int Player::getDodgeChance()
+{
+	return dodgeChance;
 }
 void Player::PlayerAttack(Entity* enemy)
 {
