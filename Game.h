@@ -58,6 +58,9 @@ public:
 	char ClassSelection(void);
 	void DisplayGame(char sym);
 
+	void DisplayEnemyHP(Enemy* enemy);
+	int RandNumber(int min, int max);
+
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
 	void CheckSceneExit(char sym);
