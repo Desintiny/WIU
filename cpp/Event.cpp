@@ -1,9 +1,9 @@
 #include "Event.h"
+#include "Equipment.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <filesystem>
 
 using namespace std;
 
@@ -22,14 +22,6 @@ bool Event::IsUsed(int event)
         }
     }
 
-    ifstream inputFile("eventnames.txt");
-
-    if (!inputFile.is_open())
-    {
-        cout << "ERROR: Could not open eventnames.txt\n";
-
-    }
-
     return false;
 }
 
@@ -40,19 +32,7 @@ bool Event::IsUsed(int event)
 
 void Event::PathChoice(Player* player)
 {
-    cout << "Current folder: "
-        << filesystem::current_path()
-        << endl;
-
     ifstream inputFile("eventnames.txt");
-
-    if (!inputFile.is_open())
-    {
-        cout << "ERROR: eventnames.txt could not be opened!" << endl;
-        cout << "Current working directory may be wrong." << endl;
-        return;
-    }
-
 
     vector<string> eventNames;
     string line;
@@ -316,6 +296,17 @@ void Event::ForestEvent(int event, Player* player)
             player->AddItem(water);
         }
 
+        // ----------------------------------------------------
+        // EVENT 4 - WANDERING TRAVELLER
+        // Choices can give a Charm
+        // ----------------------------------------------------
+
+        if (event == 3 && (choice == 2))
+        {
+            player->GetSharkToothCharm();
+            cout << "You have recieved and equipped --Shark Tooth Charm--" << endl;
+        }
+
 
         // ----------------------------------------------------
         // EVENT 5 - RANDOM CHEST
@@ -323,19 +314,10 @@ void Event::ForestEvent(int event, Player* player)
         // ----------------------------------------------------
 
         if (event == 4 &&
-            (choice == 1 ||
-                choice == 2 ||
-                choice == 3))
+            (choice == 1 || choice == 2 || choice == 3))
         {
-            Item trinket;
-
-            trinket.name = "Old Trinket";
-            trinket.type = "Key Item";
-            trinket.healAmount = 0;
-            trinket.atkBonus = 0;
-            trinket.consumable = false;
-
-            player->AddItem(trinket);
+            player->GetIdolTrinket();
+            cout << "You have recieved and equipped --Idol Trinket--" << endl;
         }
 
 
@@ -346,15 +328,8 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 5 && choice == 2)
         {
-            Item ring;
-
-            ring.name = "Old Ring";
-            ring.type = "Key Item";
-            ring.healAmount = 0;
-            ring.atkBonus = 0;
-            ring.consumable = false;
-
-            player->AddItem(ring);
+            player->GetHpRing();
+            cout << "You have recieved and equipped --HP Ring--" << endl;
         }
 
 
@@ -441,15 +416,8 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 9 && choice == 1)
         {
-            Item crowItem;
-
-            crowItem.name = "Crow Trinket";
-            crowItem.type = "Key Item";
-            crowItem.healAmount = 0;
-            crowItem.atkBonus = 0;
-            crowItem.consumable = false;
-
-            player->AddItem(crowItem);
+            player->GetSilverBracelet();
+            cout << "You have recieved and equipped --Silver Bracelet--" << endl;
         }
 
 
@@ -512,21 +480,57 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
+            // EVENT 13 - FELLOW ADVENTURER
+            // Choice 2 gives bread
+            // ----------------------------------------------------
+
+        if (event == 11 &&
+            (choice == 2))
+        {
+            player->GetWoodCarvedNecklace();
+            cout << "You have recieved and equipped --Wood Carved Necklace--" << endl;
+        }
+
+        // ----------------------------------------------------
+        // EVENT 13 - FELLOW ADVENTURER
+        // Choice 3 gives bread
+        // ----------------------------------------------------
+
+        if (event == 11 &&
+            (choice == 3))
+        {
+            Item bread;
+
+            bread.name = "Bread";
+            bread.type = "Healing";
+            bread.healAmount = 5;
+            bread.atkBonus = 0;
+            bread.consumable = true;
+
+            player->AddItem(bread);
+        }
+
+        // ----------------------------------------------------
         // EVENT 14 - ABANDONED CARAVAN
         // Choice 1 gives Charm
         // ----------------------------------------------------
 
         if (event == 13 && choice == 1)
         {
-            Item charm;
+            player->GetGemCharm();
+            cout << "You have recieved and equipped --Gem Charm--" << endl;
+        }
 
-            charm.name = "Old Charm";
-            charm.type = "Key Item";
-            charm.healAmount = 0;
-            charm.atkBonus = 0;
-            charm.consumable = false;
 
-            player->AddItem(charm);
+        // ----------------------------------------------------
+        // EVENT 15 - GIANT TREE
+        // Choice 2 gives Emblem
+        // ----------------------------------------------------
+
+        if (event == 14 && choice == 2)
+        {
+            player->GetTreeEmblem();
+            cout << "You have recieved and equipped --Tree Emblem--" << endl;
         }
 
 
