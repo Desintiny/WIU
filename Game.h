@@ -57,15 +57,15 @@ public:
 	void MainMenu();
 	char ClassSelection(void);
 	void DisplayGame(char sym);
+	void DisplayEnemyHP(Enemy* enemy);
 
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
 	void CheckSceneExit(char sym);
+	int RandNumber(int min, int max);
 
 	// Resolves one ability cast: scans tiles in the chosen direction (range 1-3),
 	// applies the matching Ability function to the first enemy found.
 	void CastAbility(int abilityChoice, char direction);
-
-	// Applies active damage-over-time effects to enemies once per turn.
-	void TickEnemyDoT();
 };
+

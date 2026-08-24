@@ -36,9 +36,9 @@ void MoveTargEnemy::EnemyMovement(Entity* target, char mapGrid[12][12])
 		return;
 	}
 
-	if (newRow >= 1 && newRow <= 10 &&
-		newCol >= 1 && newCol <= 10 &&
-		mapGrid[newRow][newCol] == '.')
+	if (newRow >= 1 && newRow <= 10 && // within the border
+		newCol >= 1 && newCol <= 10 && // within the border
+		mapGrid[newRow][newCol] == '.') // if the next new position is '.'
 	{
 		mapGrid[getRow()][getCol()] = '.';
 
