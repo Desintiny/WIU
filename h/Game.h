@@ -11,6 +11,13 @@
 
 #include "Abilities.h"
 
+#include "Slime.h"
+#include "Goblin.h"
+#include "WildBoar.h"
+#include "ValSwordman.h"
+#include "ValEnforcer.h"
+#include "ValArcher.h"
+
 class Game
 {
 	bool gameRunning;
@@ -25,8 +32,8 @@ class Game
 	Enemy* enemy[MAX_ENEMIES];
 	int enemyCount;
 
-	static const int ENEMY_FOREST = 2;
-	static const int ENEMY_VILLAGE = 4;
+	static const int ENEMY_FOREST = 3;
+	static const int ENEMY_VILLAGE = 3;
 	static const int ENEMY_BOSS = 1;
 
 	GameScene scene;
