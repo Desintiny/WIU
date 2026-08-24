@@ -3,19 +3,13 @@
 #include "Entity.h"
 #include "RNG.h"
 
-//build abilities here with this structure
-//void Abilities::ABILITYNAME(Entity& target)
-//{
-	//target.TakeDamage(dmg num here) note: dmg is hardcoded
-	//target.SetDoT(dmg per tick, duration) // so 3, 3 means 3 dmg for 3 turns
-//}
+using namespace std;
 
-// definitions in case
-// Direct damage -- Only does dmg
-// DoT -- Has Damage over time as an addition
-// Resource Tradeoff -- uses a different resource than mp *
 
-//Direct Damage Spells
+// ============================================================
+// DIRECT DAMAGE ABILITIES
+// ============================================================
+
 void Abilities::LightningBolt(Entity& target)
 {
     RNG rng;
@@ -26,6 +20,7 @@ void Abilities::LightningBolt(Entity& target)
         target.TakeDamage(2);
     }
 }
+
 
 void Abilities::MagicMissile(Entity& target)
 {
@@ -38,7 +33,8 @@ void Abilities::MagicMissile(Entity& target)
     }
 }
 
-void Abilities::WaterBolt(Entity& target)
+
+void Abilities::WaterBolt(Entity& target, Entity& caster)
 {
     RNG rng;
     rng.AbilityHitOrMiss(90);
@@ -46,8 +42,16 @@ void Abilities::WaterBolt(Entity& target)
     if (rng.GetDidHit())
     {
         target.TakeDamage(3);
+        
+        int newHP = caster.getHealth() + 5;
+        if (newHP > caster.getMaxHealth())
+        {
+            newHP = caster.getMaxHealth();
+        }
+        caster.setHealth(newHP);
     }
 }
+
 
 void Abilities::BoulderThrow(Entity& target)
 {
@@ -59,6 +63,7 @@ void Abilities::BoulderThrow(Entity& target)
         target.TakeDamage(8);
     }
 }
+
 
 void Abilities::Aircutter(Entity& target)
 {
@@ -72,60 +77,100 @@ void Abilities::Aircutter(Entity& target)
 }
 
 
-// DoT Spells
+// ============================================================
+// DAMAGE OVER TIME ABILITIES
+// ============================================================
+
 void Abilities::Fireball(Entity& target)
 {
     RNG rng;
     rng.AbilityHitOrMiss(95);
-    if (rng.GetDidHit()) {
+
+    if (rng.GetDidHit())
+    {
         target.TakeDamage(4);
         target.SetDoT(2, 2);
     }
 }
 
+
 void Abilities::IcicleSpear(Entity& target)
 {
     RNG rng;
     rng.AbilityHitOrMiss(90);
-    if (rng.GetDidHit()) {
+
+    if (rng.GetDidHit())
+    {
         target.TakeDamage(3);
         target.SetDoT(3, 3);
     }
 }
 
+
 void Abilities::PoisonShot(Entity& target)
 {
     RNG rng;
     rng.AbilityHitOrMiss(80);
-    if (rng.GetDidHit()) {
+
+    if (rng.GetDidHit())
+    {
         target.TakeDamage(3);
         target.SetDoT(2, 5);
     }
 }
 
-//Resource Tradeoff Spells
 
-void Abilities::BloodPierce(Entity& target, Entity& caster)
+// ============================================================
+// RESOURCE TRADEOFF ABILITIES
+// ============================================================
+
+void Abilities::BloodPierce(Entity& target)
 {
     RNG rng;
     rng.AbilityHitOrMiss(100);
 
-    if (rng.GetDidHit()) {
+    if (rng.GetDidHit())
+    {
         target.TakeDamage(6);
-
-        caster.TakeDamage(5); //casters(player) resource tradeoff, hp in this case
+        //caster.TakeDamage(5);
     }
 }
 
+
 void Abilities::BloodBomb(Entity& target, Entity& caster)
 {
-
     RNG rng;
     rng.AbilityHitOrMiss(90);
 
-    if (rng.GetDidHit()) {
+    if (rng.GetDidHit())
+    {
         target.TakeDamage(10);
-
-        caster.TakeDamage(10); //casters(player) resource tradeoff, hp in this case
+        caster.TakeDamage(10);
     }
+}
+
+
+// ============================================================
+// ABILITY RANGE GETTERS
+// ============================================================
+
+int Abilities::GetMinRange(int ability)
+{
+    if (ability < 0 || ability >= 10)
+    {
+        return 1;
+    }
+
+    return minRange[ability];
+}
+
+
+int Abilities::GetMaxRange(int ability)
+{
+    if (ability < 0 || ability >= 10)
+    {
+        return 1;
+    }
+
+    return maxRange[ability];
 }
