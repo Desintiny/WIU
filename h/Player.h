@@ -11,6 +11,7 @@ class Player : public Entity
 	int minRange;
 	int maxRange;
 
+	int dodgeChance;
 	std::vector<Item> inventory;
 
 	Equipment AttackRing;
@@ -44,6 +45,9 @@ public:
 
 	void setMaxRange(int);
 	int getMaxRange(void);
+
+	void setDodgeChance(int dodge);
+	int getDodgeChance();
 
 	// -------- INVENTORY --------
 	void AddItem(Item item);
