@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 using namespace std;
 
@@ -49,6 +50,15 @@ void Event::Heal20(Player* player)
     }
     player->setHealth(newHp);
     cout << "You recovered 20 HP." << endl;
+    ifstream inputFile("eventnames.txt");
+
+    if (!inputFile.is_open())
+    {
+        cout << "ERROR: Could not open eventnames.txt\n";
+
+    }
+
+    return false;
 }
 
 
@@ -59,6 +69,20 @@ void Event::Heal20(Player* player)
 void Event::PathChoice(Player* player)
 {
     ifstream inputFile("eventnames.txt");
+
+    cout << "Current folder: "
+        << filesystem::current_path()
+        << endl;
+
+    ifstream inputFile("eventnames.txt");
+
+    if (!inputFile.is_open())
+    {
+        cout << "ERROR: eventnames.txt could not be opened!" << endl;
+        cout << "Current working directory may be wrong." << endl;
+        return;
+    }
+
 
     vector<string> eventNames;
     string line;
