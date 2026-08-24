@@ -1,4 +1,6 @@
 #include "Enemy.h"
+#include "Player.h"
+#include "RNG.h"
 
 Enemy::Enemy(string n) : Entity(n)
 {
@@ -17,6 +19,16 @@ void Enemy::EnemyAttack(Entity* target)
 {
 	if (target != nullptr)
 	{
+		RNG rng;	//Player Dodge attack
+		Player* player = dynamic_cast<Player*>(target);
+		if (player != nullptr)
+		{
+			rng.Dodge(player->getDodgeChance());	// Use the player's dodge chance
+			if (rng.GetDodged())	// If the player dodged, stop the attack
+			{
+				return;
+			}
+		}
 		int dmg = getAttack();
 
 		target->TakeDamage(dmg);
