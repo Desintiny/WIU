@@ -58,6 +58,7 @@ public:
 	int GetAccuracy();	//Equipment Stats	
 	int GetEquipmentHealth();
 	int GetEquipmentDamage();
+	int GetCritChance();
 
 	void GetAttackRing();	//Indiv equipment
 	void GetHpRing();
