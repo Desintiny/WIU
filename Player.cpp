@@ -10,12 +10,15 @@ Player::Player(string n) : Entity(n)
 	minRange = 0;
 	maxRange = 0;
 
+	dodgeChance = 5;
+
 	equippedWeaponBonus = 0;
 	equippedWeaponName = "None";
 }
 
 Player::~Player()
 {
+
 }
 
 void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
@@ -218,6 +221,15 @@ int Player::GetCritChance()
 		+ WoodCarvedNecklace.GetCritChance()
 		+ GemCharm.GetCritChance()
 		+ TreeEmblem.GetCritChance();
+}
+void Player::setDodgeChance(int dodge)
+{
+	dodgeChance = dodge;
+}
+
+int Player::getDodgeChance()
+{
+	return dodgeChance;
 }
 
 void Player::PlayerAttack(Entity* enemy)
