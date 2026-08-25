@@ -42,7 +42,8 @@ void Abilities::WaterBolt(Entity& target, Entity& caster)
     if (rng.GetDidHit())
     {
         target.TakeDamage(3);
-        
+
+        // Water Bolt also heals the caster by 5 HP, capped at max HP.
         int newHP = caster.getHealth() + 5;
         if (newHP > caster.getMaxHealth())
         {
@@ -124,7 +125,7 @@ void Abilities::PoisonShot(Entity& target)
 // RESOURCE TRADEOFF ABILITIES
 // ============================================================
 
-void Abilities::BloodPierce(Entity& target)
+void Abilities::BloodPierce(Entity& target, Entity& caster)
 {
     RNG rng;
     rng.AbilityHitOrMiss(100);
@@ -132,7 +133,7 @@ void Abilities::BloodPierce(Entity& target)
     if (rng.GetDidHit())
     {
         target.TakeDamage(6);
-        //caster.TakeDamage(5);
+        caster.TakeDamage(5);
     }
 }
 
@@ -173,4 +174,14 @@ int Abilities::GetMaxRange(int ability)
     }
 
     return maxRange[ability];
+}
+
+int Abilities::GetStaminaCost(int ability)
+{
+    if (ability < 0 || ability >= 10)
+    {
+        return 0;
+    }
+
+    return staminaCost[ability];
 }

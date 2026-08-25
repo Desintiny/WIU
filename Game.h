@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "GameScene.h"
 
 #include "Player.h"
@@ -32,6 +34,9 @@ class Game
 	Enemy* enemy[MAX_ENEMIES];
 	int enemyCount;
 
+	string combatMessage;
+	std::string dotMessage;
+
 	static const int ENEMY_FOREST = 3;
 	static const int ENEMY_VILLAGE = 3;
 	static const int ENEMY_BOSS = 1;
@@ -45,6 +50,13 @@ class Game
 	bool encounterFinished;
 
 	Abilities Ability;
+
+	Enemy* FindEnemyInRange(
+		int minRange,
+		int maxRange,
+		int dirRow,
+		int dirCol
+	);
 
 public:
 	Game();

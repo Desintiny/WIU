@@ -14,6 +14,7 @@ void MoveTargEnemy::EnemyMovement(Entity* target, char mapGrid[12][12])
 {
 	int newRow = getRow();
 	int newCol = getCol();
+	
 
 	if (target->getRow() < getRow()) // UP
 	{
@@ -49,7 +50,9 @@ void MoveTargEnemy::EnemyMovement(Entity* target, char mapGrid[12][12])
 	}
 }
 
+
 char MoveTargEnemy::getChar()
 {
 	return 'E';
 }
+
