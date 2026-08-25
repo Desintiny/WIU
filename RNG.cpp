@@ -65,6 +65,29 @@ void RNG::Dodge(int chance)
     }
 }
 
+void RNG::Thorns(int chance)
+{
+    int roll = rand() % 100;
+
+    if (roll < chance)
+    {
+        Thorned = true;
+
+        cout << "Thorns activated! ("
+            << chance << "%)\n\n";
+    }
+    else
+    {
+        Thorned = false;
+    }
+}
+
+bool RNG::GetThorns()
+{
+    return Thorned;
+}
+
+
 bool RNG::GetDidHit() {
     return DidHit;
 }
