@@ -240,59 +240,9 @@ void Game::Start()
 										(scene.getCurrentScene() == 1 ||
 											scene.getCurrentScene() == 2))
 									{
-										loopCount++;
-
-										// Heal 25% of the player's maximum HP
-										int healAmount = player->getMaxHealth() / 4;
-
-										int newHealth = player->getHealth() + healAmount;
-
-										// Prevent healing above Max HP
-										if (newHealth > player->getMaxHealth())
-										{
-											newHealth = player->getMaxHealth();
-										}
-
-										player->setHealth(newHealth);
-										player->setStamina(player->getMaxStamina());
-
-										cout << "\nEncounter completed!";
-
-										cout << "\nYou recovered "
-											<< healAmount
-											<< " HP!";
-
-										cout << "\nHP: "
-											<< player->getHealth()
-											<< "/"
-											<< player->getMaxHealth()
-										    << endl;
-
-										cout << "Stamina: "
-											<< player->getStamina()
-											<< "/"
-											<< player->getMaxStamina()
-											<< endl;
-
-										cout << "\nProgress: "
-											<< loopCount
-											<< "/"
-											<< maxLoops;
-
-										encounterFinished = true;
+										CompleteCombat();
 									}
-									else if (allEnemiesDead && scene.getCurrentScene() == 2)
-									{
-										loopCount++;
 
-										encounterFinished = true;
-
-										cout << "\nEncounter completed!";
-										cout << "\nProgress: "
-											<< loopCount
-											<< "/"
-											<< maxLoops;
-									}
 								}
 
 								hit = true;
@@ -617,6 +567,8 @@ void Game::DisplayGame(char sym)
 		}
 	}
 
+	// ------------ DAMAGE OVER TIME / STATUS MESSAGE ------------
+
 	if (!dotMessage.empty())
 	{
 		cout << "\n--- STATUS EFFECTS ---" << endl;
@@ -812,9 +764,62 @@ void Game::ClearEnemies()
 	enemyCount = 0;
 }
 
+
+void Game::CompleteCombat()
+{
+	loopCount++;
+	system("cls");
+
+	// ---------------- HEAL PLAYER ----------------
+	int healthBefore = player->getHealth();
+
+	// Heal 25% of max HP after a normal encounter
+	int healAmount = player->getMaxHealth() / 4;
+
+	int newHealth = player->getHealth() + healAmount;
+
+	if (newHealth > player->getMaxHealth())
+	{
+		newHealth = player->getMaxHealth();
+	}
+
+	player->setHealth(newHealth);
+
+	int actualHealing = player->getHealth() - healthBefore;
+
+	// ---------------- RESTORE STAMINA ----------------
+	player->setStamina(player->getMaxStamina());
+
+	// ---------------- DISPLAY ----------------
+	cout << "\nEncounter completed!";
+
+	cout << "\nYou recovered "
+		<< actualHealing
+		<< " HP!";
+
+	cout << "\nHP: "
+		<< player->getHealth()
+		<< "/"
+		<< player->getMaxHealth();
+
+	cout << "\nStamina: "
+		<< player->getStamina()
+		<< "/"
+		<< player->getMaxStamina();
+
+	cout << "\nProgress: "
+		<< loopCount
+		<< "/"
+		<< maxLoops;
+
+	encounterFinished = true;
+}
+
+
 void Game::TickEnemyDoT()
 {
-
+	// Clear the previous turn's DoT text.
+	// New DoT text will be stored here and displayed by DisplayGame().
 	dotMessage.clear();
 
 	bool anyDotDamage = false;
@@ -835,10 +840,12 @@ void Game::TickEnemyDoT()
 		{
 			anyDotDamage = true;
 
+			int dotDamage = healthBefore - enemy[i]->getHealth();
+
 			dotMessage +=
 				enemy[i]->getName()
 				+ " takes "
-				+ to_string(healthBefore - enemy[i]->getHealth())
+				+ to_string(dotDamage)
 				+ " damage from a damage-over-time effect!\n";
 
 			if (enemy[i]->IsAlive())
@@ -880,18 +887,16 @@ void Game::TickEnemyDoT()
 		if (allEnemiesDead &&
 			(scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2))
 		{
-			loopCount++;
-			encounterFinished = true;
-
-			cout << "\nEncounter completed!";
-			cout << "\nProgress: " << loopCount << "/" << maxLoops;
+			CompleteCombat();
 		}
 	}
 
-	
+	// No _getch() or system("cls") here.
+	// DisplayGame() will show dotMessage on the normal main screen.
 }
 
-Enemy* Game::FindEnemyInRange(int minRange,int maxRange,int dirRow,int dirCol)
+
+Enemy* Game::FindEnemyInRange(int minRange, int maxRange, int dirRow, int dirCol)
 {
 	for (int dist = minRange; dist <= maxRange; dist++)
 	{
@@ -921,7 +926,7 @@ void Game::CastAbility(int abilityChoice, char direction)
 	int dirCol;
 
 	// Convert IJKL into row/column direction
-	if (!player->PlayerAbilityDirection(direction,dirRow,dirCol))
+	if (!player->PlayerAbilityDirection(direction, dirRow, dirCol))
 	{
 		cout << "\nInvalid direction!" << endl;
 		return;
@@ -986,7 +991,7 @@ void Game::CastAbility(int abilityChoice, char direction)
 		cout << "Required: "
 			<< staminaCost
 			<< " ST" << endl;
-        return;
+		return;
 	}
 
 	// Spend stamina
@@ -1005,7 +1010,7 @@ void Game::CastAbility(int abilityChoice, char direction)
 			<< " casts Fireball on "
 			<< target->getName()
 			<< "!" << endl;
-		  
+
 		break;
 
 
@@ -1192,17 +1197,7 @@ void Game::CastAbility(int abilityChoice, char direction)
 			(scene.getCurrentScene() == 1 ||
 				scene.getCurrentScene() == 2))
 		{
-			loopCount++;
-
-			encounterFinished = true;
-
-
-			cout << "\nEncounter completed!";
-
-			cout << "\nProgress: "
-				<< loopCount
-				<< "/"
-				<< maxLoops;
+			CompleteCombat();
 		}
 	}
 

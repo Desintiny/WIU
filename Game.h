@@ -83,4 +83,5 @@ public:
 
 	// Applies active damage-over-time effects to enemies once per turn.
 	void TickEnemyDoT();
+	void CompleteCombat();
 };
