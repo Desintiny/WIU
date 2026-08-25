@@ -8,17 +8,20 @@ private:
 
     bool DidHit;
     bool Dodged;
+    bool Thorned;
 
 public:
     RNG();
 
-    void SetAccuracy(int accuracy); // Accuracy
+    void SetAccuracy(int accuracy);
     void HitOrMiss();
     void AbilityHitOrMiss(int chance);
     void Dodge(int chance);
+    void Thorns(int chance);
 
-    bool CriticalHit(int chance);    // Critical Hit
+    bool CriticalHit(int chance);
 
     bool GetDidHit();
     bool GetDodged();
+    bool GetThorns();
 };
