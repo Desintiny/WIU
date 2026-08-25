@@ -11,6 +11,7 @@ Player::Player(string n) : Entity(n)
 	maxRange = 0;
 
 	dodgeChance = 5;
+	thornsChance = 0;
 
 	equippedWeaponBonus = 0;
 	equippedWeaponName = "None";
@@ -116,7 +117,7 @@ void Player::GetSharkToothCharm()
 {
 	SharkToothCharm.AddAccuracy(2);
 	SharkToothCharm.AddDamage(2);
-	AttackRing.AddCritChance(5);
+	SharkToothCharm.AddCritChance(5);
 }
 
 void Player::GetIdolTrinket()
@@ -142,7 +143,8 @@ void Player::GetWoodCarvedNecklace()
 {
 	WoodCarvedNecklace.AddAccuracy(2);
 	WoodCarvedNecklace.AddHealth(2);
-	AttackRing.AddCritChance(5);
+	WoodCarvedNecklace.AddCritChance(5);
+	WoodCarvedNecklace.AddThornsChance(5);
 
 	setMaxHealth(getMaxHealth() + WoodCarvedNecklace.GetHealth());
 	setHealth(getHealth() + WoodCarvedNecklace.GetHealth());
@@ -162,7 +164,8 @@ void Player::GetTreeEmblem()
 	TreeEmblem.AddAccuracy(2);
 	TreeEmblem.AddHealth(5);
 	TreeEmblem.AddDamage(2);
-	AttackRing.AddCritChance(5);
+	TreeEmblem.AddCritChance(5);
+	TreeEmblem.AddThornsChance(5);
 
 	setMaxHealth(getMaxHealth() + TreeEmblem.GetHealth());
 	setHealth(getHealth() + TreeEmblem.GetHealth());
@@ -211,14 +214,16 @@ int Player::GetCritChance()
 		+ GemCharm.GetCritChance()
 		+ TreeEmblem.GetCritChance();
 }
-void Player::setDodgeChance(int dodge)
+int Player::GetThornsChance()
 {
-	dodgeChance = dodge;
-}
-
-int Player::getDodgeChance()
-{
-	return dodgeChance;
+	return AttackRing.GetThornsChance()
+		+ HpRing.GetThornsChance()
+		+ SharkToothCharm.GetThornsChance()
+		+ IdolTrinket.GetThornsChance()
+		+ SilverBracelet.GetThornsChance()
+		+ WoodCarvedNecklace.GetThornsChance()
+		+ GemCharm.GetThornsChance()
+		+ TreeEmblem.GetThornsChance();
 }
 
 void Player::PlayerAttack(Entity* enemy)
@@ -300,6 +305,26 @@ void Player::setMaxRange(int r)
 int Player::getMaxRange(void)
 {
 	return maxRange;
+}
+
+void Player::setDodgeChance(int dodge)
+{
+	dodgeChance = dodge;
+}
+
+int Player::getDodgeChance()
+{
+	return dodgeChance;
+}
+
+void Player::setThornsChance(int thorns)
+{
+	thornsChance = thorns;
+}
+
+int Player::getThornsChance()
+{
+	return thornsChance;
 }
 
 void Player::AddItem(Item item)
