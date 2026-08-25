@@ -12,7 +12,6 @@ class Player : public Entity
 	int maxRange;
 
 	int dodgeChance;
-	int thornsChance;
 
 	std::vector<Item> inventory;
 
@@ -56,9 +55,6 @@ public:
 	void setDodgeChance(int dodge);
 	int getDodgeChance();
 
-	void setThornsChance(int thorns);
-	int getThornsChance();
-
 	// -------- INVENTORY --------
 	void AddItem(Item item);
 	void DisplayInventory();
@@ -69,7 +65,6 @@ public:
 	int GetEquipmentHealth();
 	int GetEquipmentDamage();
 	int GetCritChance();
-	int GetThornsChance();
 
 	void GetAttackRing();	//Indiv equipment
 	void GetHpRing();

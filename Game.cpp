@@ -22,7 +22,7 @@ Game::Game()
 	loopCount = 0;
 	maxLoops = 6;
 
-	exitUnlocked = false;
+	
 	encounterFinished = false;
 
 	for (int i = 0; i < MAX_ENEMIES; i++)
@@ -225,18 +225,8 @@ void Game::Start()
 									delete enemy[i];
 									enemy[i] = nullptr;
 
-									bool allEnemiesDead = true;
-
-									for (int j = 0; j < enemyCount; j++)
-									{
-										if (enemy[j] != nullptr)
-										{
-											allEnemiesDead = false;
-											break;
-										}
-									}
-
-									if (allEnemiesDead &&
+									
+									if (AreAllEnemiesDead() &&
 										(scene.getCurrentScene() == 1 ||
 											scene.getCurrentScene() == 2))
 									{
@@ -764,6 +754,18 @@ void Game::ClearEnemies()
 	enemyCount = 0;
 }
 
+bool Game::AreAllEnemiesDead()
+{
+	for (int i = 0; i < enemyCount; i++)
+	{
+		if (enemy[i] != nullptr)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
 
 void Game::CompleteCombat()
 {
@@ -873,18 +875,7 @@ void Game::TickEnemyDoT()
 	// If DoT killed an enemy, check whether that was the final enemy.
 	if (anyDotDamage)
 	{
-		bool allEnemiesDead = true;
-
-		for (int i = 0; i < enemyCount; i++)
-		{
-			if (enemy[i] != nullptr)
-			{
-				allEnemiesDead = false;
-				break;
-			}
-		}
-
-		if (allEnemiesDead &&
+		if (AreAllEnemiesDead() &&
 			(scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2))
 		{
 			CompleteCombat();
@@ -932,22 +923,21 @@ void Game::CastAbility(int abilityChoice, char direction)
 		return;
 	}
 	// CONVERT MENU CHOICE INTO ABILITY ID
+	if (abilityChoice < 0 || abilityChoice > 9)
+	{
+		cout << "\nInvalid ability!" << endl;
+		return;
+	}
+
 	int abilityId;
 
-	switch (abilityChoice)
+	if (abilityChoice == 0)
 	{
-	case 1:abilityId = Abilities::FIREBALL;break;
-	case 2:abilityId = Abilities::MAGIC_MISSILE;break;
-	case 3:abilityId = Abilities::BLOOD_PIERCE;break;
-	case 4:abilityId = Abilities::ICICLE_SPEAR;break;
-	case 5:abilityId = Abilities::LIGHTNING_BOLT;break;
-	case 6:abilityId = Abilities::BLOOD_BOMB;break;
-	case 7:abilityId = Abilities::POISON_SHOT;break;
-	case 8:abilityId = Abilities::AIR_CUTTER;break;
-	case 9:abilityId = Abilities::BOULDER_THROW;break;
-	case 0:abilityId = Abilities::WATER_BOLT;break;
-
-	default:cout << "\nInvalid ability!" << endl;return;
+		abilityId = Abilities::WATER_BOLT;
+	}
+	else
+	{
+		abilityId = abilityChoice - 1;
 	}
 
 	// GET UNIQUE ABILITY RANGE
@@ -1174,26 +1164,8 @@ void Game::CastAbility(int abilityChoice, char direction)
 			}
 		}
 
-
-		// ========================================================
-		// CHECK IF ALL ENEMIES ARE DEAD
-		// ========================================================
-
-		bool allEnemiesDead = true;
-
-
-		for (int i = 0; i < enemyCount; i++)
-		{
-			if (enemy[i] != nullptr)
-			{
-				allEnemiesDead = false;
-				break;
-			}
-		}
-
-
 		// Forest or Village encounter completed
-		if (allEnemiesDead &&
+		if (AreAllEnemiesDead() &&
 			(scene.getCurrentScene() == 1 ||
 				scene.getCurrentScene() == 2))
 		{
@@ -1213,5 +1185,5 @@ void Game::CastAbility(int abilityChoice, char direction)
 			<< endl;
 
 		gameRunning = false;
-	}
+	};
 }

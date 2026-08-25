@@ -42,7 +42,7 @@ class Game
 	static const int ENEMY_BOSS = 1;
 
 	GameScene scene;
-	bool exitUnlocked;
+	bool AreAllEnemiesDead();
 
 	int loopCount;
 	int maxLoops;
@@ -84,4 +84,5 @@ public:
 	// Applies active damage-over-time effects to enemies once per turn.
 	void TickEnemyDoT();
 	void CompleteCombat();
+	
 };
