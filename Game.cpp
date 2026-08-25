@@ -351,28 +351,20 @@ void Game::Start()
 
 			if (loopCount < 3)
 			{
-				// Pick another event
+				StoryDialogue();
 				event.PathChoice(player);
-
 				cout << "\nPress any key to continue...";
 				_getch();
-
 				system("cls");
-
-				// Start another combat encounter
 				LoadScene(sym, 1);
 			}
 			else if (loopCount < 6)
 			{
-				// Pick another event
+				StoryDialogue();
 				event.PathChoice(player);
-
 				cout << "\nPress any key to continue...";
 				_getch();
-
 				system("cls");
-
-				// Start another combat encounter
 				LoadScene(sym, 2);
 			}
 
@@ -382,6 +374,8 @@ void Game::Start()
 
 			else if (loopCount == maxLoops)
 			{
+				StoryDialogue();
+
 				cout << "=====================================\n";
 				cout << "          STAGE COMPLETE\n";
 				cout << "=====================================\n";
@@ -391,8 +385,6 @@ void Game::Start()
 				_getch();
 
 				system("cls");
-
-				// Load Boss Arena
 				LoadScene(sym, 3);
 			}
 		}
@@ -404,15 +396,52 @@ void Game::Start()
 
 void Game::StoryDialogue()
 {
-	cout << "\n=====================================" << endl;
-	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
-	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
-	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
-	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
-	cout << "=====================================\n" << endl;
-	cout << "Press any key to continue...";
+	ifstream inputFile("Story.txt");
+
+	if (!inputFile.is_open())
+	{
+		cout << "Unable to open Story.txt!" << endl;
+		return;
+	}
+	int storyNumber = loopCount + 1;
+
+	string storyTitle = "======Story " + to_string(storyNumber) + "======";
+
+	string line;
+	bool printingStory = false;
+
+	cout << "\n=====================================\n";
+
+	while (getline(inputFile, line))
+	{
+		// Find the story we want
+		if (line == storyTitle)
+		{
+			printingStory = true;
+			continue;
+		}
+
+		// Stop when we reach the next story
+		if (printingStory && line.find("======Story ") == 0)
+		{
+			break;
+		}
+
+		// Print lines belonging to the story
+		if (printingStory)
+		{
+			cout << line << endl;
+		}
+	}
+
+	cout << "=====================================\n";
+
+	cout << "\nPress any key to continue...";
 	_getch();
+
 	system("cls");
+
+	inputFile.close();
 }
 
 // ------------- SPAWN ENTITIES ONTO THE MAP -------------

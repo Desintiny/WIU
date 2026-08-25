@@ -50,17 +50,38 @@ void Event::Heal20(Player* player)
     }
     player->setHealth(newHp);
     cout << "You recovered 20 HP." << endl;
-    ifstream inputFile("eventnames.txt");
-
-    if (!inputFile.is_open())
-    {
-        cout << "ERROR: Could not open eventnames.txt\n";
-
-    }
-
-    return false;
 }
 
+
+// ============================================================
+// DAMAGE FUNCTIONS
+// ============================================================
+
+void Event::Damage10(Player* player)
+{
+    if (player == nullptr) return;
+
+    int newHp = player->getHealth() - 10;
+    if (newHp < 0)
+    {
+        newHp = 0;
+    }
+    player->setHealth(newHp);
+    cout << "You took 10 damage." << endl;
+}
+
+void Event::Damage15(Player* player)
+{
+    if (player == nullptr) return;
+
+    int newHp = player->getHealth() - 15;
+    if (newHp < 0)
+    {
+        newHp = 0;
+    }
+    player->setHealth(newHp);
+    cout << "You took 15 damage." << endl;
+}
 
 // ============================================================
 // PLAYER CHOOSES ONE OF THREE RANDOM PATHS
@@ -73,8 +94,6 @@ void Event::PathChoice(Player* player)
     cout << "Current folder: "
         << filesystem::current_path()
         << endl;
-
-    ifstream inputFile("eventnames.txt");
 
     if (!inputFile.is_open())
     {
@@ -448,6 +467,17 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
+        // EVENT 7 - SUDDEN RAIN
+        // Choice 1 loses 10 HP
+        // ----------------------------------------------------
+
+        if (event == 6 && choice == 1)
+        {
+            Damage10(player);
+        }
+
+
+        // ----------------------------------------------------
         // EVENT 8 - MEDICINAL HERBS
         // Choice 1 gives Medicinal Herb
         // ----------------------------------------------------
@@ -578,11 +608,11 @@ void Event::ForestEvent(int event, Player* player)
 
         // ----------------------------------------------------
         // EVENT 12 - BEE HIVE
-        // Choices 2 and 3 give Honey
+        // Choice 2 gives Honey
         // ----------------------------------------------------
 
         if (event == 11 &&
-            (choice == 2 || choice == 3))
+            (choice == 2))
         {
             Item honey;
 
@@ -597,9 +627,30 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
-            // EVENT 13 - FELLOW ADVENTURER
-            // Choice 2 gives bread
-            // ----------------------------------------------------
+       // EVENT 12 - BEE HIVE
+       // Choice 3 give Honey also lose 15 HP
+       // ----------------------------------------------------
+
+        if (event == 11 &&
+            (choice == 2 || choice == 3))
+        {
+            Item honey;
+
+            honey.name = "Honey";
+            honey.type = "Healing";
+            honey.healAmount = 6;
+            honey.atkBonus = 0;
+            honey.consumable = true;
+
+            player->AddItem(honey);
+            Damage15(player);
+        }
+
+
+        // ----------------------------------------------------
+        // EVENT 13 - FELLOW ADVENTURER
+        // Choice 2 gives bread
+        // ----------------------------------------------------
 
         if (event == 11 &&
             (choice == 2))
