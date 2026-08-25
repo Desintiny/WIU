@@ -23,8 +23,10 @@ void Enemy::EnemyAttack(Entity* target)
 	if (target != nullptr)
 	{
 		RNG rng;
+
 		Player* player = dynamic_cast<Player*>(target);
 
+		// Dodge
 		if (player != nullptr)
 		{
 			rng.Dodge(player->getDodgeChance());
@@ -37,11 +39,27 @@ void Enemy::EnemyAttack(Entity* target)
 
 		int dmg = getAttack();
 
+		// Player takes normal damage
 		target->TakeDamage(dmg);
 
 		cout << getName() << " attacks " << target->getName()
 			<< " for " << dmg << " damage!" << endl;
 
+		// Thorns
+		if (player != nullptr)
+		{
+			rng.Thorns(player->GetThornsChance());
+
+			if (rng.GetThorns())
+			{
+				TakeDamage(dmg);
+
+				cout << getName() << " takes "
+					<< dmg << " reflected damage!" << endl;
+			}
+		}
+
+		// Check player's HP
 		if (!target->IsAlive())
 		{
 			cout << target->getName() << " has been defeated!" << endl;
