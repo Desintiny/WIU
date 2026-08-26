@@ -71,4 +71,10 @@ public:
 
 	// Applies active damage-over-time effects to enemies once per turn.
 	void TickEnemyDoT();
+
+	// TEST CODE FOR ABILITY PICKER RANDOMISER
+	void randomAbilityPicker();
+
+	//TEST CODE CLASS ABILITY
+	void CastClassAbility(int classAbilityChoice, char direction);
 };

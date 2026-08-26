@@ -20,4 +20,5 @@ public:
    //Damage
     void Damage10(Player* player);
     void Damage15(Player* player);
+    void Damage25Per(Player* player);
 };

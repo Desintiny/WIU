@@ -498,7 +498,4 @@ std::string Player::getEquippedWeaponName(void)
 {
 	return equippedWeaponName;
 }
-std::string Player::getEquippedWeaponName(void)
-{
-	return equippedWeaponName;
-}
+
