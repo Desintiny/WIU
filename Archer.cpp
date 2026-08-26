@@ -3,7 +3,7 @@
 Archer::Archer(string n) : Player(n)
 {
 	static const int health = 28;
-	static const int stamina = 10;
+	static const int stamina = 25;
 
 	setHealth(health);
 	setMaxHealth(health);
