@@ -111,6 +111,26 @@ void Game::Start()
 
 			char input = _getch();
 
+			// -------------- for debugging --------------
+			if (input == '0')
+			{
+				system("cls");
+
+				Boss boss("Emperor Valdrek");
+
+				bool isBadEnding = false;
+
+				if (!isBadEnding)
+				{
+					boss.StartBossFight(player, Ability);
+				}
+				else
+				{
+					gameRunning = false;
+				}
+			}
+			// -------------- for debugging --------------
+
 			// -------- INVENTORY --------
 			if (input == 'e' || input == 'E')
 			{
@@ -420,14 +440,14 @@ void Game::Start()
 				system("cls");
 
 				// Boss dialogue / ending choice from the to-be-confirmed build.
-				Boss bossIntro("Emperor Valdrek");
-				bool isBadEnding = bossIntro.DisplayCutscene();
+				Boss boss("Emperor Valdrek");
+				bool isBadEnding = boss.DisplayCutscene();
 
 				if (!isBadEnding)
 				{
 					// Keep the merged game's normal combat system so stamina,
 					// random abilities, DoT, Thorns and the VictoryScreen still work.
-					LoadScene(sym, 3);
+					boss.StartBossFight(player, Ability);
 				}
 				else
 				{
@@ -472,55 +492,15 @@ void Game::MainMenu()
 
 void Game::StoryDialogue()
 {
-	ifstream inputFile("Story.txt");
-
-	if (!inputFile.is_open())
-	{
-		cout << "Unable to open Story.txt!" << endl;
-		return;
-	}
-
-	// Story 1 when loopCount is 0,
-	// Story 2 when loopCount is 1, etc.
-	int storyNumber = loopCount + 1;
-
-	string storyTitle = "======Story " + to_string(storyNumber) + "======";
-
-	string line;
-	bool printingStory = false;
-
-	cout << "\n=====================================\n";
-
-	while (getline(inputFile, line))
-	{
-		// Find the story we want
-		if (line == storyTitle)
-		{
-			printingStory = true;
-			continue;
-		}
-
-		// Stop when we reach the next story
-		if (printingStory && line.find("======Story ") == 0)
-		{
-			break;
-		}
-
-		// Print the lines belonging to this story
-		if (printingStory)
-		{
-			cout << line << endl;
-		}
-	}
-
-	cout << "=====================================\n";
-
-	cout << "\nPress any key to continue...";
-	_getch();
-
+	cout << "\n=====================================" << endl;
+	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
+	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
+	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
+	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
+	cout << "=====================================\n" << endl;
+	cout << "Press any key to continue...";
+	(void)_getch();
 	system("cls");
-
-	inputFile.close();
 }
 
 char Game::ClassSelection()
@@ -911,16 +891,6 @@ void Game::LoadScene(char sym, int sceneNumber)
 			SpawnEntity(enemy[i], symbol, row, col);
 		}
 	}
-	// ------------------------- BOSS -------------------------
-	else if (sceneNumber == 3)
-	{
-		SpawnEntity(player, sym, 7, 1);
-
-		enemyCount = ENEMY_BOSS;
-
-		enemy[0] = new Boss("Emperor Valdrek");
-		SpawnEntity(enemy[0], 'B', 7, 8);
-	}
 }
 
 void Game::ClearEnemies()
@@ -973,7 +943,6 @@ void Game::CompleteCombat()
 	player->setStamina(player->getMaxStamina());
 
 	// ---------------- DISPLAY ----------------
-	StoryDialogue();
 	cout << "\nEncounter completed!";
 
 	cout << "\nYou recovered "

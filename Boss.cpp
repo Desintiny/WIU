@@ -34,7 +34,7 @@ void Boss::EnemyMovement(Entity* target, char mapGrid[12][12])
 	// NONE
 }
 
-void Boss::StartBossFight(Player* player)
+void Boss::StartBossFight(Player* player, Abilities& Ability)
 {
 	bool battleRunning = true;
 
@@ -56,22 +56,136 @@ void Boss::StartBossFight(Player* player)
 
 		bool playerTurnUsed = false;
 
-		switch (choice)
+		if (choice == 1)
 		{
-		case 1:
 			player->PlayerAttack(this);
 
 			cout << "\nYou attack " << getName() << "!\n";
 
 			playerTurnUsed = true;
-			break;
+		}
+		else if (choice == 2)
+		{
+			cout << "\n--- Abilities ---\n";
+			cout << "Stamina: " << player->getStamina()
+				<< "/" << player->getMaxStamina() << endl;
 
-		case 2:
-			// Ability menu goes here
+			int abilitySlots[9];
+			int slotCount = 0;
+
+			// Display only abilities the player unlocked
+			for (int id = 1; id <= 9; id++)
+			{
+				if (Ability.RandoAbilityBools[id])
+				{
+					abilitySlots[slotCount] = id;
+
+					cout << "[" << slotCount + 1 << "] "
+						<< Ability.RandoAbilityList[id]
+						<< " (ST "
+						<< Ability.GetStaminaCost(id)
+						<< ")" << endl;
+
+					slotCount++;
+				}
+			}
+
+			if (slotCount == 0)
+			{
+				cout << "\nYou have no abilities!\n";
+				break;
+			}
+
+			int abilityChoice;
+
+			cout << "\nChoice: ";
+			cin >> abilityChoice;
+
+			if (abilityChoice < 1 || abilityChoice > slotCount)
+			{
+				cout << "\nInvalid ability choice!\n";
+				break;
+			}
+
+			// Get the REAL ability ID
+			int abilityIndex = abilitySlots[abilityChoice - 1];
+
+			int staminaCost = Ability.GetStaminaCost(abilityIndex);
+
+			if (player->getStamina() < staminaCost)
+			{
+				cout << "\nNot enough stamina! Required: "
+					<< staminaCost << " ST\n";
+				break;
+			}
+
+			// Use stamina
+			player->setStamina(
+				player->getStamina() - staminaCost
+			);
+
+			// Cast directly on THIS boss
+			switch (abilityIndex)
+			{
+			case Abilities::FIREBALL:
+				Ability.Fireball(*this);
+				break;
+
+			case Abilities::BOULDER_THROW:
+				Ability.BoulderThrow(*this);
+				break;
+
+			case Abilities::BLOOD_PIERCE:
+				Ability.BloodPierce(*this);
+				player->TakeDamage(5);
+				break;
+
+			case Abilities::POISON_SHOT:
+				Ability.PoisonShot(*this);
+				break;
+
+			case Abilities::LIGHTNING_BOLT:
+				Ability.LightningBolt(*this);
+				break;
+
+			case Abilities::BLOOD_BOMB:
+				Ability.BloodBomb(*this, *player);
+				break;
+
+			case Abilities::WATER_BOLT:
+				Ability.WaterBolt(*this, *player);
+				break;
+
+			case Abilities::AIR_CUTTER:
+				Ability.Aircutter(*this);
+				break;
+
+			case Abilities::BLOOMING_FLOWER:
+				Ability.BloomingFlowers(*this, *player);
+				break;
+			}
+
+			cout << "\n" << player->getName()
+				<< " casts "
+				<< Ability.RandoAbilityList[abilityIndex]
+				<< " on "
+				<< getName()
+				<< "!\n";
+
+			cout << getName() << " has "
+				<< getHealth() << "/"
+				<< getMaxHealth()
+				<< " HP left.\n";
+
+			cout << "Stamina remaining: "
+				<< player->getStamina()
+				<< "/"
+				<< player->getMaxStamina()
+				<< " ST\n";
+
 			playerTurnUsed = true;
-			break;
-
-		case 3:
+		}
+		else if (choice == 3)
 		{
 			player->DisplayInventory();
 
@@ -85,15 +199,12 @@ void Boss::StartBossFight(Player* player)
 				player->UseItem(itemChoice - 1);
 				playerTurnUsed = true;
 			}
-
-			break;
 		}
-
-		default:
+		else
+		{
 			cout << "\nInvalid choice!\n";
 			cout << "Press any key...";
 			_getch();
-			continue;
 		}
 
 		if (!IsAlive())
@@ -220,14 +331,21 @@ void Boss::EnemyAttack(Entity* target)
 
 	target->TakeDamage(dmg);
 
-	if (choice == 1)
+	switch (choice)
+	{
+	case 1: 
 		cout << getName() << " attacks " << target->getName() << " for " << dmg << " damage!" << endl;
-	else if (choice == 2)
+		break;
+	case 2: 
 		cout << getName() << " uses Imperial Slash for " << dmg << " damage!" << endl;
-	else if (choice == 3)
+		break;
+	case 3: 
 		cout << getName() << " uses Dark Execution for " << dmg << " damage!" << endl;
-	else if (choice == 4)
+		break;
+	case 4: 
 		cout << getName() << " uses Emperor's Wrath for " << dmg << " damage!" << endl;
+		break;
+	}
 
 	// Keep Thorns from the merged build.
 	if (player != nullptr)

@@ -2,6 +2,8 @@
 #include "Enemy.h"
 #include "Player.h"
 
+#include "Abilities.h"
+
 #include <iostream>
 #include <ctime>
 #include <conio.h>
@@ -32,7 +34,7 @@ public:
 	void setEmperorWrath(int);
 	int getEmperorWrath(void);
 
-	void StartBossFight(Player* player);
+	void StartBossFight(Player* player, Abilities& Ability);
 	void BossTurn(Player* player);
 	void DisplayBattle(Player* player);
 
