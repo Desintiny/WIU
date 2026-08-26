@@ -43,6 +43,18 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	{
 		newCol++;
 	}
+	else if (input == 'q')
+	{
+		GetAttackRing();
+			GetHpRing();
+			GetSharkToothCharm();
+			GetIdolTrinket();
+			GetSilverBracelet();
+			GetWoodCarvedNecklace();
+			GetGemCharm();
+			GetTreeEmblem();
+			GetReaperNail();
+	}
 	else
 	{
 		return;
@@ -170,6 +182,17 @@ void Player::GetTreeEmblem()
 	setMaxHealth(getMaxHealth() + TreeEmblem.GetHealth());
 	setHealth(getHealth() + TreeEmblem.GetHealth());
 }
+void Player::GetReaperNail()
+{
+	ReaperNail.AddAccuracy(5);
+	ReaperNail.AddHealth(10);
+	ReaperNail.AddDamage(5);
+	ReaperNail.AddCritChance(5);
+	ReaperNail.AddDisableTurns(2);
+
+	setMaxHealth(getMaxHealth() + ReaperNail.GetHealth());
+	setHealth(getHealth() + ReaperNail.GetHealth());
+}
 int Player::GetAccuracy()
 {
 	return AttackRing.GetAccuracy()
@@ -179,7 +202,8 @@ int Player::GetAccuracy()
 		+ SilverBracelet.GetAccuracy()
 		+ WoodCarvedNecklace.GetAccuracy()
 		+ GemCharm.GetAccuracy()
-		+ TreeEmblem.GetAccuracy();
+		+ TreeEmblem.GetAccuracy()
+		+ ReaperNail.GetAccuracy();
 }
 int Player::GetEquipmentDamage()
 {
@@ -190,7 +214,8 @@ int Player::GetEquipmentDamage()
 		+ SilverBracelet.GetDamage()
 		+ WoodCarvedNecklace.GetDamage()
 		+ GemCharm.GetDamage()
-		+ TreeEmblem.GetDamage();
+		+ TreeEmblem.GetDamage()
+		+ ReaperNail.GetDamage();
 }
 int Player::GetEquipmentHealth()
 {
@@ -201,7 +226,8 @@ int Player::GetEquipmentHealth()
 		+ SilverBracelet.GetHealth()
 		+ WoodCarvedNecklace.GetHealth()
 		+ GemCharm.GetHealth()
-		+ TreeEmblem.GetHealth();
+		+ TreeEmblem.GetHealth()
+		+ ReaperNail.GetHealth();
 }
 int Player::GetCritChance()
 {
@@ -212,7 +238,8 @@ int Player::GetCritChance()
 		+ SilverBracelet.GetCritChance()
 		+ WoodCarvedNecklace.GetCritChance()
 		+ GemCharm.GetCritChance()
-		+ TreeEmblem.GetCritChance();
+		+ TreeEmblem.GetCritChance()
+		+ ReaperNail.GetCritChance();
 }
 int Player::GetThornsChance()
 {
@@ -223,9 +250,13 @@ int Player::GetThornsChance()
 		+ SilverBracelet.GetThornsChance()
 		+ WoodCarvedNecklace.GetThornsChance()
 		+ GemCharm.GetThornsChance()
-		+ TreeEmblem.GetThornsChance();
+		+ TreeEmblem.GetThornsChance()
+		+ ReaperNail.GetThornsChance();
 }
-
+bool Player::HasDisableEquipment()
+{
+	return ReaperNail.GetHealth() > 0;
+}
 void Player::PlayerAttack(Entity* enemy)
 {
 	if (enemy != nullptr)
@@ -325,6 +356,11 @@ void Player::setThornsChance(int thorns)
 int Player::getThornsChance()
 {
 	return thornsChance;
+}
+
+int Player::GetDisableTurns()
+{
+	return ReaperNail.GetDisableTurns();
 }
 
 void Player::AddItem(Item item)
@@ -458,6 +494,10 @@ void Player::UseItem(int index)
 	}
 }
 
+std::string Player::getEquippedWeaponName(void)
+{
+	return equippedWeaponName;
+}
 std::string Player::getEquippedWeaponName(void)
 {
 	return equippedWeaponName;
