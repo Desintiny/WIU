@@ -5,6 +5,8 @@ Equipment::Equipment() {
     CritChance = 0;
     Health = 0;
     Damage = 0;
+    ThornsChance = 0;
+    DisableTurns = 0;
 }
 
 int Equipment::GetAccuracy() {
@@ -20,7 +22,7 @@ int Equipment::GetDamage() {
 }
 
 int Equipment::GetCritChance() {
-    return CritChance;  
+    return CritChance;
 }
 
 void Equipment::AddAccuracy(int accuracy) {
@@ -37,4 +39,23 @@ void Equipment::AddDamage(int damage) {
 void Equipment::AddCritChance(int critChance)
 {
     CritChance += critChance;
+}
+void Equipment::AddThornsChance(int chance)
+{
+    ThornsChance += chance;
+}
+
+int Equipment::GetThornsChance()
+{
+    return ThornsChance;
+}
+
+int Equipment::GetDisableTurns()
+{
+    return DisableTurns;
+}
+
+void Equipment::AddDisableTurns(int turns)
+{
+    DisableTurns += turns;
 }

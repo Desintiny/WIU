@@ -191,5 +191,13 @@ You decided to take a break by the Tree base. As you rest you feel energy pourin
 You decided to walk around the Tree base. At one point you found something hidden the crack of the roots.
 You decided to walk around the edges of the clearing you came from. While walking, you came across some fruits.
 
+======EVENT 16======
+You opened your eyes, how did I get here? A black figure towers over you. You hear a faint whisper. 
+Want to make a deal?
 
+1.Yes
+2.No
 
+What do you do? Choice:
+A creepy smile appears on his face. ??? Rolls a 10 sided dice. You wait with anticipation and fear.
+??? does not have face but you can tell he is mad, you woke back up, something does not feel right.
