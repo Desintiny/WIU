@@ -29,6 +29,7 @@ class Player : public Entity
 	Equipment WoodCarvedNecklace;
 	Equipment GemCharm;
 	Equipment TreeEmblem;
+	Equipment ReaperNail;
 
 public:
 	Player(string n);
@@ -71,6 +72,9 @@ public:
 	int GetCritChance();
 	int GetThornsChance();
 
+	int GetDisableTurns();
+	bool HasDisableEquipment();
+
 	void GetAttackRing();	//Indiv equipment
 	void GetHpRing();
 	void GetSharkToothCharm();
@@ -79,4 +83,5 @@ public:
 	void GetWoodCarvedNecklace();
 	void GetGemCharm();
 	void GetTreeEmblem();
+	void GetReaperNail();
 };
