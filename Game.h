@@ -18,6 +18,8 @@
 #include "ValEnforcer.h"
 #include "ValArcher.h"
 
+#include "Boss.h"
+
 class Game
 {
 	bool gameRunning;
