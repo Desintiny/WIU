@@ -100,25 +100,25 @@ void Game::Start()
 
 			char input = _getch();
 			
-			// -------------- for debug (remove when merged) --------------
-			if (input == '0')
-			{
-				system("cls");
+			//// -------------- for debug (remove when merged) --------------
+			//if (input == '0')
+			//{
+			//	system("cls");
 
-				Boss boss("Emperor Valdrek");
+			//	Boss boss("Emperor Valdrek");
 
-				bool isBadEnding = boss.DisplayCutscene();
+			//	bool isBadEnding = boss.DisplayCutscene();
 
-				if (!isBadEnding)
-				{
-					boss.StartBossFight(player);
-				}
-				else
-				{
-					gameRunning = false;
-				}
-			}
-			// -------------- for debug (remove when merged) --------------
+			//	if (!isBadEnding)
+			//	{
+			//		boss.StartBossFight(player);
+			//	}
+			//	else
+			//	{
+			//		gameRunning = false;
+			//	}
+			//}
+			//// -------------- for debug (remove when merged) --------------
 
 			// -------- INVENTORY --------
 			if (input == 'e' || input == 'E')
