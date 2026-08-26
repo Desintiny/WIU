@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "GameScene.h"
 
 #include "Player.h"
@@ -17,7 +19,6 @@
 #include "ValSwordman.h"
 #include "ValEnforcer.h"
 #include "ValArcher.h"
-
 #include "Boss.h"
 
 class Game
@@ -34,12 +35,15 @@ class Game
 	Enemy* enemy[MAX_ENEMIES];
 	int enemyCount;
 
+	string combatMessage;
+	std::string dotMessage;
+
 	static const int ENEMY_FOREST = 3;
 	static const int ENEMY_VILLAGE = 3;
 	static const int ENEMY_BOSS = 1;
 
 	GameScene scene;
-	bool exitUnlocked;
+	
 
 	int loopCount;
 	int maxLoops;
@@ -47,6 +51,13 @@ class Game
 	bool encounterFinished;
 
 	Abilities Ability;
+
+	Enemy* FindEnemyInRange(
+		int minRange,
+		int maxRange,
+		int dirRow,
+		int dirCol
+	);
 
 public:
 	Game();
@@ -73,10 +84,12 @@ public:
 
 	// Applies active damage-over-time effects to enemies once per turn.
 	void TickEnemyDoT();
+	void CompleteCombat();
+	bool AreAllEnemiesDead();
+	void GameOver();
+	void VictoryScreen();
 
-	// TEST CODE FOR ABILITY PICKER RANDOMISER
+	// Ability randomiser / class-specific ability systems
 	void randomAbilityPicker();
-
-	//TEST CODE CLASS ABILITY
 	void CastClassAbility(int classAbilityChoice, char direction);
 };

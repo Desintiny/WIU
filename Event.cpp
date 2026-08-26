@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <cmath>
 
 using namespace std;
 
@@ -56,6 +57,25 @@ void Event::Heal20(Player* player)
 // ============================================================
 // DAMAGE FUNCTIONS
 // ============================================================
+
+
+void Event::Damage10(Player* player)
+{
+    if (player == nullptr) return;
+    int newHp = player->getHealth() - 10;
+    if (newHp < 0) newHp = 0;
+    player->setHealth(newHp);
+    cout << "You took 10 damage." << endl;
+}
+
+void Event::Damage15(Player* player)
+{
+    if (player == nullptr) return;
+    int newHp = player->getHealth() - 15;
+    if (newHp < 0) newHp = 0;
+    player->setHealth(newHp);
+    cout << "You took 15 damage." << endl;
+}
 
 void Event::Damage25Per(Player* player)
 {

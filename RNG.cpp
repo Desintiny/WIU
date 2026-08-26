@@ -10,6 +10,7 @@ RNG::RNG() {
 
     DidHit = false;
     Dodged = false;
+    Thorned = false;
 }
 
 void RNG::SetAccuracy(int accuracy) {

@@ -1,4 +1,5 @@
 #include "Boss.h"
+#include "RNG.h"
 #include <iostream>
 #include <fstream>
 #include <ctime>
@@ -150,103 +151,102 @@ void Boss::DisplayBattle(Player* player)
 
 void Boss::EnemyAttack(Entity* target)
 {
-	if (target != nullptr)
+	if (target == nullptr)
 	{
-		int choice = 0;
-		int dmg = 0;
-		int percent = 0;
+		return;
+	}
 
-		static const int PERCENT_ATK = 40;
-		static const int PERCENT_IMP = 25 + PERCENT_ATK;
-		static const int PERCENT_EXE = 15 + PERCENT_IMP;
-		static const int PERCENT_EMP = 10 + PERCENT_EXE;
-		static const int PERCENT_MISS = 10 + PERCENT_EMP;
+	// Keep the merged disable-turn mechanic for the boss too.
+	if (GetDisabledTurns() > 0)
+	{
+		cout << getName() << " is unable to attack!" << endl;
+		SetDisabledTurns(GetDisabledTurns() - 1);
+		return;
+	}
 
-		percent = rand() % 100 + 1;
+	RNG rng;
+	Player* player = dynamic_cast<Player*>(target);
 
-		if (percent <= PERCENT_ATK)
+	// Keep player dodge equipment/bonuses against boss attacks.
+	if (player != nullptr)
+	{
+		rng.Dodge(player->getDodgeChance());
+		if (rng.GetDodged())
 		{
-			choice = 1; // Basic attack
+			return;
 		}
-		else if (percent <= PERCENT_IMP)
-		{
-			choice = 2; // Imperial Slash
-		}
-		else if (percent <= PERCENT_EXE)
-		{
-			choice = 3; // Dark Execution
-		}
-		else if (percent <= PERCENT_EMP)
-		{
-			choice = 4; // Emperor's Wrath
-		}
-		else if (percent <= PERCENT_MISS)
-		{
-			choice = 5; // Miss
-		}
-		
+	}
 
-		switch (choice)
+	int choice = 0;
+	int dmg = 0;
+	int percent = rand() % 100 + 1;
+
+	static const int PERCENT_ATK = 40;
+	static const int PERCENT_IMP = 65;
+	static const int PERCENT_EXE = 80;
+	static const int PERCENT_EMP = 90;
+
+	if (percent <= PERCENT_ATK)
+	{
+		choice = 1;
+		dmg = getAttack();
+	}
+	else if (percent <= PERCENT_IMP)
+	{
+		choice = 2;
+		dmg = getImperialSlash();
+	}
+	else if (percent <= PERCENT_EXE)
+	{
+		choice = 3;
+		dmg = getDarkExecution();
+	}
+	else if (percent <= PERCENT_EMP)
+	{
+		choice = 4;
+		dmg = getEmperorWrath();
+	}
+	else
+	{
+		choice = 5;
+		dmg = 0;
+	}
+
+	if (choice == 5)
+	{
+		cout << getName() << " missed!" << endl;
+		return;
+	}
+
+	target->TakeDamage(dmg);
+
+	if (choice == 1)
+		cout << getName() << " attacks " << target->getName() << " for " << dmg << " damage!" << endl;
+	else if (choice == 2)
+		cout << getName() << " uses Imperial Slash for " << dmg << " damage!" << endl;
+	else if (choice == 3)
+		cout << getName() << " uses Dark Execution for " << dmg << " damage!" << endl;
+	else if (choice == 4)
+		cout << getName() << " uses Emperor's Wrath for " << dmg << " damage!" << endl;
+
+	// Keep Thorns from the merged build.
+	if (player != nullptr)
+	{
+		rng.Thorns(player->GetThornsChance());
+		if (rng.GetThorns())
 		{
-		case 1: dmg = getAttack();
-			break;
-
-		case 2: dmg = getImperialSlash();
-			break;
-
-		case 3: dmg = getDarkExecution();
-			break;
-
-		case 4: dmg = getEmperorWrath();
-			break;
-
-		case 5: dmg = 0;
-			break;
-
-		default:
-			cout << "Didn't attack" << endl;
+			TakeDamage(dmg);
+			cout << getName() << " takes " << dmg << " reflected damage!" << endl;
 		}
+	}
 
-
-		target->TakeDamage(dmg);
-
-		if (choice == 1)
-		{
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 2)
-		{
-			cout << getName() << " uses Imperial Slash! " << endl;
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 3)
-		{
-			cout << getName() << " uses Dark Execution! " << endl;
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 4)
-		{
-			cout << getName() << " uses Emperor's Wrath! " << endl;
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 5)
-		{
-			cout << getName() << " missed! " << endl;
-		}
-
-		if (!target->IsAlive())
-		{
-			cout << target->getName() << " has been defeated!" << endl;
-		}
-		else
-		{
-			cout << target->getName() << " has "
-				<< target->getHealth() << " HP left." << endl;
-		}
+	if (!target->IsAlive())
+	{
+		cout << target->getName() << " has been defeated!" << endl;
+	}
+	else
+	{
+		cout << target->getName() << " has " << target->getHealth() << " HP left." << endl;
 	}
 }
 

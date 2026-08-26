@@ -361,3 +361,15 @@ void Abilities::PhoenixArrow(Entity& target, Entity& caster)
         caster.TakeDamage(9);
     }
 }
+
+int Abilities::GetStaminaCost(int ability)
+{
+    if (ability < 1 || ability > 9) return 0;
+    return staminaCost[ability];
+}
+
+int Abilities::GetClassStaminaCost(int ability)
+{
+    if (ability < 1 || ability > 9) return 0;
+    return classStaminaCost[ability];
+}
