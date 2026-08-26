@@ -1,0 +1,110 @@
+[START]
+EMPEROR VALDREK: Who stands before me...
+
+[CHOICE1_1]
+YOU: You don't know who I am?
+EMPEROR VALDREK: No, but I do sense great power in you.
+EMPEROR VALDREK: You had killed most of my army, and I recognise your ambition and power.
+YOU: Then why have you brought me here?
+EMPEROR VALDREK: Because I see potential in you.
+EMPEROR VALDREK: You have lost everything, yet you continue to fight.
+EMPEROR VALDREK: That determination is something my empire needs.
+EMPEROR VALDREK: Join me.
+EMPEROR VALDREK: Stand beside me, and you will have the power to build something greater than what you have lost.
+
+[CHOICE1_1_1]
+YOU: I will never join you.
+EMPEROR VALDREK: Then you leave me with no choice.
+EMPEROR VALDREK: I had hoped you would see reason.
+
+[CHOICE1_1_2]
+YOU: Why should I trust you?
+EMPEROR VALDREK: You shouldn't.
+EMPEROR VALDREK: Trust is earned. I am offering you power.
+EMPEROR VALDREK: The choice is yours.
+
+[CHOICE1_1_3]
+YOU: I will join you.
+EMPEROR VALDREK: Then you have made the right choice.
+EMPEROR VALDREK: Together, we shall build something greater than what was lost.
+
+[CHOICE1_2]
+YOU: The one who is going to end you.
+EMPEROR VALDREK: Such confidence...
+EMPEROR VALDREK: You have destroyed most of my army and now you believe yourself capable of defeating an emperor.
+YOU: I didn't come here to talk.
+EMPEROR VALDREK: And yet you will listen.
+EMPEROR VALDREK: Your strength is undeniable.
+EMPEROR VALDREK: Your aggression is exactly what my empire needs.
+EMPEROR VALDREK: Join me.
+EMPEROR VALDREK: Stand beside me, and your power will be given a purpose.
+
+[CHOICE1_2_1]
+YOU: I will destroy your empire.
+EMPEROR VALDREK: Then you have chosen your fate.
+EMPEROR VALDREK: I will make sure your ambition dies with you.
+
+[CHOICE1_2_2]
+YOU: Enough talk. Fight me.
+EMPEROR VALDREK: As you wish.
+EMPEROR VALDREK: Show me if your power is truly worth remembering.
+
+[CHOICE1_2_3]
+YOU: I will join you.
+EMPEROR VALDREK: Then stand beside me.
+EMPEROR VALDREK: Let us see what your strength can accomplish.
+
+[CHOICE1_3]
+YOU: You had destroyed everything I ever had.
+EMPEROR VALDREK: I see... so that is what drives you.
+YOU: Why?
+YOU: Why did you destroy my home? Why did you take everything from me?
+EMPEROR VALDREK: Because your home stood in the way of my empire.
+EMPEROR VALDREK: I did not destroy it out of hatred.
+EMPEROR VALDREK: I destroyed it because I believed it was necessary.
+YOU: Necessary?
+YOU: You call destroying innocent lives necessary?
+EMPEROR VALDREK: Empires are not built through mercy.
+EMPEROR VALDREK: They are built through sacrifice.
+YOU: Then why ask me to join you?
+EMPEROR VALDREK: Because you understand loss now.
+EMPEROR VALDREK: You understand what it means to have everything taken from you.
+EMPEROR VALDREK: That pain can either destroy you... or make you powerful.
+EMPEROR VALDREK: Join my empire.
+EMPEROR VALDREK: Let your loss become the source of your strength.
+
+[CHOICE1_3_1]
+YOU: I will never forgive you.
+EMPEROR VALDREK: I never asked for your forgiveness.
+EMPEROR VALDREK: I asked for your strength.
+
+[CHOICE1_3_2]
+YOU: I want to know what you are planning.
+EMPEROR VALDREK: I am building an empire that will never know defeat.
+EMPEROR VALDREK: And I want you to be part of it.
+
+[CHOICE1_3_3]
+YOU: I will join you.
+EMPEROR VALDREK: Then let us build a new future together.
+
+[OFFER_1]
+YOU: I will never join you.
+EMPEROR VALDREK: Then so be it. I'll crush you by myself.
+
+[OFFER_2]
+YOU: I will join you.
+
+[FIGHT]
+EMPEROR VALDREK: Enough words.
+EMPEROR VALDREK: Now... show me what your power is truly worth.
+
+[BAD_ENDING]
+You have joined Emperor Valdrek, helping him conquer towns and villages.
+You have become something that you once hated.
+
+[GOOD_ENDING]
+You have ended Emperor Valdrek, bringing a definitive end to his reign of terror.
+With his fall, the iron grip that choked a dozen kingdoms is finally broken.
+From the snow-peaked northern peaks to the sun-drenched southern sands, banners of freedom fly.
+The grand alliance of liberated realms joins together to build a lasting era of peace.
+You have become the legendary savior who united the worlds and ushered in a new era of hope.

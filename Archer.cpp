@@ -2,7 +2,7 @@
 
 Archer::Archer(string n) : Player(n)
 {
-	static const int health = 28;
+	static const int health = 2800;
 	static const int stamina = 10;
 
 	setHealth(health);

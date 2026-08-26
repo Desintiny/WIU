@@ -43,20 +43,6 @@ private:
         3  // Water Bolt
     };
 
-    int staminaCost[10] =
-    {
-        3, // Fireball
-        3, // Magic Missile
-        2, // Blood Pierce
-        3, // Icicle Spear
-        4, // Lightning Bolt
-        4, // Blood Bomb
-        3, // Poison Shot
-        2, // Air Cutter
-        2, // Boulder Throw
-        2  // Water Bolt
-    };
-
 public:
     // Ability IDs
     enum AbilityID
@@ -76,7 +62,7 @@ public:
     // Direct Damage
     void LightningBolt(Entity& target);
     void MagicMissile(Entity& target);
-    void WaterBolt(Entity& target, Entity& caster);
+    void WaterBolt(Entity& target);
     void BoulderThrow(Entity& target);
     void Aircutter(Entity& target);
 
@@ -92,5 +78,4 @@ public:
     // Range getters
     int GetMinRange(int ability);
     int GetMaxRange(int ability);
-    int GetStaminaCost(int ability);
 };

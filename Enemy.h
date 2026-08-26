@@ -7,7 +7,6 @@ using namespace std;
 
 class Enemy : public Entity
 {
-	bool recovering;
 
 public:
 	Enemy(string n);
@@ -16,7 +15,4 @@ public:
 	virtual void EnemyMovement(Entity* target, char mapGrid[12][12]) = 0;
 
 	virtual void EnemyAttack(Entity* target);
-
-	bool getRecovering();
-	void setRecovering(bool value);
 };

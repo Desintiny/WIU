@@ -34,7 +34,7 @@ void Abilities::MagicMissile(Entity& target)
 }
 
 
-void Abilities::WaterBolt(Entity& target, Entity& caster)
+void Abilities::WaterBolt(Entity& target)
 {
     RNG rng;
     rng.AbilityHitOrMiss(90);
@@ -42,14 +42,6 @@ void Abilities::WaterBolt(Entity& target, Entity& caster)
     if (rng.GetDidHit())
     {
         target.TakeDamage(3);
-
-        // Water Bolt also heals the caster by 5 HP, capped at max HP.
-        int newHP = caster.getHealth() + 5;
-        if (newHP > caster.getMaxHealth())
-        {
-            newHP = caster.getMaxHealth();
-        }
-        caster.setHealth(newHP);
     }
 }
 
@@ -174,14 +166,4 @@ int Abilities::GetMaxRange(int ability)
     }
 
     return maxRange[ability];
-}
-
-int Abilities::GetStaminaCost(int ability)
-{
-    if (ability < 0 || ability >= 10)
-    {
-        return 0;
-    }
-
-    return staminaCost[ability];
 }

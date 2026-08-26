@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-
 #include "GameScene.h"
 
 #include "Player.h"
@@ -20,6 +18,8 @@
 #include "ValEnforcer.h"
 #include "ValArcher.h"
 
+#include "Boss.h"
+
 class Game
 {
 	bool gameRunning;
@@ -34,15 +34,12 @@ class Game
 	Enemy* enemy[MAX_ENEMIES];
 	int enemyCount;
 
-	string combatMessage;
-	std::string dotMessage;
-
 	static const int ENEMY_FOREST = 3;
 	static const int ENEMY_VILLAGE = 3;
 	static const int ENEMY_BOSS = 1;
 
 	GameScene scene;
-	bool AreAllEnemiesDead();
+	bool exitUnlocked;
 
 	int loopCount;
 	int maxLoops;
@@ -50,13 +47,6 @@ class Game
 	bool encounterFinished;
 
 	Abilities Ability;
-
-	Enemy* FindEnemyInRange(
-		int minRange,
-		int maxRange,
-		int dirRow,
-		int dirCol
-	);
 
 public:
 	Game();
@@ -75,7 +65,6 @@ public:
 
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
-	void CheckSceneExit(char sym);
 
 	// Resolves one ability cast: scans tiles in the chosen direction (range 1-3),
 	// applies the matching Ability function to the first enemy found.
@@ -83,6 +72,4 @@ public:
 
 	// Applies active damage-over-time effects to enemies once per turn.
 	void TickEnemyDoT();
-	void CompleteCombat();
-	
 };

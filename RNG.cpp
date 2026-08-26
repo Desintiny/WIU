@@ -7,9 +7,7 @@ using namespace std;
 RNG::RNG() {
     GotHit = 0;
     Accuracy = 0;
-
     DidHit = false;
-    Dodged = false;
 }
 
 void RNG::SetAccuracy(int accuracy) {
@@ -47,30 +45,8 @@ void RNG::AbilityHitOrMiss(int chance) {
     }
 }
 
-
-void RNG::Dodge(int chance)
-{
-    int roll = rand() % 100;
-
-    if (roll < chance)
-    {
-        Dodged = true;
-
-        cout << "You dodged the attack! ("
-            << chance << "%)\n\n";
-    }
-    else
-    {
-        Dodged = false;
-    }
-}
-
 bool RNG::GetDidHit() {
     return DidHit;
-}
-bool RNG::GetDodged()
-{
-    return Dodged;
 }
 
 bool RNG::CriticalHit(int chance) {

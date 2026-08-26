@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "RNG.h"
 #include <iostream>
 
 Player::Player(string n) : Entity(n)
@@ -10,15 +9,12 @@ Player::Player(string n) : Entity(n)
 	minRange = 0;
 	maxRange = 0;
 
-	dodgeChance = 5;
-
 	equippedWeaponBonus = 0;
 	equippedWeaponName = "None";
 }
 
 Player::~Player()
 {
-
 }
 
 void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
@@ -41,17 +37,6 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	else if (input == 'd' || input == 'D') // DOWN
 	{
 		newCol++;
-	}
-	else if (input == 'q')
-	{
-		GetAttackRing();
-		GetHpRing();
-		GetSharkToothCharm();
-		GetIdolTrinket();
-		GetSilverBracelet();
-		GetWoodCarvedNecklace();
-		GetGemCharm();
-		GetTreeEmblem();
 	}
 	else
 	{
@@ -107,160 +92,25 @@ bool Player::PlayerAbilityDirection(char input, int& dirRow, int& dirCol)
 	return PlayerAtkDirection(input, dirRow, dirCol);
 }
 
-void Player::GetAttackRing()
-{
-	AttackRing.AddAccuracy(2);
-	AttackRing.AddDamage(4);
-	AttackRing.AddCritChance(5);
-}
-
-void Player::GetHpRing()
-{
-	HpRing.AddAccuracy(2);
-	HpRing.AddHealth(10);
-
-	setMaxHealth(getMaxHealth() + HpRing.GetHealth());
-	setHealth(getHealth() + HpRing.GetHealth());
-}
-
-void Player::GetSharkToothCharm()
-{
-	SharkToothCharm.AddAccuracy(2);
-	SharkToothCharm.AddDamage(2);
-	AttackRing.AddCritChance(5);
-}
-
-void Player::GetIdolTrinket()
-{
-	IdolTrinket.AddAccuracy(2);
-	IdolTrinket.AddDamage(2);
-	IdolTrinket.AddHealth(2);
-
-	setMaxHealth(getMaxHealth() + IdolTrinket.GetHealth());
-	setHealth(getHealth() + IdolTrinket.GetHealth());
-}
-
-void Player::GetSilverBracelet()
-{
-	SilverBracelet.AddAccuracy(2);
-	SilverBracelet.AddHealth(5);
-
-	setMaxHealth(getMaxHealth() + SilverBracelet.GetHealth());
-	setHealth(getHealth() + SilverBracelet.GetHealth());
-}
-
-void Player::GetWoodCarvedNecklace()
-{
-	WoodCarvedNecklace.AddAccuracy(2);
-	WoodCarvedNecklace.AddHealth(2);
-	AttackRing.AddCritChance(5);
-
-	setMaxHealth(getMaxHealth() + WoodCarvedNecklace.GetHealth());
-	setHealth(getHealth() + WoodCarvedNecklace.GetHealth());
-}
-
-void Player::GetGemCharm()
-{
-	GemCharm.AddAccuracy(2);
-	GemCharm.AddHealth(7);
-
-	setMaxHealth(getMaxHealth() + GemCharm.GetHealth());
-	setHealth(getHealth() + GemCharm.GetHealth());
-}
-
-void Player::GetTreeEmblem()
-{
-	TreeEmblem.AddAccuracy(2);
-	TreeEmblem.AddHealth(5);
-	TreeEmblem.AddDamage(2);
-	AttackRing.AddCritChance(5);
-
-	setMaxHealth(getMaxHealth() + TreeEmblem.GetHealth());
-	setHealth(getHealth() + TreeEmblem.GetHealth());
-}
-int Player::GetAccuracy()
-{
-	return AttackRing.GetAccuracy()
-		+ HpRing.GetAccuracy()
-		+ SharkToothCharm.GetAccuracy()
-		+ IdolTrinket.GetAccuracy()
-		+ SilverBracelet.GetAccuracy()
-		+ WoodCarvedNecklace.GetAccuracy()
-		+ GemCharm.GetAccuracy()
-		+ TreeEmblem.GetAccuracy();
-}
-int Player::GetEquipmentDamage()
-{
-	return AttackRing.GetDamage()
-		+ HpRing.GetDamage()
-		+ SharkToothCharm.GetDamage()
-		+ IdolTrinket.GetDamage()
-		+ SilverBracelet.GetDamage()
-		+ WoodCarvedNecklace.GetDamage()
-		+ GemCharm.GetDamage()
-		+ TreeEmblem.GetDamage();
-}
-int Player::GetEquipmentHealth()
-{
-	return AttackRing.GetHealth()
-		+ HpRing.GetHealth()
-		+ SharkToothCharm.GetHealth()
-		+ IdolTrinket.GetHealth()
-		+ SilverBracelet.GetHealth()
-		+ WoodCarvedNecklace.GetHealth()
-		+ GemCharm.GetHealth()
-		+ TreeEmblem.GetHealth();
-}
-int Player::GetCritChance()
-{
-	return AttackRing.GetCritChance()
-		+ HpRing.GetCritChance()
-		+ SharkToothCharm.GetCritChance()
-		+ IdolTrinket.GetCritChance()
-		+ SilverBracelet.GetCritChance()
-		+ WoodCarvedNecklace.GetCritChance()
-		+ GemCharm.GetCritChance()
-		+ TreeEmblem.GetCritChance();
-}
-void Player::setDodgeChance(int dodge)
-{
-	dodgeChance = dodge;
-}
-
-int Player::getDodgeChance()
-{
-	return dodgeChance;
-}
-
 void Player::PlayerAttack(Entity* enemy)
 {
 	if (enemy != nullptr)
 	{
-		RNG rng;
-		rng.SetAccuracy(GetAccuracy()); //Equipment Accuracy
-		rng.HitOrMiss();
+		int dmg = getAttack();
 
-		if (rng.GetDidHit()) {
-			int dmg = getAttack() + GetEquipmentDamage();
-			if (rng.CriticalHit(GetCritChance()))
-			{
-				dmg *= 2;
-				cout << "CRITICAL HIT" << endl;
-			}
-			enemy->TakeDamage(dmg);
+		enemy->TakeDamage(dmg);
 
-			cout << getName() << " attacks " << enemy->getName()
-				<< " for " << dmg << " damage!" << endl;
+		cout << getName() << " attacks " << enemy->getName()
+			<< " for " << dmg << " damage!" << endl;
 
-			if (!enemy->IsAlive())
-			{
-				cout << enemy->getName() << " has been defeated!" << endl;
-			}
-			else
-			{
-				cout << enemy->getName() << " has "
-					<< enemy->getHealth() << " HP left." << endl;
-			}
+		if (!enemy->IsAlive())
+		{
+			cout << enemy->getName() << " has been defeated!" << endl;
+		}
+		else
+		{
+			cout << enemy->getName() << " has "
+				<< enemy->getHealth() << " HP left." << endl;
 		}
 	}
 	else
@@ -315,136 +165,136 @@ int Player::getMaxRange(void)
 
 void Player::AddItem(Item item)
 {
-	inventory.push_back(item);
+    inventory.push_back(item);
 
-	cout << "\nYou obtained: " << item.name << "!" << endl;
+    cout << "\nYou obtained: " << item.name << "!" << endl;
 }
 
 
 void Player::DisplayInventory()
 {
-	cout << "\n=====================================" << endl;
-	cout << "              INVENTORY" << endl;
-	cout << "=====================================" << endl;
+    cout << "\n=====================================" << endl;
+    cout << "              INVENTORY" << endl;
+    cout << "=====================================" << endl;
 
-	cout << "HP: " << getHealth()
-		<< "/" << getMaxHealth() << endl;
+    cout << "HP: " << getHealth()
+        << "/" << getMaxHealth() << endl;
 
-	cout << "ATK: " << getAttack() << endl;
-	cout << "Weapon: " << equippedWeaponName << endl;
+    cout << "ATK: " << getAttack() << endl;
+    cout << "Weapon: " << equippedWeaponName << endl;
 
-	cout << "-------------------------------------" << endl;
+    cout << "-------------------------------------" << endl;
 
-	if (inventory.empty())
-	{
-		cout << "Inventory is empty." << endl;
-	}
-	else
-	{
-		for (int i = 0; i < inventory.size(); i++)
-		{
-			cout << "[" << i + 1 << "] "
-				<< inventory[i].name << endl;
+    if (inventory.empty())
+    {
+        cout << "Inventory is empty." << endl;
+    }
+    else
+    {
+        for (int i = 0; i < inventory.size(); i++)
+        {
+            cout << "[" << i + 1 << "] "
+                << inventory[i].name << endl;
 
-			cout << "    Type: "
-				<< inventory[i].type << endl;
+            cout << "    Type: "
+                << inventory[i].type << endl;
 
-			if (inventory[i].healAmount > 0)
-			{
-				cout << "    Heal: "
-					<< inventory[i].healAmount
-					<< " HP" << endl;
-			}
+            if (inventory[i].healAmount > 0)
+            {
+                cout << "    Heal: "
+                    << inventory[i].healAmount
+                    << " HP" << endl;
+            }
 
-			if (inventory[i].atkBonus > 0)
-			{
-				cout << "    ATK Bonus: +"
-					<< inventory[i].atkBonus << endl;
-			}
+            if (inventory[i].atkBonus > 0)
+            {
+                cout << "    ATK Bonus: +"
+                    << inventory[i].atkBonus << endl;
+            }
 
-			cout << endl;
-		}
-	}
+            cout << endl;
+        }
+    }
 
-	cout << "-------------------------------------" << endl;
-	cout << "[Item Number] Use Item" << endl;
-	cout << "[0] Back" << endl;
-	cout << "=====================================" << endl;
+    cout << "-------------------------------------" << endl;
+    cout << "[Item Number] Use Item" << endl;
+    cout << "[0] Back" << endl;
+    cout << "=====================================" << endl;
 }
 
 
 void Player::UseItem(int index)
 {
-	if (index < 0 || index >= inventory.size())
-	{
-		cout << "\nInvalid item." << endl;
-		return;
-	}
+    if (index < 0 || index >= inventory.size())
+    {
+        cout << "\nInvalid item." << endl;
+        return;
+    }
 
-	Item item = inventory[index];
+    Item item = inventory[index];
 
-	// -------- HEALING ITEM --------
-	if (item.type == "Healing")
-	{
-		int oldHealth = getHealth();
+    // -------- HEALING ITEM --------
+    if (item.type == "Healing")
+    {
+        int oldHealth = getHealth();
 
-		int newHealth = getHealth() + item.healAmount;
+        int newHealth = getHealth() + item.healAmount;
 
-		if (newHealth > getMaxHealth())
-		{
-			newHealth = getMaxHealth();
-		}
+        if (newHealth > getMaxHealth())
+        {
+            newHealth = getMaxHealth();
+        }
 
-		setHealth(newHealth);
+        setHealth(newHealth);
 
-		cout << "\nYou used "
-			<< item.name << "!" << endl;
+        cout << "\nYou used "
+            << item.name << "!" << endl;
 
-		cout << "HP: "
-			<< oldHealth
-			<< " -> "
-			<< getHealth()
-			<< endl;
-	}
+        cout << "HP: "
+            << oldHealth
+            << " -> "
+            << getHealth()
+            << endl;
+    }
 
-	// -------- WEAPON --------
-	else if (item.type == "Weapon")
-	{
-		int oldAttack = getAttack();
+    // -------- WEAPON --------
+    else if (item.type == "Weapon")
+    {
+        int oldAttack = getAttack();
 
-		// remove the previous weapon's bonus before applying the new one,
-		// so switching weapons replaces rather than stacks
-		setAttack(getAttack() - equippedWeaponBonus);
+        // remove the previous weapon's bonus before applying the new one,
+        // so switching weapons replaces rather than stacks
+        setAttack(getAttack() - equippedWeaponBonus);
 
-		equippedWeaponBonus = item.atkBonus;
-		equippedWeaponName = item.name;
+        equippedWeaponBonus = item.atkBonus;
+        equippedWeaponName = item.name;
 
-		setAttack(getAttack() + equippedWeaponBonus);
+        setAttack(getAttack() + equippedWeaponBonus);
 
-		cout << "\nYou equipped "
-			<< item.name << "!" << endl;
+        cout << "\nYou equipped "
+            << item.name << "!" << endl;
 
-		cout << "ATK: "
-			<< oldAttack
-			<< " -> "
-			<< getAttack()
-			<< endl;
-	}
+        cout << "ATK: "
+            << oldAttack
+            << " -> "
+            << getAttack()
+            << endl;
+    }
 
-	else
-	{
-		cout << "\nThis item cannot be used yet." << endl;
-		return;
-	}
+    else
+    {
+        cout << "\nThis item cannot be used yet." << endl;
+        return;
+    }
 
-	// Remove consumable items
-	if (item.consumable)
-	{
-		inventory.erase(inventory.begin() + index);
-	}
+    // Remove consumable items
+    if (item.consumable)
+    {
+        inventory.erase(inventory.begin() + index);
+    }
 }
 
 std::string Player::getEquippedWeaponName(void)
 {
-	return equippedWeaponName;
+    return equippedWeaponName;
 }

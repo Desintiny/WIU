@@ -1,5 +1,4 @@
 #include "Event.h"
-#include "Item.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -23,65 +22,17 @@ bool Event::IsUsed(int event)
         }
     }
 
+    ifstream inputFile("eventnames.txt");
+
+    if (!inputFile.is_open())
+    {
+        cout << "ERROR: Could not open eventnames.txt\n";
+
+    }
+
     return false;
 }
 
-
-// ============================================================
-// HEAL FUNCTIONS
-// ============================================================
-
-void Event::HealToMax(Player* player)
-{
-    if (player == nullptr) return;
-
-    player->setHealth(player->getMaxHealth());
-    cout << "You have been fully healed!" << endl;
-}
-
-void Event::Heal20(Player* player)
-{
-    if (player == nullptr) return;
-
-    int newHp = player->getHealth() + 20;
-    if (newHp > player->getMaxHealth())
-    {
-        newHp = player->getMaxHealth();
-    }
-    player->setHealth(newHp);
-    cout << "You recovered 20 HP." << endl;
-}
-
-
-// ============================================================
-// DAMAGE FUNCTIONS
-// ============================================================
-
-void Event::Damage10(Player* player)
-{
-    if (player == nullptr) return;
-
-    int newHp = player->getHealth() - 10;
-    if (newHp < 0)
-    {
-        newHp = 0;
-    }
-    player->setHealth(newHp);
-    cout << "You took 10 damage." << endl;
-}
-
-void Event::Damage15(Player* player)
-{
-    if (player == nullptr) return;
-
-    int newHp = player->getHealth() - 15;
-    if (newHp < 0)
-    {
-        newHp = 0;
-    }
-    player->setHealth(newHp);
-    cout << "You took 15 damage." << endl;
-}
 
 // ============================================================
 // PLAYER CHOOSES ONE OF THREE RANDOM PATHS
@@ -89,11 +40,11 @@ void Event::Damage15(Player* player)
 
 void Event::PathChoice(Player* player)
 {
-    ifstream inputFile("eventnames.txt");
-
     cout << "Current folder: "
         << filesystem::current_path()
         << endl;
+
+    ifstream inputFile("eventnames.txt");
 
     if (!inputFile.is_open())
     {
@@ -329,28 +280,6 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
-        // EVENT 1 - CAMPFIRE REST
-        // Choice 1 gives full heal
-        // ----------------------------------------------------
-
-        if (event == 0 && choice == 1)
-        {
-            HealToMax(player);
-        }
-
-
-        // ----------------------------------------------------
-       // EVENT 2 - FOREST COTTAGE
-       // Choice 1 gives full heal
-       // ----------------------------------------------------
-
-        if (event == 1 && choice == 1)
-        {
-            HealToMax(player);
-        }
-
-
-        // ----------------------------------------------------
         // EVENT 2 - FOREST COTTAGE
         // Choice 2 gives Bread
         // ----------------------------------------------------
@@ -389,49 +318,24 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
-       // EVENT 3 - FLOWING RIVER
-       // Choice 2 gives full heal
-       // ----------------------------------------------------
-
-        if (event == 2 && choice == 2)
-        {
-            HealToMax(player);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 4 - WANDERING TRAVELLER
-        // Choices can give a Charm
-        // ----------------------------------------------------
-
-        if (event == 3 && (choice == 2))
-        {
-            player->GetSharkToothCharm();
-            cout << "You have recieved and equipped --Shark Tooth Charm--" << endl;
-        }
-
-
-        // ----------------------------------------------------
         // EVENT 5 - RANDOM CHEST
         // Choices can give a Trinket
         // ----------------------------------------------------
 
         if (event == 4 &&
-            (choice == 1 || choice == 2 || choice == 3))
+            (choice == 1 ||
+                choice == 2 ||
+                choice == 3))
         {
-            player->GetIdolTrinket();
-            cout << "You have recieved and equipped --Idol Trinket--" << endl;
-        }
+            Item trinket;
 
+            trinket.name = "Old Trinket";
+            trinket.type = "Key Item";
+            trinket.healAmount = 0;
+            trinket.atkBonus = 0;
+            trinket.consumable = false;
 
-        // ----------------------------------------------------
-        // EVENT 6 - WATERFALL
-        // Choice 1 gives full heal
-        // ----------------------------------------------------
-
-        if (event == 5 && choice == 1)
-        {
-            HealToMax(player);
+            player->AddItem(trinket);
         }
 
 
@@ -442,8 +346,15 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 5 && choice == 2)
         {
-            player->GetHpRing();
-            cout << "You have recieved and equipped --HP Ring--" << endl;
+            Item ring;
+
+            ring.name = "Old Ring";
+            ring.type = "Key Item";
+            ring.healAmount = 0;
+            ring.atkBonus = 0;
+            ring.consumable = false;
+
+            player->AddItem(ring);
         }
 
 
@@ -467,17 +378,6 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
-        // EVENT 7 - SUDDEN RAIN
-        // Choice 1 loses 10 HP
-        // ----------------------------------------------------
-
-        if (event == 6 && choice == 1)
-        {
-            Damage10(player);
-        }
-
-
-        // ----------------------------------------------------
         // EVENT 8 - MEDICINAL HERBS
         // Choice 1 gives Medicinal Herb
         // ----------------------------------------------------
@@ -497,17 +397,6 @@ void Event::ForestEvent(int event, Player* player)
 
 
         // ----------------------------------------------------
-        // EVENT 8 - MEDICINAL HERBS
-        // Choice 2 gives 20 HP
-        // ----------------------------------------------------
-
-        if (event == 7 && choice == 2)
-        {
-            Heal20(player);
-        }
-
-
-        // ----------------------------------------------------
         // EVENT 9 - TRAINING GROUNDS
         // Choice 1 gives a Weapon
         // ----------------------------------------------------
@@ -523,17 +412,6 @@ void Event::ForestEvent(int event, Player* player)
             weapon.consumable = false;
 
             player->AddItem(weapon);
-        }
-
-
-        // ----------------------------------------------------
-       // EVENT 9 - TRAINING GROUNDS
-       // Choice 2 gives 20 HP
-       // ----------------------------------------------------
-
-        if (event == 8 && choice == 2)
-        {
-            Heal20(player);
         }
 
 
@@ -563,8 +441,15 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 9 && choice == 1)
         {
-            player->GetSilverBracelet();
-            cout << "You have recieved and equipped --Silver Bracelet--" << endl;
+            Item crowItem;
+
+            crowItem.name = "Crow Trinket";
+            crowItem.type = "Key Item";
+            crowItem.healAmount = 0;
+            crowItem.atkBonus = 0;
+            crowItem.consumable = false;
+
+            player->AddItem(crowItem);
         }
 
 
@@ -608,28 +493,8 @@ void Event::ForestEvent(int event, Player* player)
 
         // ----------------------------------------------------
         // EVENT 12 - BEE HIVE
-        // Choice 2 gives Honey
+        // Choices 2 and 3 give Honey
         // ----------------------------------------------------
-
-        if (event == 11 &&
-            (choice == 2))
-        {
-            Item honey;
-
-            honey.name = "Honey";
-            honey.type = "Healing";
-            honey.healAmount = 6;
-            honey.atkBonus = 0;
-            honey.consumable = true;
-
-            player->AddItem(honey);
-        }
-
-
-        // ----------------------------------------------------
-       // EVENT 12 - BEE HIVE
-       // Choice 3 give Honey also lose 15 HP
-       // ----------------------------------------------------
 
         if (event == 11 &&
             (choice == 2 || choice == 3))
@@ -643,40 +508,8 @@ void Event::ForestEvent(int event, Player* player)
             honey.consumable = true;
 
             player->AddItem(honey);
-            Damage15(player);
         }
 
-
-        // ----------------------------------------------------
-        // EVENT 13 - FELLOW ADVENTURER
-        // Choice 2 gives bread
-        // ----------------------------------------------------
-
-        if (event == 11 &&
-            (choice == 2))
-        {
-            player->GetWoodCarvedNecklace();
-            cout << "You have recieved and equipped --Wood Carved Necklace--" << endl;
-        }
-
-        // ----------------------------------------------------
-        // EVENT 13 - FELLOW ADVENTURER
-        // Choice 3 gives bread
-        // ----------------------------------------------------
-
-        if (event == 11 &&
-            (choice == 3))
-        {
-            Item bread;
-
-            bread.name = "Bread";
-            bread.type = "Healing";
-            bread.healAmount = 5;
-            bread.atkBonus = 0;
-            bread.consumable = true;
-
-            player->AddItem(bread);
-        }
 
         // ----------------------------------------------------
         // EVENT 14 - ABANDONED CARAVAN
@@ -685,31 +518,15 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 13 && choice == 1)
         {
-            player->GetGemCharm();
-            cout << "You have recieved and equipped --Gem Charm--" << endl;
-        }
+            Item charm;
 
+            charm.name = "Old Charm";
+            charm.type = "Key Item";
+            charm.healAmount = 0;
+            charm.atkBonus = 0;
+            charm.consumable = false;
 
-        // ----------------------------------------------------
-       // EVENT 15 - GIANT TREE
-       // Choice 1 gives full heal
-       // ----------------------------------------------------
-
-        if (event == 14 && choice == 1)
-        {
-            HealToMax(player);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 15 - GIANT TREE
-        // Choice 2 gives Emblem
-        // ----------------------------------------------------
-
-        if (event == 14 && choice == 2)
-        {
-            player->GetTreeEmblem();
-            cout << "You have recieved and equipped --Tree Emblem--" << endl;
+            player->AddItem(charm);
         }
 
 
