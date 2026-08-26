@@ -1,555 +1,187 @@
-#include "Event.h"
+#include "Abilities.h"
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <filesystem>
+#include "Entity.h"
+#include "RNG.h"
 
 using namespace std;
 
 
 // ============================================================
-// CHECK IF EVENT WAS ALREADY USED
+// DIRECT DAMAGE ABILITIES
 // ============================================================
 
-bool Event::IsUsed(int event)
+void Abilities::LightningBolt(Entity& target)
 {
-    for (int i = 0; i < usedEvents.size(); i++)
+    RNG rng;
+    rng.AbilityHitOrMiss(100);
+
+    if (rng.GetDidHit())
     {
-        if (usedEvents[i] == event)
+        target.TakeDamage(2);
+    }
+}
+
+
+void Abilities::MagicMissile(Entity& target)
+{
+    RNG rng;
+    rng.AbilityHitOrMiss(85);
+
+    if (rng.GetDidHit())
+    {
+        target.TakeDamage(10);
+    }
+}
+
+
+void Abilities::WaterBolt(Entity& target, Entity& caster)
+{
+    RNG rng;
+    rng.AbilityHitOrMiss(90);
+
+    if (rng.GetDidHit())
+    {
+        target.TakeDamage(3);
+
+        // Water Bolt also heals the caster by 5 HP, capped at max HP.
+        int newHP = caster.getHealth() + 5;
+        if (newHP > caster.getMaxHealth())
         {
-            return true;
+            newHP = caster.getMaxHealth();
         }
+        caster.setHealth(newHP);
     }
+}
 
-    ifstream inputFile("eventnames.txt");
 
-    if (!inputFile.is_open())
+void Abilities::BoulderThrow(Entity& target)
+{
+    RNG rng;
+    rng.AbilityHitOrMiss(90);
+
+    if (rng.GetDidHit())
     {
-        cout << "ERROR: Could not open eventnames.txt\n";
-
+        target.TakeDamage(8);
     }
+}
 
-    return false;
+
+void Abilities::Aircutter(Entity& target)
+{
+    RNG rng;
+    rng.AbilityHitOrMiss(90);
+
+    if (rng.GetDidHit())
+    {
+        target.TakeDamage(5);
+    }
 }
 
 
 // ============================================================
-// PLAYER CHOOSES ONE OF THREE RANDOM PATHS
+// DAMAGE OVER TIME ABILITIES
 // ============================================================
 
-void Event::PathChoice(Player* player)
+void Abilities::Fireball(Entity& target)
 {
-    cout << "Current folder: "
-        << filesystem::current_path()
-        << endl;
+    RNG rng;
+    rng.AbilityHitOrMiss(95);
 
-    ifstream inputFile("eventnames.txt");
-
-    if (!inputFile.is_open())
+    if (rng.GetDidHit())
     {
-        cout << "ERROR: eventnames.txt could not be opened!" << endl;
-        cout << "Current working directory may be wrong." << endl;
-        return;
+        target.TakeDamage(4);
+        target.SetDoT(2, 2);
     }
+}
 
 
-    vector<string> eventNames;
-    string line;
+void Abilities::IcicleSpear(Entity& target)
+{
+    RNG rng;
+    rng.AbilityHitOrMiss(90);
 
-    // Read all event names from file
-    while (getline(inputFile, line))
+    if (rng.GetDidHit())
     {
-        eventNames.push_back(line);
+        target.TakeDamage(3);
+        target.SetDoT(3, 3);
     }
+}
 
-    inputFile.close();
 
+void Abilities::PoisonShot(Entity& target)
+{
+    RNG rng;
+    rng.AbilityHitOrMiss(80);
 
-    // Make sure enough events exist
-    if (eventNames.size() < 3)
+    if (rng.GetDidHit())
     {
-        cout << "Not enough events!\n";
-        return;
+        target.TakeDamage(3);
+        target.SetDoT(2, 5);
     }
-
-
-    // ---------------- PATH 1 ----------------
-
-    int path1;
-
-    do
-    {
-        path1 = rand() % eventNames.size();
-
-    } while (IsUsed(path1));
-
-
-    // ---------------- PATH 2 ----------------
-
-    int path2;
-
-    do
-    {
-        path2 = rand() % eventNames.size();
-
-    } while (IsUsed(path2) || path2 == path1);
-
-
-    // ---------------- PATH 3 ----------------
-
-    int path3;
-
-    do
-    {
-        path3 = rand() % eventNames.size();
-
-    } while (IsUsed(path3) ||
-        path3 == path1 ||
-        path3 == path2);
-
-
-    // ---------------- DISPLAY PATHS ----------------
-
-    cout << "=====================================\n";
-    cout << "Pick a Path\n\n";
-
-    cout << "Path 1: " << eventNames[path1] << "\n";
-    cout << "Path 2: " << eventNames[path2] << "\n";
-    cout << "Path 3: " << eventNames[path3] << "\n";
-
-
-    int choice;
-
-    cout << "\nChoice: ";
-    cin >> choice;
-
-
-    int selectedEvent;
-
-
-    // ---------------- PLAYER CHOICE ----------------
-
-    if (choice == 1)
-    {
-        selectedEvent = path1;
-    }
-    else if (choice == 2)
-    {
-        selectedEvent = path2;
-    }
-    else if (choice == 3)
-    {
-        selectedEvent = path3;
-    }
-    else
-    {
-        cout << "Invalid choice.\n";
-        return;
-    }
-
-
-    // Remember that the event has been used
-    usedEvents.push_back(selectedEvent);
-
-
-    // Run selected event
-    ForestEvent(selectedEvent, player);
 }
 
 
 // ============================================================
-// FOREST EVENT
+// RESOURCE TRADEOFF ABILITIES
 // ============================================================
 
-void Event::ForestEvent(int event, Player* player)
+void Abilities::BloodPierce(Entity& target, Entity& caster)
 {
-    ifstream inputFile("input.txt");
+    RNG rng;
+    rng.AbilityHitOrMiss(100);
 
-    vector<string> eventLines;
-    string line;
-
-
-    // event starts from 0 internally
-    // so event + 1 matches EVENT 1, EVENT 2, etc.
-    string eventMarker =
-        "======EVENT " + to_string(event + 1) + "======";
-
-
-    bool readingEvent = false;
-
-
-    // ========================================================
-    // READ CORRECT EVENT FROM FILE
-    // ========================================================
-
-    while (getline(inputFile, line))
+    if (rng.GetDidHit())
     {
-        // Start reading when correct event is found
-        if (line == eventMarker)
-        {
-            readingEvent = true;
-            continue;
-        }
+        target.TakeDamage(6);
+        caster.TakeDamage(5);
+    }
+}
 
 
-        // Stop when next event starts
-        if (readingEvent &&
-            line.find("======EVENT ") == 0)
-        {
-            break;
-        }
+void Abilities::BloodBomb(Entity& target, Entity& caster)
+{
+    RNG rng;
+    rng.AbilityHitOrMiss(90);
+
+    if (rng.GetDidHit())
+    {
+        target.TakeDamage(10);
+        caster.TakeDamage(10);
+    }
+}
 
 
-        // Store event lines
-        if (readingEvent)
-        {
-            eventLines.push_back(line);
-        }
+// ============================================================
+// ABILITY RANGE GETTERS
+// ============================================================
+
+int Abilities::GetMinRange(int ability)
+{
+    if (ability < 0 || ability >= 10)
+    {
+        return 1;
     }
 
-
-    inputFile.close();
-
-
-    // ========================================================
-    // FIND THE CHOICE PROMPT
-    // ========================================================
-
-    int choicePrompt = -1;
+    return minRange[ability];
+}
 
 
-    for (int i = 0; i < eventLines.size(); i++)
+int Abilities::GetMaxRange(int ability)
+{
+    if (ability < 0 || ability >= 10)
     {
-        if (eventLines[i] == "What do you do? Choice:")
-        {
-            choicePrompt = i;
-            break;
-        }
+        return 1;
     }
 
+    return maxRange[ability];
+}
 
-    // Make sure prompt exists
-    if (choicePrompt == -1)
+int Abilities::GetStaminaCost(int ability)
+{
+    if (ability < 0 || ability >= 10)
     {
-        cout << "Choice prompt not found!\n";
-        return;
+        return 0;
     }
 
-
-    // ========================================================
-    // DISPLAY EVENT STORY AND CHOICES
-    // ========================================================
-
-    for (int i = 0; i < choicePrompt; i++)
-    {
-        cout << eventLines[i] << '\n';
-    }
-
-
-    cout << eventLines[choicePrompt] << " ";
-
-
-    // ========================================================
-    // PLAYER MAKES EVENT CHOICE
-    // ========================================================
-
-    int choice;
-
-    cin >> choice;
-
-
-    // Response starts after the choice prompt
-    int responseIndex = choicePrompt + choice;
-
-
-    // ========================================================
-    // DISPLAY RESPONSE
-    // ========================================================
-
-    if (responseIndex < eventLines.size())
-    {
-        cout << '\n'
-            << eventLines[responseIndex]
-            << '\n';
-
-
-        // ====================================================
-        // EVENT ITEM REWARDS
-        // ====================================================
-
-
-        // ----------------------------------------------------
-        // EVENT 2 - FOREST COTTAGE
-        // Choice 2 gives Bread
-        // ----------------------------------------------------
-
-        if (event == 1 && choice == 2)
-        {
-            Item bread;
-
-            bread.name = "Bread";
-            bread.type = "Healing";
-            bread.healAmount = 5;
-            bread.atkBonus = 0;
-            bread.consumable = true;
-
-            player->AddItem(bread);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 3 - FLOWING RIVER
-        // Choice 1 gives Water
-        // ----------------------------------------------------
-
-        if (event == 2 && choice == 1)
-        {
-            Item water;
-
-            water.name = "Bottle of Water";
-            water.type = "Healing";
-            water.healAmount = 3;
-            water.atkBonus = 0;
-            water.consumable = true;
-
-            player->AddItem(water);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 5 - RANDOM CHEST
-        // Choices can give a Trinket
-        // ----------------------------------------------------
-
-        if (event == 4 &&
-            (choice == 1 ||
-                choice == 2 ||
-                choice == 3))
-        {
-            Item trinket;
-
-            trinket.name = "Old Trinket";
-            trinket.type = "Key Item";
-            trinket.healAmount = 0;
-            trinket.atkBonus = 0;
-            trinket.consumable = false;
-
-            player->AddItem(trinket);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 6 - WATERFALL
-        // Choice 2 gives Ring
-        // ----------------------------------------------------
-
-        if (event == 5 && choice == 2)
-        {
-            Item ring;
-
-            ring.name = "Old Ring";
-            ring.type = "Key Item";
-            ring.healAmount = 0;
-            ring.atkBonus = 0;
-            ring.consumable = false;
-
-            player->AddItem(ring);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 6 - WATERFALL
-        // Choice 3 gives Water
-        // ----------------------------------------------------
-
-        if (event == 5 && choice == 3)
-        {
-            Item water;
-
-            water.name = "Bottle of Water";
-            water.type = "Healing";
-            water.healAmount = 3;
-            water.atkBonus = 0;
-            water.consumable = true;
-
-            player->AddItem(water);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 8 - MEDICINAL HERBS
-        // Choice 1 gives Medicinal Herb
-        // ----------------------------------------------------
-
-        if (event == 7 && choice == 1)
-        {
-            Item herb;
-
-            herb.name = "Medicinal Herb";
-            herb.type = "Healing";
-            herb.healAmount = 8;
-            herb.atkBonus = 0;
-            herb.consumable = true;
-
-            player->AddItem(herb);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 9 - TRAINING GROUNDS
-        // Choice 1 gives a Weapon
-        // ----------------------------------------------------
-
-        if (event == 8 && choice == 1)
-        {
-            Item weapon;
-
-            weapon.name = "Old Weapon";
-            weapon.type = "Weapon";
-            weapon.healAmount = 0;
-            weapon.atkBonus = 2;
-            weapon.consumable = false;
-
-            player->AddItem(weapon);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 9 - TRAINING GROUNDS
-        // Choice 3 gives Bread
-        // ----------------------------------------------------
-
-        if (event == 8 && choice == 3)
-        {
-            Item bread;
-
-            bread.name = "Bread";
-            bread.type = "Healing";
-            bread.healAmount = 5;
-            bread.atkBonus = 0;
-            bread.consumable = true;
-
-            player->AddItem(bread);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 10 - WHITE CROW
-        // Choice 1 gives Mystery Item
-        // ----------------------------------------------------
-
-        if (event == 9 && choice == 1)
-        {
-            Item crowItem;
-
-            crowItem.name = "Crow Trinket";
-            crowItem.type = "Key Item";
-            crowItem.healAmount = 0;
-            crowItem.atkBonus = 0;
-            crowItem.consumable = false;
-
-            player->AddItem(crowItem);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 11 - APPLE TREE
-        // Choice 2 gives Apples
-        // ----------------------------------------------------
-
-        if (event == 10 && choice == 2)
-        {
-            Item apple;
-
-            apple.name = "Apple";
-            apple.type = "Healing";
-            apple.healAmount = 4;
-            apple.atkBonus = 0;
-            apple.consumable = true;
-
-            player->AddItem(apple);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 11 - APPLE TREE
-        // Choice 3 also gives Apple
-        // ----------------------------------------------------
-
-        if (event == 10 && choice == 3)
-        {
-            Item apple;
-
-            apple.name = "Apple";
-            apple.type = "Healing";
-            apple.healAmount = 4;
-            apple.atkBonus = 0;
-            apple.consumable = true;
-
-            player->AddItem(apple);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 12 - BEE HIVE
-        // Choices 2 and 3 give Honey
-        // ----------------------------------------------------
-
-        if (event == 11 &&
-            (choice == 2 || choice == 3))
-        {
-            Item honey;
-
-            honey.name = "Honey";
-            honey.type = "Healing";
-            honey.healAmount = 6;
-            honey.atkBonus = 0;
-            honey.consumable = true;
-
-            player->AddItem(honey);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 14 - ABANDONED CARAVAN
-        // Choice 1 gives Charm
-        // ----------------------------------------------------
-
-        if (event == 13 && choice == 1)
-        {
-            Item charm;
-
-            charm.name = "Old Charm";
-            charm.type = "Key Item";
-            charm.healAmount = 0;
-            charm.atkBonus = 0;
-            charm.consumable = false;
-
-            player->AddItem(charm);
-        }
-
-
-        // ----------------------------------------------------
-        // EVENT 15 - GIANT TREE
-        // Choice 3 gives Fruit
-        // ----------------------------------------------------
-
-        if (event == 14 && choice == 3)
-        {
-            Item fruit;
-
-            fruit.name = "Forest Fruit";
-            fruit.type = "Healing";
-            fruit.healAmount = 5;
-            fruit.atkBonus = 0;
-            fruit.consumable = true;
-
-            player->AddItem(fruit);
-        }
-    }
-    else
-    {
-        cout << "Invalid choice.\n";
-    }
+    return staminaCost[ability];
 }
