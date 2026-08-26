@@ -12,25 +12,38 @@ Enemy::Enemy(string n) : Entity(n)
 	setHealth(18);
 	setMaxHealth(18);
 	setAttack(5);
+
+	disabledTurns = 0;
 }
 
 Enemy::~Enemy()
 {
 
 }
+int Enemy::GetDisabledTurns()
+{
+	return disabledTurns;
+}
+
+void Enemy::SetDisabledTurns(int turns)
+{
+	disabledTurns = turns;
+}
 void Enemy::EnemyAttack(Entity* target)
 {
 	if (target != nullptr)
 	{
+		if (disabledTurns > 0)
+		{
+			cout << getName() << " is unable to attack!" << endl;
+			disabledTurns--;
+			return;
+		}
 		RNG rng;
-
 		Player* player = dynamic_cast<Player*>(target);
-
-		// Dodge
 		if (player != nullptr)
 		{
 			rng.Dodge(player->getDodgeChance());
-
 			if (rng.GetDodged())
 			{
 				return;
@@ -38,14 +51,22 @@ void Enemy::EnemyAttack(Entity* target)
 		}
 
 		int dmg = getAttack();
-
-		// Player takes normal damage
 		target->TakeDamage(dmg);
 
 		cout << getName() << " attacks " << target->getName()
 			<< " for " << dmg << " damage!" << endl;
+		if (player != nullptr)
+		{
+			if (player->GetDisableTurns() > 0)
+			{
+				disabledTurns = player->GetDisableTurns();
 
-		// Thorns
+				cout << getName()
+					<< " has been disabled for "
+					<< disabledTurns
+					<< " turns!" << endl;
+			}
+		}
 		if (player != nullptr)
 		{
 			rng.Thorns(player->GetThornsChance());
@@ -58,8 +79,6 @@ void Enemy::EnemyAttack(Entity* target)
 					<< dmg << " reflected damage!" << endl;
 			}
 		}
-
-		// Check player's HP
 		if (!target->IsAlive())
 		{
 			cout << target->getName() << " has been defeated!" << endl;
