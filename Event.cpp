@@ -57,30 +57,16 @@ void Event::Heal20(Player* player)
 // DAMAGE FUNCTIONS
 // ============================================================
 
-void Event::Damage10(Player* player)
+void Event::Damage25Per(Player* player)
 {
     if (player == nullptr) return;
-
-    int newHp = player->getHealth() - 10;
-    if (newHp < 0)
-    {
+    int dmg = (int)ceil(player->getHealth() * 0.25);
+    int newHp = player->getHealth() - dmg;
+    if (newHp < 0) {
         newHp = 0;
     }
     player->setHealth(newHp);
-    cout << "You took 10 damage." << endl;
-}
-
-void Event::Damage15(Player* player)
-{
-    if (player == nullptr) return;
-
-    int newHp = player->getHealth() - 15;
-    if (newHp < 0)
-    {
-        newHp = 0;
-    }
-    player->setHealth(newHp);
-    cout << "You took 15 damage." << endl;
+    cout << "You took " << dmg << " damage." << endl;
 }
 
 // ============================================================
@@ -473,7 +459,7 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 6 && choice == 1)
         {
-            Damage10(player);
+            Damage25Per(player);
         }
 
 
@@ -643,7 +629,7 @@ void Event::ForestEvent(int event, Player* player)
             honey.consumable = true;
 
             player->AddItem(honey);
-            Damage15(player);
+            Damage25Per(player);
         }
 
 
@@ -748,7 +734,7 @@ void Event::ForestEvent(int event, Player* player)
             }
             else {
                 cout << "You have rolled: " << Nail + 1 << endl;
-                Damage15(player);
+                Damage25Per(player);
             }
         }
 
@@ -760,7 +746,7 @@ void Event::ForestEvent(int event, Player* player)
 
         if (event == 15 && choice == 2)
         {
-            Damage15(player);
+            Damage25Per(player);
         }
     }
     else
