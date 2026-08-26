@@ -730,6 +730,38 @@ void Event::ForestEvent(int event, Player* player)
 
             player->AddItem(fruit);
         }
+
+
+        // ----------------------------------------------------
+        // EVENT 16 - ???
+        // Choice 1 gives 1/10 of Nail or lose 15 HP
+        // ----------------------------------------------------
+
+        if (event == 15 && choice == 1)
+        {
+            int Nail;
+            Nail = rand() % 10;
+            if (Nail == 9) {
+                player -> GetReaperNail();
+                cout << "You have rolled: " << Nail + 1 << endl;
+                cout << "You have recieved and equipped --Reapers Nail--" << endl;
+            }
+            else {
+                cout << "You have rolled: " << Nail + 1 << endl;
+                Damage15(player);
+            }
+        }
+
+
+        // ----------------------------------------------------
+       // EVENT 16 - ???
+       // Choice 2 lose 15 HP
+       // ----------------------------------------------------
+
+        if (event == 15 && choice == 2)
+        {
+            Damage15(player);
+        }
     }
     else
     {
