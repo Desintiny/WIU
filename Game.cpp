@@ -99,6 +99,26 @@ void Game::Start()
 			DisplayGame(sym);
 
 			char input = _getch();
+			
+			// -------------- for debug (remove when merged) --------------
+			if (input == '0')
+			{
+				system("cls");
+
+				Boss boss("Emperor Valdrek");
+
+				bool isBadEnding = boss.DisplayCutscene();
+
+				if (!isBadEnding)
+				{
+					boss.StartBossFight(player);
+				}
+				else
+				{
+					gameRunning = false;
+				}
+			}
+			// -------------- for debug (remove when merged) --------------
 
 			// -------- INVENTORY --------
 			if (input == 'e' || input == 'E')
@@ -380,7 +400,7 @@ void Game::Start()
 			// ALL ENCOUNTERS COMPLETE
 			// =====================================
 
-			else if (loopCount == maxLoops)
+			else if (loopCount >= maxLoops)
 			{
 				cout << "=====================================\n";
 				cout << "          STAGE COMPLETE\n";
@@ -392,8 +412,18 @@ void Game::Start()
 
 				system("cls");
 
-				// Load Boss Arena
-				LoadScene(sym, 3);
+				Boss boss("Emperor Valdrek");
+
+				bool isBadEnding = boss.DisplayCutscene();
+
+				if (!isBadEnding)
+				{
+					boss.StartBossFight(player);
+				}
+				else
+				{
+					gameRunning = false;
+				}
 			}
 		}
 
@@ -759,7 +789,7 @@ void Game::LoadScene(char sym, int sceneNumber)
 
 		enemyCount = ENEMY_BOSS;
 
-		enemy[0] = new ValEnforcer("Valdrek");
+		enemy[0] = new Boss("Emperor Valdrek");
 		SpawnEntity(enemy[0], 'E', 7, 8);
 	}
 }

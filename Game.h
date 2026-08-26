@@ -18,6 +18,8 @@
 #include "ValEnforcer.h"
 #include "ValArcher.h"
 
+#include "Boss.h"
+
 class Game
 {
 	bool gameRunning;
@@ -63,7 +65,6 @@ public:
 
 	void LoadScene(char sym, int sceneNumber);
 	void ClearEnemies();
-	void CheckSceneExit(char sym);
 
 	// Resolves one ability cast: scans tiles in the chosen direction (range 1-3),
 	// applies the matching Ability function to the first enemy found.
