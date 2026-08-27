@@ -34,7 +34,7 @@ public:
 	void setEmperorWrath(int);
 	int getEmperorWrath(void);
 
-	void StartBossFight(Player* player, Abilities& Ability);
+	bool StartBossFight(Player* player, Abilities& Ability);
 	void BossTurn(Player* player);
 	void DisplayBattle(Player* player);
 

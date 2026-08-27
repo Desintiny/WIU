@@ -34,7 +34,7 @@ void Boss::EnemyMovement(Entity* target, char mapGrid[12][12])
 	// NONE
 }
 
-void Boss::StartBossFight(Player* player, Abilities& Ability)
+bool Boss::StartBossFight(Player* player, Abilities& Ability)
 {
 	bool battleRunning = true;
 
@@ -217,6 +217,7 @@ void Boss::StartBossFight(Player* player, Abilities& Ability)
 
 			battleRunning = false;
 
+			return true;
 			break;
 		}
 
@@ -232,6 +233,7 @@ void Boss::StartBossFight(Player* player, Abilities& Ability)
 
 				battleRunning = false;
 
+				return false;
 				break;
 			}
 		}
@@ -657,6 +659,8 @@ bool Boss::BadEndingDialog()
 	cout << "=============================\n";
 	cout << "          BAD ENDING         \n";
 	cout << "=============================\n";
+
+	_getch();
 
 	return true;
 }

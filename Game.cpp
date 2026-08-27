@@ -283,11 +283,6 @@ void Game::Start()
 										{
 											CompleteCombat();
 										}
-										else if (scene.getCurrentScene() == 3)
-										{
-											VictoryScreen();
-											return;
-										}
 									}
 
 								}
@@ -357,14 +352,14 @@ void Game::Start()
 								if (AreAllEnemiesDead())
 								{
 									if (scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2)
+									{
 										CompleteCombat();
-									else if (scene.getCurrentScene() == 3)
-										VictoryScreen();
+									}
 								}
-							}
-							else
-							{
-								enemy[i]->setRecovering(true);
+								else
+								{
+									enemy[i]->setRecovering(true);
+								}
 							}
 						}
 						else
@@ -373,91 +368,100 @@ void Game::Start()
 						}
 					}
 				}
-			}
 
-			if (!player->IsAlive())
-			{
-				GameOver();
-				return;
-			}
-		} // end normal player/enemy turn
-
-		if (encounterFinished)
-		{
-			encounterFinished = false;
-
-			cout << "\nPress any key to continue...";
-			_getch();
-
-			system("cls");
-
-
-			// =====================================
-			// MORE ENCOUNTERS REMAIN
-			// =====================================
-
-			if (loopCount < 3)
-			{
-				// Pick another event
-				event.PathChoice(player);
-
-				cout << "\nPress any key to continue...";
-				_getch();
-
-				system("cls");
-
-				// Start another combat encounter
-				LoadScene(sym, 1);
-			}
-			else if (loopCount < 6)
-			{
-				// Pick another event
-				event.PathChoice(player);
-
-				cout << "\nPress any key to continue...";
-				_getch();
-
-				system("cls");
-
-				// Start another combat encounter
-				LoadScene(sym, 2);
-			}
-
-			// =====================================
-			// ALL ENCOUNTERS COMPLETE
-			// =====================================
-
-			else if (loopCount == maxLoops)
-			{
-				cout << "=====================================\n";
-				cout << "          STAGE COMPLETE\n";
-				cout << "=====================================\n";
-				cout << "The boss awaits...\n";
-
-				cout << "\nPress any key to continue...";
-				(void)_getch();
-
-				system("cls");
-
-				// Boss dialogue / ending choice from the to-be-confirmed build.
-				Boss boss("Emperor Valdrek");
-				bool isBadEnding = boss.DisplayCutscene();
-
-				if (!isBadEnding)
+				if (!player->IsAlive())
 				{
-					// Keep the merged game's normal combat system so stamina,
-					// random abilities, DoT, Thorns and the VictoryScreen still work.
-					boss.StartBossFight(player, Ability);
+					GameOver();
+					return;
 				}
-				else
+			} // end normal player/enemy turn
+
+			if (encounterFinished)
+			{
+				encounterFinished = false;
+
+				cout << "\nPress any key to continue...";
+				_getch();
+
+				system("cls");
+
+
+				// =====================================
+				// MORE ENCOUNTERS REMAIN
+				// =====================================
+
+				if (loopCount < 3)
 				{
+					// Pick another event
+					event.PathChoice(player);
+
+					cout << "\nPress any key to continue...";
+					_getch();
+
+					system("cls");
+
+					// Start another combat encounter
+					LoadScene(sym, 1);
+				}
+				else if (loopCount < 6)
+				{
+					// Pick another event
+					event.PathChoice(player);
+
+					cout << "\nPress any key to continue...";
+					_getch();
+
+					system("cls");
+
+					// Start another combat encounter
+					LoadScene(sym, 2);
+				}
+
+				// =====================================
+				// ALL ENCOUNTERS COMPLETE
+				// =====================================
+
+				else if (loopCount == maxLoops)
+				{
+					cout << "=====================================\n";
+					cout << "          STAGE COMPLETE\n";
+					cout << "=====================================\n";
+					cout << "The boss awaits...\n";
+
+					cout << "\nPress any key to continue...";
+					(void)_getch();
+
+					system("cls");
+
+					Boss* boss = nullptr;
+					boss = new Boss("Emperor Valdrek");
+					bool isBadEnding = boss->DisplayCutscene();
+
+					if (!isBadEnding)
+					{
+						bool winGame = boss->StartBossFight(player, Ability);
+
+						if (winGame)
+						{
+							VictoryScreen();
+						}
+						else
+						{
+							GameOver();
+						}
+					}
+					else
+					{
+						GameOver();
+					}
+
 					gameRunning = false;
 				}
 			}
-		}
 
-		// Clears the the rest of the console text, so it doesn't show the previous map
-		system("cls");
+			// Clears the the rest of the console text, so it doesn't show the previous map
+			system("cls");
+		}
 	}
 }
 
@@ -613,10 +617,6 @@ void Game::GameOver()
 	{
 		cout << "Village\n";
 	}
-	else if (loopCount < 9)
-	{
-		cout << "Castle\n";
-	}
 	else
 	{
 		cout << "Final Boss\n";
@@ -628,7 +628,7 @@ void Game::GameOver()
 
 	cout << "\n=====================================\n";
 	cout << "Press any key to return to menu...";
-	(void)_getch();
+	_getch();
 
 	system("cls");
 
@@ -658,7 +658,7 @@ void Game::VictoryScreen()
 	cout << "=====================================\n";
 
 	cout << "\nPress any key to exit...";
-	(void)_getch();
+	_getch();
 
 	gameRunning = false;
 }
@@ -1075,11 +1075,6 @@ void Game::TickEnemyDoT()
 			{
 				CompleteCombat();
 			}
-			else if (scene.getCurrentScene() == 3)
-			{
-				VictoryScreen();
-				return;
-			}
 		}
 	}
 
@@ -1252,10 +1247,6 @@ void Game::CastAbility(int abilityChoice, char direction)
 		{
 			CompleteCombat();
 		}
-		else if (scene.getCurrentScene() == 3)
-		{
-			VictoryScreen();
-		}
 	}
 }
 
@@ -1378,8 +1369,8 @@ void Game::CastClassAbility(int classAbilityChoice, char direction)
 	if (AreAllEnemiesDead())
 	{
 		if (scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2)
+		{
 			CompleteCombat();
-		else if (scene.getCurrentScene() == 3)
-			VictoryScreen();
+		}
 	}
 }
