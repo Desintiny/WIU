@@ -111,25 +111,25 @@ void Game::Start()
 
 			char input = _getch();
 
-			// -------------- for debugging --------------
-			if (input == '0')
-			{
-				system("cls");
+			//// -------------- for debugging --------------
+			//if (input == '0')
+			//{
+			//	system("cls");
 
-				Boss boss("Emperor Valdrek");
+			//	Boss boss("Emperor Valdrek");
 
-				bool isBadEnding = false;
+			//	bool isBadEnding = false;
 
-				if (!isBadEnding)
-				{
-					boss.StartBossFight(player, Ability);
-				}
-				else
-				{
-					gameRunning = false;
-				}
-			}
-			// -------------- for debugging --------------
+			//	if (!isBadEnding)
+			//	{
+			//		boss.StartBossFight(player, Ability);
+			//	}
+			//	else
+			//	{
+			//		gameRunning = false;
+			//	}
+			//}
+			//// -------------- for debugging --------------
 
 			// -------- INVENTORY --------
 			if (input == 'e' || input == 'E')
@@ -356,10 +356,10 @@ void Game::Start()
 										CompleteCombat();
 									}
 								}
-								else
-								{
-									enemy[i]->setRecovering(true);
-								}
+							}
+							else
+							{
+								enemy[i]->setRecovering(true);
 							}
 						}
 						else
