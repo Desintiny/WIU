@@ -17,25 +17,13 @@ void MoveRandEnemy::EnemyMovement(Entity* target, char mapGrid[12][12])
 
 	int dir = rand() % 4 + 1;
 
-	if (dir == 1) // UP
+	switch (dir)
 	{
-		newRow--;
-	}
-	else if (dir == 2) // LEFT
-	{
-		newCol--;
-	}
-	else if (dir == 3) // DOWN
-	{
-		newRow++;
-	}
-	else if (dir == 4) // RIGHT
-	{
-		newCol++;
-	}
-	else
-	{
-		return;
+		case 1: newRow--;
+		case 2:newCol--;
+		case 3:newRow++;
+		case 4:newCol++;
+		default: return;
 	}
 
 	if (newRow >= 1 && newRow <= 10 &&

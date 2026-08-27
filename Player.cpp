@@ -43,27 +43,53 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	{
 		newCol++;
 	}
-	else if (input == '=') {
+	
+	// Cheats
+	else if (input == '=')
+	{
 		GetAttackRing();
 		GetHpRing();
 		GetSharkToothCharm();
 		GetIdolTrinket();
 		GetSilverBracelet();
 		GetGemCharm();
-		cout << "This Equipments gives you accuracy,dmg,hp,critchance";
+
+		cout << "Testing equipment added!" << endl;
 	}
-	else if (input == '-') {
+	// Give Thorns equipment
+	else if (input == '-')
+	{
 		GetWoodCarvedNecklace();
 		GetTreeEmblem();
-		cout << "This Equipments gives you Thorns";
+
+		cout << "Thorns equipment added!" << endl;
 	}
-	else if (input == '+') {
+	// Give Taunt testing equipment
+	else if (input == '+')
+	{
 		GetWoodCarvedNecklace();
 		GetTreeEmblem();
-		cout << "This Equipments gives you Taunt";
+
+		cout << "Taunt equipment added!" << endl;
 	}
-	else if (input == '_') {
+	// 100% dodge
+	else if (input == '_')
+	{
 		setDodgeChance(100);
+
+		cout << "Dodge chance set to 100%!" << endl;
+		return;
+	}
+	else if (input == '?')
+	{
+		setHealth(999);
+		setMaxHealth(999);
+
+		setAttack(999);
+
+		cout << "GOD MODE ACTIVATED!" << endl;
+		cout << "HP: 999/999 | ATK: 999" << endl;
+
 		return;
 	}
 	else
