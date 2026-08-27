@@ -455,6 +455,9 @@ void Game::Start()
 						GameOver();
 					}
 
+					delete boss;
+					boss = nullptr;
+
 					gameRunning = false;
 				}
 			}
