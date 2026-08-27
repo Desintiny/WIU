@@ -1,4 +1,5 @@
 #include "Boss.h"
+#include "RNG.h"
 #include <iostream>
 #include <fstream>
 #include <ctime>
@@ -33,7 +34,7 @@ void Boss::EnemyMovement(Entity* target, char mapGrid[12][12])
 	// NONE
 }
 
-void Boss::StartBossFight(Player* player)
+bool Boss::StartBossFight(Player* player, Abilities& Ability)
 {
 	bool battleRunning = true;
 
@@ -55,22 +56,136 @@ void Boss::StartBossFight(Player* player)
 
 		bool playerTurnUsed = false;
 
-		switch (choice)
+		if (choice == 1)
 		{
-		case 1:
 			player->PlayerAttack(this);
 
 			cout << "\nYou attack " << getName() << "!\n";
 
 			playerTurnUsed = true;
-			break;
+		}
+		else if (choice == 2)
+		{
+			cout << "\n--- Abilities ---\n";
+			cout << "Stamina: " << player->getStamina()
+				<< "/" << player->getMaxStamina() << endl;
 
-		case 2:
-			// Ability menu goes here
+			int abilitySlots[9];
+			int slotCount = 0;
+
+			// Display only abilities the player unlocked
+			for (int id = 1; id <= 9; id++)
+			{
+				if (Ability.RandoAbilityBools[id])
+				{
+					abilitySlots[slotCount] = id;
+
+					cout << "[" << slotCount + 1 << "] "
+						<< Ability.RandoAbilityList[id]
+						<< " (ST "
+						<< Ability.GetStaminaCost(id)
+						<< ")" << endl;
+
+					slotCount++;
+				}
+			}
+
+			if (slotCount == 0)
+			{
+				cout << "\nYou have no abilities!\n";
+				break;
+			}
+
+			int abilityChoice;
+
+			cout << "\nChoice: ";
+			cin >> abilityChoice;
+
+			if (abilityChoice < 1 || abilityChoice > slotCount)
+			{
+				cout << "\nInvalid ability choice!\n";
+				break;
+			}
+
+			// Get the REAL ability ID
+			int abilityIndex = abilitySlots[abilityChoice - 1];
+
+			int staminaCost = Ability.GetStaminaCost(abilityIndex);
+
+			if (player->getStamina() < staminaCost)
+			{
+				cout << "\nNot enough stamina! Required: "
+					<< staminaCost << " ST\n";
+				break;
+			}
+
+			// Use stamina
+			player->setStamina(
+				player->getStamina() - staminaCost
+			);
+
+			// Cast directly on THIS boss
+			switch (abilityIndex)
+			{
+			case Abilities::FIREBALL:
+				Ability.Fireball(*this);
+				break;
+
+			case Abilities::BOULDER_THROW:
+				Ability.BoulderThrow(*this);
+				break;
+
+			case Abilities::BLOOD_PIERCE:
+				Ability.BloodPierce(*this);
+				player->TakeDamage(5);
+				break;
+
+			case Abilities::POISON_SHOT:
+				Ability.PoisonShot(*this);
+				break;
+
+			case Abilities::LIGHTNING_BOLT:
+				Ability.LightningBolt(*this);
+				break;
+
+			case Abilities::BLOOD_BOMB:
+				Ability.BloodBomb(*this, *player);
+				break;
+
+			case Abilities::WATER_BOLT:
+				Ability.WaterBolt(*this, *player);
+				break;
+
+			case Abilities::AIR_CUTTER:
+				Ability.Aircutter(*this);
+				break;
+
+			case Abilities::BLOOMING_FLOWER:
+				Ability.BloomingFlowers(*this, *player);
+				break;
+			}
+
+			cout << "\n" << player->getName()
+				<< " casts "
+				<< Ability.RandoAbilityList[abilityIndex]
+				<< " on "
+				<< getName()
+				<< "!\n";
+
+			cout << getName() << " has "
+				<< getHealth() << "/"
+				<< getMaxHealth()
+				<< " HP left.\n";
+
+			cout << "Stamina remaining: "
+				<< player->getStamina()
+				<< "/"
+				<< player->getMaxStamina()
+				<< " ST\n";
+
 			playerTurnUsed = true;
-			break;
-
-		case 3:
+		}
+		else if (choice == 3)
 		{
 			player->DisplayInventory();
 
@@ -84,15 +199,12 @@ void Boss::StartBossFight(Player* player)
 				player->UseItem(itemChoice - 1);
 				playerTurnUsed = true;
 			}
-
-			break;
 		}
-
-		default:
+		else
+		{
 			cout << "\nInvalid choice!\n";
 			cout << "Press any key...";
 			_getch();
-			continue;
 		}
 
 		if (!IsAlive())
@@ -105,6 +217,7 @@ void Boss::StartBossFight(Player* player)
 
 			battleRunning = false;
 
+			return true;
 			break;
 		}
 
@@ -120,6 +233,7 @@ void Boss::StartBossFight(Player* player)
 
 				battleRunning = false;
 
+				return false;
 				break;
 			}
 		}
@@ -127,6 +241,7 @@ void Boss::StartBossFight(Player* player)
 		cout << "\nPress any key to continue...";
 		_getch();
 	}
+	return false;
 }
 
 void Boss::DisplayBattle(Player* player)
@@ -150,103 +265,109 @@ void Boss::DisplayBattle(Player* player)
 
 void Boss::EnemyAttack(Entity* target)
 {
-	if (target != nullptr)
+	if (target == nullptr)
 	{
-		int choice = 0;
-		int dmg = 0;
-		int percent = 0;
+		return;
+	}
 
-		static const int PERCENT_ATK = 40;
-		static const int PERCENT_IMP = 25 + PERCENT_ATK;
-		static const int PERCENT_EXE = 15 + PERCENT_IMP;
-		static const int PERCENT_EMP = 10 + PERCENT_EXE;
-		static const int PERCENT_MISS = 10 + PERCENT_EMP;
+	// Keep the merged disable-turn mechanic for the boss too.
+	if (GetDisabledTurns() > 0)
+	{
+		cout << getName() << " is unable to attack!" << endl;
+		SetDisabledTurns(GetDisabledTurns() - 1);
+		return;
+	}
 
-		percent = rand() % 100 + 1;
+	RNG rng;
+	Player* player = dynamic_cast<Player*>(target);
 
-		if (percent <= PERCENT_ATK)
+	// Keep player dodge equipment/bonuses against boss attacks.
+	if (player != nullptr)
+	{
+		rng.Dodge(player->getDodgeChance());
+		if (rng.GetDodged())
 		{
-			choice = 1; // Basic attack
+			return;
 		}
-		else if (percent <= PERCENT_IMP)
-		{
-			choice = 2; // Imperial Slash
-		}
-		else if (percent <= PERCENT_EXE)
-		{
-			choice = 3; // Dark Execution
-		}
-		else if (percent <= PERCENT_EMP)
-		{
-			choice = 4; // Emperor's Wrath
-		}
-		else if (percent <= PERCENT_MISS)
-		{
-			choice = 5; // Miss
-		}
-		
+	}
 
-		switch (choice)
+	int choice = 0;
+	int dmg = 0;
+	int percent = rand() % 100 + 1;
+
+	static const int PERCENT_ATK = 40;
+	static const int PERCENT_IMP = 65;
+	static const int PERCENT_EXE = 80;
+	static const int PERCENT_EMP = 90;
+
+	if (percent <= PERCENT_ATK)
+	{
+		choice = 1;
+		dmg = getAttack();
+	}
+	else if (percent <= PERCENT_IMP)
+	{
+		choice = 2;
+		dmg = getImperialSlash();
+	}
+	else if (percent <= PERCENT_EXE)
+	{
+		choice = 3;
+		dmg = getDarkExecution();
+	}
+	else if (percent <= PERCENT_EMP)
+	{
+		choice = 4;
+		dmg = getEmperorWrath();
+	}
+	else
+	{
+		choice = 5;
+		dmg = 0;
+	}
+
+	if (choice == 5)
+	{
+		cout << getName() << " missed!" << endl;
+		return;
+	}
+
+	target->TakeDamage(dmg);
+
+	switch (choice)
+	{
+	case 1: 
+		cout << getName() << " attacks " << target->getName() << " for " << dmg << " damage!" << endl;
+		break;
+	case 2: 
+		cout << getName() << " uses Imperial Slash for " << dmg << " damage!" << endl;
+		break;
+	case 3: 
+		cout << getName() << " uses Dark Execution for " << dmg << " damage!" << endl;
+		break;
+	case 4: 
+		cout << getName() << " uses Emperor's Wrath for " << dmg << " damage!" << endl;
+		break;
+	}
+
+	// Keep Thorns from the merged build.
+	if (player != nullptr)
+	{
+		rng.Thorns(player->GetThornsChance());
+		if (rng.GetThorns())
 		{
-		case 1: dmg = getAttack();
-			break;
-
-		case 2: dmg = getImperialSlash();
-			break;
-
-		case 3: dmg = getDarkExecution();
-			break;
-
-		case 4: dmg = getEmperorWrath();
-			break;
-
-		case 5: dmg = 0;
-			break;
-
-		default:
-			cout << "Didn't attack" << endl;
+			TakeDamage(dmg);
+			cout << getName() << " takes " << dmg << " reflected damage!" << endl;
 		}
+	}
 
-
-		target->TakeDamage(dmg);
-
-		if (choice == 1)
-		{
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 2)
-		{
-			cout << getName() << " uses Imperial Slash! " << endl;
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 3)
-		{
-			cout << getName() << " uses Dark Execution! " << endl;
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 4)
-		{
-			cout << getName() << " uses Emperor's Wrath! " << endl;
-			cout << getName() << " attacks " << target->getName()
-				<< " for " << dmg << " damage!" << endl;
-		}
-		else if (choice == 5)
-		{
-			cout << getName() << " missed! " << endl;
-		}
-
-		if (!target->IsAlive())
-		{
-			cout << target->getName() << " has been defeated!" << endl;
-		}
-		else
-		{
-			cout << target->getName() << " has "
-				<< target->getHealth() << " HP left." << endl;
-		}
+	if (!target->IsAlive())
+	{
+		cout << target->getName() << " has been defeated!" << endl;
+	}
+	else
+	{
+		cout << target->getName() << " has " << target->getHealth() << " HP left." << endl;
 	}
 }
 
@@ -539,6 +660,8 @@ bool Boss::BadEndingDialog()
 	cout << "=============================\n";
 	cout << "          BAD ENDING         \n";
 	cout << "=============================\n";
+
+	_getch();
 
 	return true;
 }

@@ -1,81 +1,158 @@
 #pragma once
+#include <string>
+#include <iostream>
 #include "Entity.h"
 
 class Abilities
 {
 private:
-    // Ability range data
-    // Index:
-    // 0 = Fireball
-    // 1 = Magic Missile
-    // 2 = Blood Pierce
-    // 3 = Icicle Spear
-    // 4 = Lightning Bolt
-    // 5 = Blood Bomb
-    // 6 = Poison Shot
-    // 7 = Air Cutter
-    // 8 = Boulder Throw
-    // 9 = Water Bolt
-
+    // Index 0 is unused so menu numbers and ability IDs match directly.
     int minRange[10] = {
+        1,
         1, // Fireball
-        1, // Magic Missile
+        1, // Boulder Throw
         1, // Blood Pierce
-        1, // Icicle Spear
+        1, // Poison Shot
         1, // Lightning Bolt
         1, // Blood Bomb
-        1, // Poison Shot
+        1, // Water Bolt
         1, // Air Cutter
-        1, // Boulder Throw
-        1  // Water Bolt
+        1  // Blooming Flowers
     };
 
     int maxRange[10] = {
+        1, //INDEX 0 IGNORE
         3, // Fireball
-        4, // Magic Missile
+        2, // Boulder Throw
         4, // Blood Pierce
-        2, // Icicle Spear
+        3, // Poison Shot
         5, // Lightning Bolt
         3, // Blood Bomb
-        3, // Poison Shot
+        3, // Water Bolt
         5, // Air Cutter
-        2, // Boulder Throw
-        3  // Water Bolt
+        5  // Blooming Flowers
+    };
+
+    //NORMAL COST HERE
+    int staminaCost[10] = {
+        0, //INDEX 0 IGNORE
+        5, // Fireball
+        7, // Boulder Throw
+        0, // Blood Pierce
+        4, // Poison Shot
+        3, // Lightning Bolt
+        0, // Blood Bomb
+        4, // Water Bolt
+        6, // Air Cutter
+        8  // Blooming Flowers
+    };
+
+    int ClassAbilityMinRange[10] = {
+        1,
+        1, // Hero's Light
+        1, // Sworvant
+        1, // Sworvant Sacrifice
+        1, // Magic Missile
+        1, // Cataclysm
+        1, // Icicle Spear
+        1, // Magic Arrow
+        1, // Bullseye
+        1  // Phoenix Arrow
+    };
+
+    int ClassAbilityMaxRange[10] = {
+        1,
+        2, // Hero's Light
+        3, // Sworvant
+        3, // Sworvant Sacrifice
+        4, // Magic Missile
+        4, // Cataclysm
+        2, // Icicle Spear
+        3, // Magic Arrow
+        5, // Bullseye
+        7  // Phoenix Arrow
+    };
+
+    //COST HERE
+    int classStaminaCost[10] = {
+        0,
+        10, // Hero's Light
+        15, // Sworvant
+        0, // Sworvant Sacrifice
+        8, // Magic Missile
+        15, // Cataclysm
+        3, // Icicle Spear
+        3, // Magic Arrow
+        5, // Bullseye
+        0  // Phoenix Arrow
     };
 
 public:
-    // Ability IDs
+    std::string RandoAbilityList[10];
+    std::string ClassAbilityList[10];
+    bool RandoAbilityBools[10];
+    bool ClassAbilityBools[10];
+
+    Abilities();
+
     enum AbilityID
     {
-        FIREBALL = 0,
-        MAGIC_MISSILE = 1,
-        BLOOD_PIERCE = 2,
-        ICICLE_SPEAR = 3,
-        LIGHTNING_BOLT = 4,
-        BLOOD_BOMB = 5,
-        POISON_SHOT = 6,
-        AIR_CUTTER = 7,
-        BOULDER_THROW = 8,
-        WATER_BOLT = 9
+        FIREBALL = 1,
+        BOULDER_THROW = 2,
+        BLOOD_PIERCE = 3,
+        POISON_SHOT = 4,
+        LIGHTNING_BOLT = 5,
+        BLOOD_BOMB = 6,
+        WATER_BOLT = 7,
+        AIR_CUTTER = 8,
+        BLOOMING_FLOWER = 9
     };
 
-    // Direct Damage
+    enum ClassAbilityID
+    {
+        HEROS_LIGHT = 1,
+        SWORVANT = 2,
+        SWORVANT_SACRIFICE = 3,
+        MAGIC_MISSILE = 4,
+        CATCLYSM = 5,
+        ICICLE_SPEAR = 6,
+        MAGIC_ARROW = 7,
+        BULLSEYE = 8,
+        PHOENIX_ARROW = 9
+    };
+
+    int randoability1, randoability2, randoability3, randoability4, randoability5, randoability6;
+    int abilityans1, abilityans2;
+
     void LightningBolt(Entity& target);
-    void MagicMissile(Entity& target);
-    void WaterBolt(Entity& target);
+    void WaterBolt(Entity& target, Entity& caster);
     void BoulderThrow(Entity& target);
     void Aircutter(Entity& target);
+    void BloomingFlowers(Entity& target, Entity& caster);
 
-    // Damage Over Time
     void Fireball(Entity& target);
-    void IcicleSpear(Entity& target);
     void PoisonShot(Entity& target);
 
-    // Resource Tradeoff
-    void BloodPierce(Entity& target, Entity& caster);
+    void BloodPierce(Entity& target);
     void BloodBomb(Entity& target, Entity& caster);
 
-    // Range getters
+    void MagicArrow(Entity& target);
+    void Bullseye(Entity& target);
+    void PhoenixArrow(Entity& target, Entity& caster);
+
+    void HerosLight(Entity& target, Entity& caster);
+    void Sworvant(Entity& target);
+    void SworvantSacrifice(Entity& target, Entity& caster);
+
+    void MagicMissile(Entity& target);
+    void Cataclysm(Entity& target);
+    void IcicleSpear(Entity& target);
+
+    int GetMinClsAbiRange(int clsability);
+    int GetMaxClsAbiRange(int clsability);
+    int GetClassStaminaCost(int clsability);
+
     int GetMinRange(int ability);
     int GetMaxRange(int ability);
+    int GetStaminaCost(int ability);
 };

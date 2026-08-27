@@ -13,6 +13,10 @@
 
 using namespace std;
 
+// ============================================================
+// CONSTRUCTOR / DESTRUCTOR
+// ============================================================
+
 Game::Game()
 {
 	gameRunning = true;
@@ -22,7 +26,7 @@ Game::Game()
 	loopCount = 0;
 	maxLoops = 6;
 
-	exitUnlocked = false;
+
 	encounterFinished = false;
 
 	for (int i = 0; i < MAX_ENEMIES; i++)
@@ -49,6 +53,10 @@ Game::~Game()
 	}
 }
 
+// ============================================================
+// MAIN GAME FLOW
+// ============================================================
+
 void Game::Start()
 {
 	MainMenu();
@@ -68,13 +76,16 @@ void Game::Start()
 		return;
 	}
 
+	// Pick 2 starter abilities from the shared ability pool.
+	randomAbilityPicker();
+
 	// ------- SPAWN PLAYER AT THE LEFT SIDE OF THE MAP -------
 	if (player != nullptr)
 	{
 		event.PathChoice(player);
 
 		cout << "\nPress any key to continue...";
-		_getch();
+		(void)_getch();
 
 		system("cls");
 
@@ -99,26 +110,26 @@ void Game::Start()
 			DisplayGame(sym);
 
 			char input = _getch();
-			
-			//// -------------- for debug (remove when merged) --------------
+
+			//// -------------- for debugging --------------
 			//if (input == '0')
 			//{
 			//	system("cls");
 
 			//	Boss boss("Emperor Valdrek");
 
-			//	bool isBadEnding = boss.DisplayCutscene();
+			//	bool isBadEnding = false;
 
 			//	if (!isBadEnding)
 			//	{
-			//		boss.StartBossFight(player);
+			//		boss.StartBossFight(player, Ability);
 			//	}
 			//	else
 			//	{
 			//		gameRunning = false;
 			//	}
 			//}
-			//// -------------- for debug (remove when merged) --------------
+			//// -------------- for debugging --------------
 
 			// -------- INVENTORY --------
 			if (input == 'e' || input == 'E')
@@ -138,76 +149,101 @@ void Game::Start()
 				}
 
 				cout << "\nPress any key to continue...";
-				_getch();
+				(void)_getch();
 			}
 
 			// -------- ABILITIES --------
 			else if (input == '2')
 			{
 				cout << "\n--- Abilities ---" << endl;
+				cout << "Stamina: " << player->getStamina() << "/" << player->getMaxStamina() << endl;
 
-				cout << "[1] Fireball (rng "
-					<< Ability.GetMinRange(Abilities::FIREBALL) << "-"
-					<< Ability.GetMaxRange(Abilities::FIREBALL) << ")  ";
+				// Menu slots are separate from the real ability IDs.
+				// This means the first unlocked ability is always [1], the second is [2], etc.
+				int abilitySlots[9];
+				int slotCount = 0;
 
-				cout << "[2] Magic Missile (rng "
-					<< Ability.GetMinRange(Abilities::MAGIC_MISSILE) << "-"
-					<< Ability.GetMaxRange(Abilities::MAGIC_MISSILE) << ")  ";
+				for (int id = 1; id <= 9; id++)
+				{
+					if (Ability.RandoAbilityBools[id])
+					{
+						abilitySlots[slotCount] = id;
 
-				cout << "[3] Blood Pierce (rng "
-					<< Ability.GetMinRange(Abilities::BLOOD_PIERCE) << "-"
-					<< Ability.GetMaxRange(Abilities::BLOOD_PIERCE) << ")" << endl;
+						cout << "[" << slotCount + 1 << "] " << Ability.RandoAbilityList[id]
+							<< " (rng " << Ability.GetMinRange(id) << "-" << Ability.GetMaxRange(id)
+							<< ", ST " << Ability.GetStaminaCost(id) << ")" << endl;
 
-				cout << "[4] Icicle Spear (rng "
-					<< Ability.GetMinRange(Abilities::ICICLE_SPEAR) << "-"
-					<< Ability.GetMaxRange(Abilities::ICICLE_SPEAR) << ")  ";
-
-				cout << "[5] Lightning Bolt (rng "
-					<< Ability.GetMinRange(Abilities::LIGHTNING_BOLT) << "-"
-					<< Ability.GetMaxRange(Abilities::LIGHTNING_BOLT) << ")  ";
-
-				cout << "[6] Blood Bomb (rng "
-					<< Ability.GetMinRange(Abilities::BLOOD_BOMB) << "-"
-					<< Ability.GetMaxRange(Abilities::BLOOD_BOMB) << ")" << endl;
-
-				cout << "[7] Poison Shot (rng "
-					<< Ability.GetMinRange(Abilities::POISON_SHOT) << "-"
-					<< Ability.GetMaxRange(Abilities::POISON_SHOT) << ")  ";
-
-				cout << "[8] Air Cutter (rng "
-					<< Ability.GetMinRange(Abilities::AIR_CUTTER) << "-"
-					<< Ability.GetMaxRange(Abilities::AIR_CUTTER) << ")  ";
-
-				cout << "[9] Boulder Throw (rng "
-					<< Ability.GetMinRange(Abilities::BOULDER_THROW) << "-"
-					<< Ability.GetMaxRange(Abilities::BOULDER_THROW) << ")" << endl;
-
-				cout << "[0] Water Bolt (rng "
-					<< Ability.GetMinRange(Abilities::WATER_BOLT) << "-"
-					<< Ability.GetMaxRange(Abilities::WATER_BOLT) << ")" << endl;
+						slotCount++;
+					}
+				}
 
 				char abilityChoice = _getch();
+				int selectedSlot = abilityChoice - '1';
 
-				if (abilityChoice >= '0' && abilityChoice <= '9')
+				if (selectedSlot >= 0 && selectedSlot < slotCount)
 				{
+					// Translate the menu slot back into the real ability ID.
+					int abilityIndex = abilitySlots[selectedSlot];
+
 					cout << "\nInput a Direction [IJKL]: " << endl;
-
 					char abilityDirection = _getch();
-
 					if (abilityDirection == 'i' || abilityDirection == 'j' ||
 						abilityDirection == 'k' || abilityDirection == 'l' ||
 						abilityDirection == 'I' || abilityDirection == 'J' ||
 						abilityDirection == 'K' || abilityDirection == 'L')
 					{
-						int abilityIndex = abilityChoice - '0';
 						CastAbility(abilityIndex, abilityDirection);
 					}
 				}
+				else
+				{
+					cout << "\nInvalid ability choice." << endl;
+				}
 
-				if (!encounterFinished)
+				if (!encounterFinished && gameRunning)
 				{
 					cout << "\nPress any key to continue...";
-					_getch();
+					(void)_getch();
+				}
+			}
+
+			// -------- CLASS ABILITIES --------
+			else if (input == 'q' || input == 'Q')
+			{
+				cout << "\n--- Class Abilities ---" << endl;
+				cout << "Stamina: " << player->getStamina() << "/" << player->getMaxStamina() << endl;
+
+				int startId = 0, endId = 0;
+
+				if (Bar) { startId = 1; endId = 3; }
+				else if (Mag) { startId = 4; endId = 6; }
+				else if (Arc) { startId = 7; endId = 9; }
+
+				for (int id = startId; id <= endId; id++)
+				{
+					cout << "[" << id << "] " << Ability.ClassAbilityList[id]
+						<< " (rng " << Ability.GetMinClsAbiRange(id) << "-" << Ability.GetMaxClsAbiRange(id)
+						<< ", ST " << Ability.GetClassStaminaCost(id) << ")" << endl;
+				}
+
+				char abilityChoice = _getch();
+				if (abilityChoice >= '1' && abilityChoice <= '9')
+				{
+					cout << "\nInput a Direction [IJKL]: " << endl;
+					char abilityDirection = _getch();
+					if (abilityDirection == 'i' || abilityDirection == 'j' ||
+						abilityDirection == 'k' || abilityDirection == 'l' ||
+						abilityDirection == 'I' || abilityDirection == 'J' ||
+						abilityDirection == 'K' || abilityDirection == 'L')
+					{
+						CastClassAbility(abilityChoice - '0', abilityDirection);
+					}
+				}
+
+				if (!encounterFinished && gameRunning)
+				{
+					cout << "\nPress any key to continue...";
+					(void)_getch();
 				}
 			}
 
@@ -245,41 +281,16 @@ void Game::Start()
 									delete enemy[i];
 									enemy[i] = nullptr;
 
-									bool allEnemiesDead = true;
 
-									for (int j = 0; j < enemyCount; j++)
+									if (AreAllEnemiesDead())
 									{
-										if (enemy[j] != nullptr)
+										if (scene.getCurrentScene() == 1 ||
+											scene.getCurrentScene() == 2)
 										{
-											allEnemiesDead = false;
-											break;
+											CompleteCombat();
 										}
 									}
 
-									if (allEnemiesDead && scene.getCurrentScene() == 1)
-									{
-										loopCount++;
-
-										encounterFinished = true;
-
-										cout << "\nEncounter completed!";
-										cout << "\nProgress: "
-											<< loopCount
-											<< "/"
-											<< maxLoops;
-									}
-									else if (allEnemiesDead && scene.getCurrentScene() == 2)
-									{
-										loopCount++;
-
-										encounterFinished = true;
-
-										cout << "\nEncounter completed!";
-										cout << "\nProgress: "
-											<< loopCount
-											<< "/"
-											<< maxLoops;
-									}
 								}
 
 								hit = true;
@@ -320,138 +331,146 @@ void Game::Start()
 				{
 					if (enemy[i] != nullptr)
 					{
-						int rowDist = abs(enemy[i]->getRow() - player->getRow());
-						int colDist = abs(enemy[i]->getCol() - player->getCol());
+						int distance =
+							abs(enemy[i]->getRow() - player->getRow()) +
+							abs(enemy[i]->getCol() - player->getCol());
 
-						bool besidePlayer =
-							(rowDist == 1 && colDist == 0) ||
-							(rowDist == 0 && colDist == 1);
+						bool besidePlayer = (distance == 1);
 
-						if (besidePlayer)
+						if (enemy[i]->getRecovering())
 						{
-							// Enemy was already beside the player before
-							// taking its action, so it attacks.
+							cout << enemy[i]->getName()
+								<< " is recovering." << endl;
+
+							enemy[i]->setRecovering(false);
+						}
+						else if (besidePlayer)
+						{
 							enemy[i]->EnemyAttack(player);
+
+							// Thorns can defeat the attacking enemy. Remove it immediately.
+							if (!enemy[i]->IsAlive())
+							{
+								mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+								delete enemy[i];
+								enemy[i] = nullptr;
+
+								if (AreAllEnemiesDead())
+								{
+									if (scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2)
+									{
+										CompleteCombat();
+									}
+								}
+							}
+							else
+							{
+								enemy[i]->setRecovering(true);
+							}
 						}
 						else
 						{
-							// Enemy is not beside the player, so its whole
-							// action this turn is movement.
 							enemy[i]->EnemyMovement(player, mapGrid);
-						}
-
-						if (!player->IsAlive())
-						{
-							break;
 						}
 					}
 				}
-			}
 
-			if (!player->IsAlive())
-			{
-				cout << "\nYou have been defeated..." << endl;
-				gameRunning = false;
-			}
-		} // end normal player/enemy turn
-
-		if (encounterFinished)
-		{
-			encounterFinished = false;
-
-			cout << "\nPress any key to continue...";
-			_getch();
-
-			system("cls");
-
-
-			// =====================================
-			// MORE ENCOUNTERS REMAIN
-			// =====================================
-
-			if (loopCount < 3)
-			{
-				// Pick another event
-				event.PathChoice(player);
-
-				cout << "\nPress any key to continue...";
-				_getch();
-
-				system("cls");
-
-				// Start another combat encounter
-				LoadScene(sym, 1);
-			}
-			else if (loopCount < 6)
-			{
-				// Pick another event
-				event.PathChoice(player);
-
-				cout << "\nPress any key to continue...";
-				_getch();
-
-				system("cls");
-
-				// Start another combat encounter
-				LoadScene(sym, 2);
-			}
-
-			// =====================================
-			// ALL ENCOUNTERS COMPLETE
-			// =====================================
-
-			else if (loopCount >= maxLoops)
-			{
-				cout << "=====================================\n";
-				cout << "          STAGE COMPLETE\n";
-				cout << "=====================================\n";
-				cout << "The boss awaits...\n";
-
-				cout << "\nPress any key to continue...";
-				_getch();
-
-				system("cls");
-
-				Boss boss("Emperor Valdrek");
-
-				bool isBadEnding = boss.DisplayCutscene();
-
-				if (!isBadEnding)
+				if (!player->IsAlive())
 				{
-					boss.StartBossFight(player);
+					GameOver();
+					return;
 				}
-				else
+			} // end normal player/enemy turn
+
+			if (encounterFinished)
+			{
+				encounterFinished = false;
+
+				cout << "\nPress any key to continue...";
+				_getch();
+
+				system("cls");
+
+
+				// =====================================
+				// MORE ENCOUNTERS REMAIN
+				// =====================================
+
+				if (loopCount < 3)
 				{
+					// Pick another event
+					event.PathChoice(player);
+
+					cout << "\nPress any key to continue...";
+					_getch();
+
+					system("cls");
+
+					// Start another combat encounter
+					LoadScene(sym, 1);
+				}
+				else if (loopCount < 6)
+				{
+					// Pick another event
+					event.PathChoice(player);
+
+					cout << "\nPress any key to continue...";
+					_getch();
+
+					system("cls");
+
+					// Start another combat encounter
+					LoadScene(sym, 2);
+				}
+
+				// =====================================
+				// ALL ENCOUNTERS COMPLETE
+				// =====================================
+
+				else if (loopCount == maxLoops)
+				{
+					cout << "=====================================\n";
+					cout << "          STAGE COMPLETE\n";
+					cout << "=====================================\n";
+					cout << "The boss awaits...\n";
+
+					cout << "\nPress any key to continue...";
+					(void)_getch();
+
+					system("cls");
+
+					Boss* boss = nullptr;
+					boss = new Boss("Emperor Valdrek");
+					bool isBadEnding = boss->DisplayCutscene();
+
+					if (!isBadEnding)
+					{
+						bool winGame = boss->StartBossFight(player, Ability);
+
+						if (winGame)
+						{
+							VictoryScreen();
+						}
+						else
+						{
+							GameOver();
+						}
+					}
+					else
+					{
+						GameOver();
+					}
+
+					delete boss;
+
 					gameRunning = false;
 				}
 			}
+
+			// Clears the the rest of the console text, so it doesn't show the previous map
+			system("cls");
 		}
-
-		// Clears the the rest of the console text, so it doesn't show the previous map
-		system("cls");
 	}
-}
-
-void Game::StoryDialogue()
-{
-	cout << "\n=====================================" << endl;
-	cout << "You lived in a small town, named Havenbrook, it was peaceful and buzzing with life." << endl;
-	cout << "Until the peace was disturbed, bells rang, The Valdrek Empire invaded the town." << endl;
-	cout << "The ruthless enemies had killed all you loved, but you managed to escape." << endl;
-	cout << "Planting a deep seed of hatred, you vowed to take back what you own and avenge your loved ones." << endl;
-	cout << "=====================================\n" << endl;
-	cout << "Press any key to continue...";
-	_getch();
-	system("cls");
-}
-
-// ------------- SPAWN ENTITIES ONTO THE MAP -------------
-
-void Game::SpawnEntity(Entity* entity, char sym, int row, int col)
-{
-	entity->setRow(row);
-	entity->setCol(col);
-	mapGrid[row][col] = sym;
 }
 
 void Game::MainMenu()
@@ -461,8 +480,8 @@ void Game::MainMenu()
 	do
 	{
 		cout << "============= HAVENFALL =============" << endl;
-		cout << "\t   1. Start Game" << endl;
-		cout << "\t   2. Quit Game" << endl;
+		cout << "	   1. Start Game" << endl;
+		cout << "	   2. Quit Game" << endl;
 		cout << "=====================================" << endl;
 
 		cout << "\nEnter: ";
@@ -475,12 +494,66 @@ void Game::MainMenu()
 		else if (option == 2)
 		{
 			gameRunning = false;
+			return;
 		}
 		else
 		{
 			cout << "Invalid option. Try again.\n\n";
 		}
 	} while (option != 1);
+}
+
+void Game::StoryDialogue()
+{
+	ifstream inputFile("Story.txt");
+
+	if (!inputFile.is_open())
+	{
+		cout << "Unable to open Story.txt!" << endl;
+		return;
+	}
+
+	// Story 1 when loopCount is 0,
+	// Story 2 when loopCount is 1, etc.
+	int storyNumber = loopCount + 1;
+
+	string storyTitle = "======Story " + to_string(storyNumber) + "======";
+
+	string line;
+	bool printingStory = false;
+
+	cout << "\n=====================================\n";
+
+	while (getline(inputFile, line))
+	{
+		// Find the story we want
+		if (line == storyTitle)
+		{
+			printingStory = true;
+			continue;
+		}
+
+		// Stop when we reach the next story
+		if (printingStory && line.find("======Story ") == 0)
+		{
+			break;
+		}
+
+		// Print the lines belonging to this story
+		if (printingStory)
+		{
+			cout << line << endl;
+		}
+	}
+
+	cout << "=====================================\n";
+
+	cout << "\nPress any key to continue...";
+	_getch();
+
+	system("cls");
+
+	inputFile.close();
 }
 
 char Game::ClassSelection()
@@ -509,16 +582,19 @@ char Game::ClassSelection()
 		{
 			player = new Berserker("Berserker");
 			sym = 'B';
+			Bar = true;
 		}
 		else if (choice == 2)
 		{
 			player = new Archer("Archer");
 			sym = 'A';
+			Arc = true;
 		}
 		else if (choice == 3)
 		{
 			player = new Mage("Mage");
 			sym = 'M';
+			Mag = true;
 		}
 		else
 		{
@@ -532,7 +608,76 @@ char Game::ClassSelection()
 	return sym;
 }
 
-// ------------ DISPLAY UI FOR THE USER ------------
+void Game::GameOver()
+{
+	system("cls");
+
+	cout << "=====================================\n";
+	cout << "              GAME OVER              \n";
+	cout << "=====================================\n\n";
+
+	cout << player->getName()
+		<< " has been defeated!\n\n";
+
+	cout << "You reached:\n";
+
+	if (loopCount < 3)
+	{
+		cout << "Forest\n";
+	}
+	else if (loopCount < 6)
+	{
+		cout << "Village\n";
+	}
+	else
+	{
+		cout << "Final Boss\n";
+	}
+
+	cout << "\nEncounters completed: "
+		<< loopCount
+		<< endl;
+
+	cout << "\n=====================================\n";
+	cout << "Press any key to return to menu...";
+	_getch();
+
+	system("cls");
+
+	gameRunning = false;
+}
+
+void Game::VictoryScreen()
+{
+	system("cls");
+
+	cout << "=====================================\n";
+	cout << "              VICTORY!               \n";
+	cout << "=====================================\n\n";
+
+	cout << "Valdrek has been defeated!\n";
+	cout << "Havenbrook is finally free.\n\n";
+
+	cout << player->getName()
+		<< " has completed the journey!\n";
+
+	cout << "\nEncounters completed: "
+		<< loopCount
+		<< endl;
+
+	cout << "\n=====================================\n";
+	cout << "       THANK YOU FOR PLAYING!        \n";
+	cout << "=====================================\n";
+
+	cout << "\nPress any key to exit...";
+	_getch();
+
+	gameRunning = false;
+}
+
+// ============================================================
+// DISPLAY / UI
+// ============================================================
 
 void Game::DisplayGame(char sym)
 {
@@ -553,11 +698,9 @@ void Game::DisplayGame(char sym)
 		enemyHealthBar[i] = '#'; // leave as-is until enemy HP tracking is wired into combat
 	}
 
-	bool inCombat = true;
-
 	// ------------ PLAYER UI ------------
 
-	cout << STYLE_ORANGE << "YOU (" << sym << ")\t\t\t";
+	cout << STYLE_ORANGE << "YOU (" << sym << ")			";
 	cout << endl;
 
 	// ------------ PLAYER HEALTH ------------
@@ -569,7 +712,7 @@ void Game::DisplayGame(char sym)
 		cout << healthBar[i];
 	}
 
-	cout << "] " << player->getHealth() << '/' << displayHealth << "\t";
+	cout << "] " << player->getHealth() << '/' << displayHealth << "	";
 	cout << endl;
 
 	// ------------ PLAYER STAMINA ------------
@@ -616,7 +759,15 @@ void Game::DisplayGame(char sym)
 		}
 	}
 
-	cout << "\n[WASD] Move | [IJKL] Attack | [2] Abilities | [E] Inventory" << endl;
+	// ------------ DAMAGE OVER TIME / STATUS MESSAGE ------------
+
+	if (!dotMessage.empty())
+	{
+		cout << "\n--- STATUS EFFECTS ---" << endl;
+		cout << dotMessage;
+	}
+
+	cout << "\n[WASD] Move | [IJKL] Attack | [2] Abilities | [Q] Class Abilities | [E] Inventory" << endl;
 	cout << "Position: Row " << player->getRow()
 		<< ", Column " << player->getCol() << endl;
 }
@@ -653,11 +804,21 @@ void Game::DisplayEnemyHP(Enemy* enemy)
 		<< STYLE_NONE << endl;
 }
 
+// ============================================================
+// SCENE / PROGRESSION
+// ============================================================
+
+void Game::SpawnEntity(Entity* entity, char sym, int row, int col)
+{
+	entity->setRow(row);
+	entity->setCol(col);
+	mapGrid[row][col] = sym;
+}
+
 int Game::RandNumber(int min, int max)
 {
 	return min + rand() % (max - min + 1);
 }
-
 
 void Game::LoadScene(char sym, int sceneNumber)
 {
@@ -782,16 +943,6 @@ void Game::LoadScene(char sym, int sceneNumber)
 			SpawnEntity(enemy[i], symbol, row, col);
 		}
 	}
-	// ------------------------- BOSS -------------------------
-	else if (sceneNumber == 3)
-	{
-		SpawnEntity(player, sym, 7, 1);
-
-		enemyCount = ENEMY_BOSS;
-
-		enemy[0] = new Boss("Emperor Valdrek");
-		SpawnEntity(enemy[0], 'E', 7, 8);
-	}
 }
 
 void Game::ClearEnemies()
@@ -805,8 +956,79 @@ void Game::ClearEnemies()
 	enemyCount = 0;
 }
 
+bool Game::AreAllEnemiesDead()
+{
+	for (int i = 0; i < enemyCount; i++)
+	{
+		if (enemy[i] != nullptr)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void Game::CompleteCombat()
+{
+	loopCount++;
+	system("cls");
+
+	// ---------------- HEAL PLAYER ----------------
+	int healthBefore = player->getHealth();
+
+	// Heal 25% of max HP after a normal encounter
+	int healAmount = player->getMaxHealth() / 4;
+
+	int newHealth = player->getHealth() + healAmount;
+
+	if (newHealth > player->getMaxHealth())
+	{
+		newHealth = player->getMaxHealth();
+	}
+
+	player->setHealth(newHealth);
+
+	int actualHealing = player->getHealth() - healthBefore;
+
+	// ---------------- RESTORE STAMINA ----------------
+	player->setStamina(player->getMaxStamina());
+
+	// ---------------- DISPLAY ----------------
+	cout << "\nEncounter completed!";
+
+	cout << "\nYou recovered "
+		<< actualHealing
+		<< " HP!";
+
+	cout << "\nHP: "
+		<< player->getHealth()
+		<< "/"
+		<< player->getMaxHealth();
+
+	cout << "\nStamina: "
+		<< player->getStamina()
+		<< "/"
+		<< player->getMaxStamina();
+
+	cout << "\nProgress: "
+		<< loopCount
+		<< "/"
+		<< maxLoops;
+
+	encounterFinished = true;
+}
+
+// ============================================================
+// STATUS EFFECTS
+// ============================================================
+
 void Game::TickEnemyDoT()
 {
+	// Clear the previous turn's DoT text.
+	// New DoT text will be stored here and displayed by DisplayGame().
+	dotMessage.clear();
+
 	bool anyDotDamage = false;
 
 	for (int i = 0; i < enemyCount; i++)
@@ -825,23 +1047,27 @@ void Game::TickEnemyDoT()
 		{
 			anyDotDamage = true;
 
-			cout << enemy[i]->getName()
-				<< " takes "
-				<< (healthBefore - enemy[i]->getHealth())
-				<< " damage from a damage-over-time effect!" << endl;
+			int dotDamage = healthBefore - enemy[i]->getHealth();
+
+			dotMessage +=
+				enemy[i]->getName()
+				+ " takes "
+				+ to_string(dotDamage)
+				+ " damage from a damage-over-time effect!\n";
 
 			if (enemy[i]->IsAlive())
 			{
-				cout << enemy[i]->getName()
-					<< " has "
-					<< enemy[i]->getHealth()
-					<< " HP left." << endl;
+				dotMessage +=
+					enemy[i]->getName()
+					+ " has "
+					+ to_string(enemy[i]->getHealth())
+					+ " HP left.\n";
 			}
 			else
 			{
-				cout << enemy[i]->getName()
-					<< " has been defeated by the damage-over-time effect!"
-					<< endl;
+				dotMessage +=
+					enemy[i]->getName()
+					+ " has been defeated by the damage-over-time effect!\n";
 
 				mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
 
@@ -854,76 +1080,33 @@ void Game::TickEnemyDoT()
 	// If DoT killed an enemy, check whether that was the final enemy.
 	if (anyDotDamage)
 	{
-		bool allEnemiesDead = true;
-
-		for (int i = 0; i < enemyCount; i++)
+		if (AreAllEnemiesDead())
 		{
-			if (enemy[i] != nullptr)
+			if (scene.getCurrentScene() == 1 ||
+				scene.getCurrentScene() == 2)
 			{
-				allEnemiesDead = false;
-				break;
+				CompleteCombat();
 			}
 		}
-
-		if (allEnemiesDead &&
-			(scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2))
-		{
-			loopCount++;
-			encounterFinished = true;
-
-			cout << "\nEncounter completed!";
-			cout << "\nProgress: " << loopCount << "/" << maxLoops;
-		}
 	}
 
-	if (anyDotDamage && !encounterFinished)
-	{
-		cout << "\nPress any key to continue...";
-		_getch();
-		system("cls");
-	}
+	// No _getch() or system("cls") here.
+	// DisplayGame() will show dotMessage on the normal main screen.
 }
 
+// ============================================================
+// ABILITY / TARGETING
+// ============================================================
 
-void Game::CastAbility(int abilityChoice, char direction)
+Enemy* Game::FindEnemyInRange(int minRange, int maxRange, int dirRow, int dirCol)
 {
-	int dirRow, dirCol;
-
-	if (!player->PlayerAbilityDirection(direction, dirRow, dirCol))
+	for (int dist = minRange; dist <= maxRange; dist++)
 	{
-		return;
-	}
+		int checkRow =
+			player->getRow() + (dirRow * dist);
 
-	// Convert the menu choice to the matching private range entry
-	// stored inside Abilities.
-	int abilityId;
-
-	switch (abilityChoice)
-	{
-	case 1: abilityId = Abilities::FIREBALL; break;
-	case 2: abilityId = Abilities::MAGIC_MISSILE; break;
-	case 3: abilityId = Abilities::BLOOD_PIERCE; break;
-	case 4: abilityId = Abilities::ICICLE_SPEAR; break;
-	case 5: abilityId = Abilities::LIGHTNING_BOLT; break;
-	case 6: abilityId = Abilities::BLOOD_BOMB; break;
-	case 7: abilityId = Abilities::POISON_SHOT; break;
-	case 8: abilityId = Abilities::AIR_CUTTER; break;
-	case 9: abilityId = Abilities::BOULDER_THROW; break;
-	case 0: abilityId = Abilities::WATER_BOLT; break;
-	default:
-		cout << "Invalid ability." << endl;
-		return;
-	}
-
-	int abilityRangeMin = Ability.GetMinRange(abilityId);
-	int abilityRangeMax = Ability.GetMaxRange(abilityId);
-
-	bool hit = false;
-
-	for (int dist = abilityRangeMin; dist <= abilityRangeMax && !hit; dist++)
-	{
-		int checkRow = player->getRow() + (dirRow * dist);
-		int checkCol = player->getCol() + (dirCol * dist);
+		int checkCol =
+			player->getCol() + (dirCol * dist);
 
 		for (int i = 0; i < enemyCount; i++)
 		{
@@ -931,71 +1114,338 @@ void Game::CastAbility(int abilityChoice, char direction)
 				enemy[i]->getRow() == checkRow &&
 				enemy[i]->getCol() == checkCol)
 			{
-				switch (abilityChoice)
+				return enemy[i];
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void Game::CastAbility(int abilityChoice, char direction)
+{
+	int dirRow = 0;
+	int dirCol = 0;
+
+	if (!player->PlayerAbilityDirection(direction, dirRow, dirCol))
+	{
+		cout << "\nInvalid direction!" << endl;
+		return;
+	}
+
+	if (abilityChoice < 1 || abilityChoice > 9 || !Ability.RandoAbilityBools[abilityChoice])
+	{
+		cout << "\nInvalid or locked ability!" << endl;
+		return;
+	}
+
+	int staminaCost = Ability.GetStaminaCost(abilityChoice);
+	if (player->getStamina() < staminaCost)
+	{
+		cout << "\nNot enough stamina! Required: " << staminaCost << " ST" << endl;
+		return;
+	}
+
+	// Blood Pierce can hit up to 2 enemies in a straight line and costs 5 HP once.
+	if (abilityChoice == Abilities::BLOOD_PIERCE)
+	{
+		int enemyHits = 0;
+		const int maxTargets = 2;
+
+		for (int dist = Ability.GetMinRange(abilityChoice);
+			dist <= Ability.GetMaxRange(abilityChoice) && enemyHits < maxTargets; dist++)
+		{
+			int checkRow = player->getRow() + (dirRow * dist);
+			int checkCol = player->getCol() + (dirCol * dist);
+
+			for (int i = 0; i < enemyCount; i++)
+			{
+				if (enemy[i] != nullptr && enemy[i]->getRow() == checkRow && enemy[i]->getCol() == checkCol)
 				{
-				case 1: Ability.Fireball(*enemy[i]); cout << player->getName() << " casts Fireball on " << enemy[i]->getName() << "!" << endl; break;
-				case 2: Ability.MagicMissile(*enemy[i]); cout << player->getName() << " casts Magic Missile on " << enemy[i]->getName() << "!" << endl; break;
-				case 3: Ability.BloodPierce(*enemy[i], *player); cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << "!" << endl; break;
-				case 4: Ability.IcicleSpear(*enemy[i]); cout << player->getName() << " casts Icicle Spear on " << enemy[i]->getName() << "!" << endl; break;
-				case 5: Ability.LightningBolt(*enemy[i]); cout << player->getName() << " casts Lightning Bolt on " << enemy[i]->getName() << "!" << endl; break;
-				case 6: Ability.BloodBomb(*enemy[i], *player); cout << player->getName() << " casts Blood Bomb on " << enemy[i]->getName() << "!" << endl; break;
-				case 7: Ability.PoisonShot(*enemy[i]); cout << player->getName() << " casts Poison Shot on " << enemy[i]->getName() << "!" << endl; break;
-				case 8: Ability.Aircutter(*enemy[i]); cout << player->getName() << " casts Air Cutter on " << enemy[i]->getName() << "!" << endl; break;
-				case 9: Ability.BoulderThrow(*enemy[i]); cout << player->getName() << " casts Boulder Throw on " << enemy[i]->getName() << "!" << endl; break;
-				case 0: Ability.WaterBolt(*enemy[i]); cout << player->getName() << " casts Water Bolt on " << enemy[i]->getName() << "!" << endl; break;
-				default: cout << "Invalid ability." << endl; break;
+					Ability.BloodPierce(*enemy[i]);
+					cout << player->getName() << " casts Blood Pierce on " << enemy[i]->getName() << "!" << endl;
+
+					if (!enemy[i]->IsAlive())
+					{
+						mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+						delete enemy[i];
+						enemy[i] = nullptr;
+					}
+					enemyHits++;
+					break;
 				}
+			}
+		}
 
-				if (enemy[i]->IsAlive())
+		if (enemyHits == 0)
+		{
+			cout << player->getName() << " casts Blood Pierce at empty space. No enemy there." << endl;
+			return;
+		}
+
+		player->setStamina(player->getStamina() - staminaCost);
+		player->TakeDamage(5);
+	}
+	else
+	{
+		Enemy* target = FindEnemyInRange(
+			Ability.GetMinRange(abilityChoice),
+			Ability.GetMaxRange(abilityChoice),
+			dirRow,
+			dirCol);
+
+		if (target == nullptr)
+		{
+			cout << "\n" << player->getName() << " casts the ability at empty space. No enemy there." << endl;
+			return;
+		}
+
+		player->setStamina(player->getStamina() - staminaCost);
+
+		switch (abilityChoice)
+		{
+		case Abilities::FIREBALL:
+			Ability.Fireball(*target); break;
+		case Abilities::BOULDER_THROW:
+			Ability.BoulderThrow(*target); break;
+		case Abilities::POISON_SHOT:
+			Ability.PoisonShot(*target); break;
+		case Abilities::LIGHTNING_BOLT:
+			Ability.LightningBolt(*target); break;
+		case Abilities::BLOOD_BOMB:
+			Ability.BloodBomb(*target, *player); break;
+		case Abilities::WATER_BOLT:
+			Ability.WaterBolt(*target, *player); break;
+		case Abilities::AIR_CUTTER:
+			Ability.Aircutter(*target); break;
+		case Abilities::BLOOMING_FLOWER:
+			Ability.BloomingFlowers(*target, *player); break;
+		}
+
+		cout << player->getName() << " casts " << Ability.RandoAbilityList[abilityChoice]
+			<< " on " << target->getName() << "!" << endl;
+
+		if (target->IsAlive())
+		{
+			cout << target->getName() << " has " << target->getHealth() << " HP left." << endl;
+		}
+		else
+		{
+			cout << target->getName() << " has been defeated!" << endl;
+			mapGrid[target->getRow()][target->getCol()] = '.';
+			for (int i = 0; i < enemyCount; i++)
+			{
+				if (enemy[i] == target)
 				{
-					cout << enemy[i]->getName() << " has " << enemy[i]->getHealth() << " HP left." << endl;
-				}
-				else
-				{
-					cout << enemy[i]->getName() << " has been defeated!" << endl;
-
-					mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
-
 					delete enemy[i];
 					enemy[i] = nullptr;
-
-					bool allEnemiesDead = true;
-
-					for (int j = 0; j < enemyCount; j++)
-					{
-						if (enemy[j] != nullptr)
-						{
-							allEnemiesDead = false;
-							break;
-						}
-					}
-
-					if (allEnemiesDead && (scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2))
-					{
-						loopCount++;
-						encounterFinished = true;
-
-						cout << "\nEncounter completed!";
-						cout << "\nProgress: " << loopCount << "/" << maxLoops;
-					}
+					break;
 				}
+			}
+		}
+	}
 
-				// If this player also took self-damage (Blood Pierce / Blood Bomb),
-				// the caster HP is already reduced by TakeDamage inside the ability call.
-				if (!player->IsAlive())
+	cout << "Stamina remaining: " << player->getStamina() << "/" << player->getMaxStamina() << " ST" << endl;
+
+	if (!player->IsAlive())
+	{
+		GameOver();
+		return;
+	}
+
+	if (AreAllEnemiesDead())
+	{
+		if (scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2)
+		{
+			CompleteCombat();
+		}
+	}
+}
+
+
+
+void Game::randomAbilityPicker()
+{
+	int picks[6];
+	for (int i = 0; i < 6; i++)
+	{
+		bool unique;
+		do
+		{
+			picks[i] = (rand() % 9) + 1;
+			unique = true;
+			for (int j = 0; j < i; j++)
+			{
+				if (picks[i] == picks[j]) unique = false;
+			}
+		} while (!unique);
+	}
+
+	cout << "Pick 2 out of these 6 abilities\n";
+	cout << "These will be your starter abilities.\n";
+	for (int i = 0; i < 6; i++)
+	{
+		cout << "[" << (i + 1) << "] " << Ability.RandoAbilityList[picks[i]] << endl;
+	}
+
+	int firstChoice;
+	int secondChoice;
+	cout << "\nYour 1st ability choice: ";
+	cin >> firstChoice;
+	while (firstChoice < 1 || firstChoice > 6)
+	{
+		cout << "Invalid input. Choose 1-6: ";
+		cin >> firstChoice;
+	}
+
+	cout << "Your 2nd ability choice: ";
+	cin >> secondChoice;
+	while (secondChoice < 1 || secondChoice > 6 || secondChoice == firstChoice)
+	{
+		cout << "Invalid or duplicate choice. Choose again: ";
+		cin >> secondChoice;
+	}
+
+	Ability.RandoAbilityBools[picks[firstChoice - 1]] = true;
+	Ability.RandoAbilityBools[picks[secondChoice - 1]] = true;
+	(void)_getch();
+	system("cls");
+}
+
+void Game::CastClassAbility(int classAbilityChoice, char direction)
+{
+	int dirRow = 0;
+	int dirCol = 0;
+	if (!player->PlayerAbilityDirection(direction, dirRow, dirCol)) return;
+	if (classAbilityChoice < 1 || classAbilityChoice > 9) return;
+
+	int staminaCost = Ability.GetClassStaminaCost(classAbilityChoice);
+	if (player->getStamina() < staminaCost)
+	{
+		cout << "\nNot enough stamina! Required: " << staminaCost << " ST" << endl;
+		return;
+	}
+
+	// Magic Arrow can hit up to 3 enemies in a straight line and costs 5 HP once.
+	if (classAbilityChoice == Abilities::MAGIC_ARROW)
+	{
+		int enemyHits = 0;
+		const int maxTargets = 3;
+
+		for (int dist = Ability.GetMinRange(classAbilityChoice);
+			dist <= Ability.GetMaxRange(classAbilityChoice) && enemyHits < maxTargets; dist++)
+		{
+			int checkRow = player->getRow() + (dirRow * dist);
+			int checkCol = player->getCol() + (dirCol * dist);
+
+			for (int i = 0; i < enemyCount; i++)
+			{
+				if (enemy[i] != nullptr && enemy[i]->getRow() == checkRow && enemy[i]->getCol() == checkCol)
 				{
-					cout << "\nYou have been defeated..." << endl;
-					gameRunning = false;
-				}
+					Ability.MagicArrow(*enemy[i]);
+					cout << player->getName() << " casts Magic Arrow on " << enemy[i]->getName() << "!" << endl;
 
-				hit = true;
+					if (!enemy[i]->IsAlive())
+					{
+						mapGrid[enemy[i]->getRow()][enemy[i]->getCol()] = '.';
+						delete enemy[i];
+						enemy[i] = nullptr;
+					}
+					enemyHits++;
+					break;
+				}
+			}
+		}
+
+		if (enemyHits == 0)
+		{
+			cout << player->getName() << " casts Magic Arrow at empty space. No enemy there." << endl;
+			return;
+		}
+
+		player->setStamina(player->getStamina() - staminaCost);
+	}
+
+	Enemy* target = FindEnemyInRange(
+		Ability.GetMinClsAbiRange(classAbilityChoice),
+		Ability.GetMaxClsAbiRange(classAbilityChoice),
+		dirRow,
+		dirCol);
+
+	if (target == nullptr)
+	{
+		cout << player->getName() << " casts at empty space. No enemy there." << endl;
+		return;
+	}
+
+	player->setStamina(player->getStamina() - staminaCost);
+
+	switch (classAbilityChoice)
+	{
+	case Abilities::HEROS_LIGHT: if (Bar == true)
+	{
+		Ability.HerosLight(*target, *player); cout << R"("Grant me power, for I shall rid this world of evil and strike my enemies down with the light!")" << "\n" <<
+			player->getName() << " casts Hero's Light on " << target->getName() << " and " << player->getName() << " heals 8 HP!" << endl; break;
+	}
+	case Abilities::SWORVANT: if (Bar == true)
+	{
+		Ability.Sworvant(*target); cout << R"("Behold! For this is the pinnacle of sword fighting. Go forth, "Solvora", and help me clear those in my way!")" << "\n" <<
+			player->getName() << " casts Sworvant on " << target->getName() << endl; break;
+	}
+	case Abilities::SWORVANT_SACRIFICE: if (Bar == true)
+	{
+		Ability.SworvantSacrifice(*target, *player); cout << R"("Just this once, lend my your strength, and in turn, I give a part of my life!")" << "\n" <<
+			player->getName() << " casts Sworvant Sacrifice on " << target->getName() << " and " << player->getName() << " sacrifices 15 HP!" << target->getName() << endl; break;
+	}
+	case Abilities::MAGIC_MISSILE: if (Mag == true) { Ability.MagicMissile(*target); cout << player->getName() << " casts Magic Missile on " << target->getName() << "!" << endl; break; }
+	case Abilities::CATCLYSM: if (Mag == true)
+	{
+		Ability.Cataclysm(*target); cout << R"("Foretold are tales of death, end shall come.")" << "\n" <<
+			R"("Borrowing a power from the times of suffering, I cast death upon those who stand against me.")" << "\n" <<
+			R"("Forgive me for I use powers that are forbidden...")" << "\n" <<
+			player->getName() << " casts Cataclysm on " << target->getName() << endl; break;
+	}
+	case Abilities::ICICLE_SPEAR: if (Mag == true) { Ability.IcicleSpear(*target); cout << player->getName() << " casts Icicle Spear on " << target->getName() << " and " << player->getName() << " sacrifices 10 HP!" << endl; break; }
+	case Abilities::MAGIC_ARROW: if (Arc == true) { Ability.MagicArrow(*target); cout << player->getName() << " casts Magic Arrow on " << target->getName() << endl; break; }
+	case Abilities::BULLSEYE: if (Arc == true) { Ability.Bullseye(*target); cout << player->getName() << " casts Bullseye on " << target->getName() << "!" << endl; break; }
+	case Abilities::PHOENIX_ARROW: if (Arc == true)
+	{
+		Ability.PhoenixArrow(*target, *player); cout << R"("Draw on the flaming bow, as the flaming arrow burns my arm.")" << "\n" <<
+			R"("Let the arrow fly as far and high as a Phoenix. Burn my enemies with the flames of life!")" << "\n" <<
+			player->getName() << " casts Phoenix Arrow on " << target->getName() << " and " << player->getName() << " sacrifices 9 HP!" << target->getName() << endl; break;
+	}
+	}
+
+	/*cout << player->getName() << " casts " << Ability.ClassAbilityList[classAbilityChoice]
+		<< " on " << target->getName() << "!" << endl;
+	cout << "Stamina remaining: " << player->getStamina() << "/" << player->getMaxStamina() << " ST" << endl;*/
+
+	if (!player->IsAlive())
+	{
+		GameOver();
+		return;
+	}
+
+	if (!target->IsAlive())
+	{
+		cout << target->getName() << " has been defeated!" << endl;
+		mapGrid[target->getRow()][target->getCol()] = '.';
+		for (int i = 0; i < enemyCount; i++)
+		{
+			if (enemy[i] == target)
+			{
+				delete enemy[i];
+				enemy[i] = nullptr;
 				break;
 			}
 		}
 	}
 
-	if (!hit)
+	if (AreAllEnemiesDead())
 	{
-		cout << player->getName() << " casts the ability at empty space. No enemy there." << endl;
+		if (scene.getCurrentScene() == 1 || scene.getCurrentScene() == 2)
+			CompleteCombat();
+		else if (scene.getCurrentScene() == 3)
+			VictoryScreen();
 	}
 }
