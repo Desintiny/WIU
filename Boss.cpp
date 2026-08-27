@@ -241,6 +241,7 @@ bool Boss::StartBossFight(Player* player, Abilities& Ability)
 		cout << "\nPress any key to continue...";
 		_getch();
 	}
+	return false;
 }
 
 void Boss::DisplayBattle(Player* player)
