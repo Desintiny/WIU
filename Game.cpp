@@ -488,6 +488,7 @@ void Game::MainMenu()
 		else if (option == 2)
 		{
 			gameRunning = false;
+			return;
 		}
 		else
 		{
