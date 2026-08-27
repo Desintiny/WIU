@@ -43,6 +43,29 @@ void Player::PlayerMovement(char sym, char input, char mapGrid[12][12])
 	{
 		newCol++;
 	}
+	else if (input == '=') {
+		GetAttackRing();
+		GetHpRing();
+		GetSharkToothCharm();
+		GetIdolTrinket();
+		GetSilverBracelet();
+		GetGemCharm();
+		cout << "This Equipments gives you accuracy,dmg,hp,critchance";
+	}
+	else if (input == '-') {
+		GetWoodCarvedNecklace();
+		GetTreeEmblem();
+		cout << "This Equipments gives you Thorns";
+	}
+	else if (input == '+') {
+		GetWoodCarvedNecklace();
+		GetTreeEmblem();
+		cout << "This Equipments gives you Taunt";
+	}
+	else if (input == '_') {
+		setDodgeChance(100);
+		return;
+	}
 	else
 	{
 		return;
